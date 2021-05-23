@@ -250,155 +250,176 @@ object RootNode : CommandNode(
                 )
             )
         ),
+        RegionEditNode
+    )
+)
+
+object RegionEditNode : CommandNode(
+    LiteralNodeData("r", null) { _, ctrl ->
+        Paginator.state = PaginatorState("/sb r help ${Paginator.PAGE_DELIM}", 1)
+        CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp(RegionEditNode)
+    },
+    listOf(
         CommandNode(
-            LiteralNodeData("r", null, null),
+            LiteralNodeData("help", "display region-edit command info") { _, ctrl ->
+                Paginator.state = PaginatorState("/sb r help ${Paginator.PAGE_DELIM}", 1)
+                CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp(RegionEditNode)
+            },
             listOf(
                 CommandNode(
-                    StringArgNodeData(SBArgs.regionArgument, null),
+                    IntArgNodeData(SBArgs.pageNumArgument) { ctx, ctrl ->
+                        Paginator.state =
+                            PaginatorState("/sb r help ${Paginator.PAGE_DELIM}", SBArgs.pageNumArgument.retrieve(ctx))
+                        CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp(RegionEditNode)
+                    },
+                    listOf()
+                )
+            )
+        ),
+        CommandNode(
+            StringArgNodeData(SBArgs.regionArgument, null),
+            listOf(
+                CommandNode(
+                    LiteralNodeData("rename", "rename region", null),
                     listOf(
                         CommandNode(
-                            LiteralNodeData("rename", "rename region", null),
-                            listOf(
-                                CommandNode(
-                                    StringArgNodeData(SBArgs.regionNameNewArgument) { ctx, ctrl ->
-                                        ctrl.renameRegion(
-                                            SBArgs.regionArgument.retrieve(ctx),
-                                            SBArgs.regionNameNewArgument.retrieve(ctx)
-                                        )
-                                    },
-                                    listOf()
+                            StringArgNodeData(SBArgs.regionNameNewArgument) { ctx, ctrl ->
+                                ctrl.renameRegion(
+                                    SBArgs.regionArgument.retrieve(ctx),
+                                    SBArgs.regionNameNewArgument.retrieve(ctx)
                                 )
-                            )
-                        ),
+                            },
+                            listOf()
+                        )
+                    )
+                ),
+                CommandNode(
+                    LiteralNodeData(
+                        "priority",
+                        "set region's priority (min 0)",
+                        null
+                    ),
+                    listOf(
                         CommandNode(
-                            LiteralNodeData(
-                                "priority",
-                                "set region's priority (min 0)",
-                                null
-                            ),
-                            listOf(
-                                CommandNode(
-                                    IntArgNodeData(SBArgs.regionPriorityArgument) { ctx, ctrl ->
-                                        ctrl.setRegionPriority(
-                                            SBArgs.regionArgument.retrieve(ctx),
-                                            SBArgs.regionPriorityArgument.retrieve(ctx)
-                                        )
-                                    },
-                                    listOf()
+                            IntArgNodeData(SBArgs.regionPriorityArgument) { ctx, ctrl ->
+                                ctrl.setRegionPriority(
+                                    SBArgs.regionArgument.retrieve(ctx),
+                                    SBArgs.regionPriorityArgument.retrieve(ctx)
                                 )
-                            )
-                        ),
+                            },
+                            listOf()
+                        )
+                    )
+                ),
+                CommandNode(
+                    LiteralNodeData(
+                        "contiguous",
+                        "check if region's volumes are contiguous"
+                    ) { ctx, ctrl -> ctrl.checkRegionContiguous(SBArgs.regionArgument.retrieve(ctx)) },
+                    listOf()
+                ),
+                CommandNode(
+                    LiteralNodeData("v", null, null),
+                    listOf(
                         CommandNode(
-                            LiteralNodeData(
-                                "contiguous",
-                                "check if region's volumes are contiguous"
-                            ) { ctx, ctrl -> ctrl.checkRegionContiguous(SBArgs.regionArgument.retrieve(ctx)) },
+                            LiteralNodeData("add", "add selected volume to region") { ctx, ctrl -> },
                             listOf()
                         ),
                         CommandNode(
-                            LiteralNodeData("v", null, null),
+                            LiteralNodeData("remove", "remove volume from region") { ctx, ctrl -> },
+                            listOf()
+                        ),
+                        CommandNode(
+                            LiteralNodeData("list", "list volumes in region") { ctx, ctrl -> },
+                            listOf()
+                        )
+                    )
+                ),
+                CommandNode(
+                    LiteralNodeData("p", null, null),
+                    listOf(
+                        CommandNode(
+                            LiteralNodeData("type", "set region's playlist type", null),
                             listOf(
                                 CommandNode(
-                                    LiteralNodeData("add", "add selected volume to region") { ctx, ctrl -> },
-                                    listOf()
-                                ),
-                                CommandNode(
-                                    LiteralNodeData("remove", "remove volume from region") { ctx, ctrl -> },
-                                    listOf()
-                                ),
-                                CommandNode(
-                                    LiteralNodeData("list", "list volumes in region") { ctx, ctrl -> },
+                                    PlaylistTypeArgData(SBArgs.playlistTypeArgument) { ctx, ctrl ->
+                                        ctrl.setRegionPlaylistType(
+                                            SBArgs.regionArgument.retrieve(ctx),
+                                            SBArgs.playlistTypeArgument.retrieve(ctx)
+                                        )
+                                    },
                                     listOf()
                                 )
                             )
                         ),
                         CommandNode(
-                            LiteralNodeData("p", null, null),
+                            LiteralNodeData("append", "append new song to region's playlist", null),
                             listOf(
                                 CommandNode(
-                                    LiteralNodeData("type", "set region's playlist type", null),
-                                    listOf(
-                                        CommandNode(
-                                            PlaylistTypeArgData(SBArgs.playlistTypeArgument) { ctx, ctrl ->
-                                                ctrl.setRegionPlaylistType(
-                                                    SBArgs.regionArgument.retrieve(ctx),
-                                                    SBArgs.playlistTypeArgument.retrieve(ctx)
-                                                )
-                                            },
-                                            listOf()
+                                    StringArgNodeData(SBArgs.songIDArgument) { ctx, ctrl ->
+                                        ctrl.appendRegionPlaylistSong(
+                                            SBArgs.regionArgument.retrieve(ctx),
+                                            SBArgs.songIDArgument.retrieve(ctx)
                                         )
-                                    )
-                                ),
+                                    },
+                                    listOf()
+                                )
+                            )
+                        ),
+                        CommandNode(
+                            LiteralNodeData("remove", "remove song from region's playlist", null),
+                            listOf(
                                 CommandNode(
-                                    LiteralNodeData("append", "append new song to region's playlist", null),
-                                    listOf(
-                                        CommandNode(
-                                            StringArgNodeData(SBArgs.songIDArgument) { ctx, ctrl ->
-                                                ctrl.appendRegionPlaylistSong(
-                                                    SBArgs.regionArgument.retrieve(ctx),
-                                                    SBArgs.songIDArgument.retrieve(ctx)
-                                                )
-                                            },
-                                            listOf()
+                                    IntArgNodeData(SBArgs.songPositionArgument) { ctx, ctrl ->
+                                        ctrl.removeRegionPlaylistSong(
+                                            SBArgs.regionArgument.retrieve(ctx),
+                                            SBArgs.songPositionArgument.retrieve(ctx)
                                         )
-                                    )
-                                ),
+                                    },
+                                    listOf()
+                                )
+                            )
+                        ),
+                        CommandNode(
+                            LiteralNodeData("insert", "insert song into region's playlist", null),
+                            listOf(
                                 CommandNode(
-                                    LiteralNodeData("remove", "remove song from region's playlist", null),
+                                    StringArgNodeData(SBArgs.songIDArgument, null),
                                     listOf(
                                         CommandNode(
                                             IntArgNodeData(SBArgs.songPositionArgument) { ctx, ctrl ->
-                                                ctrl.removeRegionPlaylistSong(
+                                                ctrl.insertRegionPlaylistSong(
                                                     SBArgs.regionArgument.retrieve(ctx),
+                                                    SBArgs.songIDArgument.retrieve(ctx),
                                                     SBArgs.songPositionArgument.retrieve(ctx)
                                                 )
                                             },
                                             listOf()
                                         )
                                     )
-                                ),
-                                CommandNode(
-                                    LiteralNodeData("insert", "insert song into region's playlist", null),
-                                    listOf(
-                                        CommandNode(
-                                            StringArgNodeData(SBArgs.songIDArgument, null),
-                                            listOf(
-                                                CommandNode(
-                                                    IntArgNodeData(SBArgs.songPositionArgument) { ctx, ctrl ->
-                                                        ctrl.insertRegionPlaylistSong(
-                                                            SBArgs.regionArgument.retrieve(ctx),
-                                                            SBArgs.songIDArgument.retrieve(ctx),
-                                                            SBArgs.songPositionArgument.retrieve(ctx)
-                                                        )
-                                                    },
-                                                    listOf()
-                                                )
-                                            )
-                                        )
-                                    )
-                                ),
-                                CommandNode(
-                                    LiteralNodeData("replace", "replace song in region's playlist", null),
-                                    listOf(
-                                        CommandNode(
-                                            IntArgNodeData(SBArgs.songPositionArgument, null),
-                                            listOf(
-                                                CommandNode(
-                                                    StringArgNodeData(SBArgs.newSongIDArgument) { ctx, ctrl ->
-                                                        ctrl.replaceRegionPlaylistSong(
-                                                            SBArgs.regionArgument.retrieve(ctx),
-                                                            SBArgs.songPositionArgument.retrieve(ctx),
-                                                            SBArgs.newSongIDArgument.retrieve(ctx)
-                                                        )
-                                                    },
-                                                    listOf()
-                                                )
-                                            )
-                                        )
-                                    )
-                                ),
+                                )
                             )
-                        )
+                        ),
+                        CommandNode(
+                            LiteralNodeData("replace", "replace song in region's playlist", null),
+                            listOf(
+                                CommandNode(
+                                    IntArgNodeData(SBArgs.songPositionArgument, null),
+                                    listOf(
+                                        CommandNode(
+                                            StringArgNodeData(SBArgs.newSongIDArgument) { ctx, ctrl ->
+                                                ctrl.replaceRegionPlaylistSong(
+                                                    SBArgs.regionArgument.retrieve(ctx),
+                                                    SBArgs.songPositionArgument.retrieve(ctx),
+                                                    SBArgs.newSongIDArgument.retrieve(ctx)
+                                                )
+                                            },
+                                            listOf()
+                                        )
+                                    )
+                                )
+                            )
+                        ),
                     )
                 )
             )

@@ -7,7 +7,6 @@ import net.minecraft.util.math.BlockPos
 
 interface ServerPlayerView {
     val owner: PlayerEntity
-    fun showHelp()
     fun showNowPlaying()
     fun notifyPosMarkerSet(marker: PosMarker, pos: BlockPos)
     fun showRegionList(regions: List<String>) // TODO sub String for Region type

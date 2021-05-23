@@ -6,7 +6,7 @@ import com.ciarandegroot.soundbounds.common.command.LiteralNodeData
 import java.security.InvalidParameterException
 
 class HelpTreeNode(
-    commandNode: CommandNode,
+    val commandNode: CommandNode,
     commandPrefix: String = "",
     parentDescription: String? = null,
     isOptionalArg: Boolean = false

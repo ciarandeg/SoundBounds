@@ -1,15 +1,10 @@
 package com.ciarandegroot.soundbounds.server.ui.cli
 
-import com.ciarandegroot.soundbounds.common.command.CommandNode
 import net.minecraft.text.LiteralText
 import net.minecraft.text.MutableText
 
 object HelpGenerator {
-    fun generate(root: CommandNode): List<MutableText> {
-        return generate(HelpTreeNode(root))
-    }
-
-    private fun generate(node: HelpTreeNode, entries: MutableList<MutableText> = mutableListOf()): List<MutableText> {
+    fun generate(node: HelpTreeNode, entries: MutableList<MutableText> = mutableListOf()): List<MutableText> {
         if (node.description != null) {
             entries.add(
                 LiteralText("/${node.command}").formatted(Colors.Help.COMMAND) +

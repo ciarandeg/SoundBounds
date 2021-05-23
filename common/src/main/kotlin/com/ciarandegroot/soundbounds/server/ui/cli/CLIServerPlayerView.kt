@@ -1,5 +1,6 @@
 package com.ciarandegroot.soundbounds.server.ui.cli
 
+import com.ciarandegroot.soundbounds.common.command.CommandNode
 import com.ciarandegroot.soundbounds.common.command.RootNode
 import com.ciarandegroot.soundbounds.common.util.Paginator
 import com.ciarandegroot.soundbounds.common.util.PlaylistType
@@ -9,6 +10,8 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.BlockPos
 
 class CLIServerPlayerView(override val owner: PlayerEntity) : ServerPlayerView {
+    private val helpTree = HelpTreeNode(RootNode)
+
     init {
         entityViews[owner] = this
     }
@@ -18,11 +21,20 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : ServerPlayerView {
         fun getEntityView(e: Entity) = entityViews[e]
     }
 
-    override fun showHelp() {
+    fun showHelp(root: CommandNode = RootNode) {
         owner.sendMessage(
-            Paginator.paginate("SoundBounds Help", HelpGenerator.generate(RootNode)),
+            Paginator.paginate("SoundBounds Help", HelpGenerator.generate(findHelpNode(root) ?: helpTree)),
             false
         )
+    }
+
+    private fun findHelpNode(commandNode: CommandNode, helpTree: HelpTreeNode = this.helpTree): HelpTreeNode? {
+        if (commandNode === helpTree.commandNode) return helpTree
+        for (c in helpTree.children) {
+            val h = findHelpNode(commandNode, c)
+            if (h != null) return h
+        }
+        return null
     }
 
     override fun showNowPlaying() {
