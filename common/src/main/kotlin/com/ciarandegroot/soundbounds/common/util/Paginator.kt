@@ -1,4 +1,4 @@
-package com.ciarandegroot.soundbounds.common.paginator
+package com.ciarandegroot.soundbounds.common.util
 
 import net.minecraft.text.ClickEvent
 import net.minecraft.text.HoverEvent

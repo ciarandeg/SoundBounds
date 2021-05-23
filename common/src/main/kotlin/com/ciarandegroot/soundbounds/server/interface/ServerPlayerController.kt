@@ -1,6 +1,6 @@
 package com.ciarandegroot.soundbounds.server.`interface`
 
-import com.ciarandegroot.cli.server.`interface`.PosMarker
+import com.ciarandegroot.soundbounds.server.`interface`.cli.PosMarker
 import com.ciarandegroot.soundbounds.common.util.PlaylistType
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.BlockPos

@@ -1,14 +1,14 @@
 package com.ciarandegroot.soundbounds.common.command
 
-import com.ciarandegroot.cli.server.`interface`.CLIServerPlayerView
-import com.ciarandegroot.cli.server.`interface`.PosMarker
+import com.ciarandegroot.soundbounds.server.`interface`.cli.CLIServerPlayerView
+import com.ciarandegroot.soundbounds.server.`interface`.cli.PosMarker
 import com.ciarandegroot.soundbounds.SoundBounds
 import com.ciarandegroot.soundbounds.common.command.argument.BlockPosArgumentContainer
 import com.ciarandegroot.soundbounds.common.command.argument.IntArgumentContainer
 import com.ciarandegroot.soundbounds.common.command.argument.PlaylistTypeArgumentContainer
 import com.ciarandegroot.soundbounds.common.command.argument.WordArgumentContainer
-import com.ciarandegroot.soundbounds.common.paginator.Paginator
-import com.ciarandegroot.soundbounds.common.paginator.PaginatorState
+import com.ciarandegroot.soundbounds.common.util.Paginator
+import com.ciarandegroot.soundbounds.common.util.PaginatorState
 import com.ciarandegroot.soundbounds.common.util.PlaylistType
 import com.ciarandegroot.soundbounds.server.`interface`.ServerPlayerController
 import com.mojang.brigadier.CommandDispatcher

@@ -1,4 +1,4 @@
-package com.ciarandegroot.cli.server.`interface`
+package com.ciarandegroot.soundbounds.server.`interface`.cli
 
 import net.minecraft.util.Formatting
 
