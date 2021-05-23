@@ -1,4 +1,4 @@
-package com.ciarandegroot.soundbounds.server.`interface`
+package com.ciarandegroot.soundbounds.server.ui
 
 class ServerWorldController(private val model: WorldModel = WorldModel()) {
     fun createRegion(regionName: String, priority: Int) {}

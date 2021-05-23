@@ -1,9 +1,9 @@
-package com.ciarandegroot.soundbounds.server.`interface`.cli
+package com.ciarandegroot.soundbounds.server.ui.cli
 
 import com.ciarandegroot.soundbounds.common.command.RootNode
 import com.ciarandegroot.soundbounds.common.util.Paginator
 import com.ciarandegroot.soundbounds.common.util.PlaylistType
-import com.ciarandegroot.soundbounds.server.`interface`.ServerPlayerView
+import com.ciarandegroot.soundbounds.server.ui.ServerPlayerView
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.BlockPos
