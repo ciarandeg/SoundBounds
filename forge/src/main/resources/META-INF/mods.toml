@@ -9,7 +9,7 @@ version = "${version}"
 displayName = "SoundBounds"
 authors = "Ciaran De Groot"
 description = '''
-SoundBounds is a region-based soundtracking mod, developed in conjunction with Crypts & Creepers.
+SoundBounds is a region-based soundtracking mod, developed for Crypts & Creepers.
 '''
 #logoFile = ""
 
