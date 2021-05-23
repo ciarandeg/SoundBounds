@@ -1,9 +1,10 @@
 package com.ciarandegroot.soundbounds.forge
 
 import com.ciarandegroot.soundbounds.SoundBounds
+import com.ciarandegroot.soundbounds.forge.common.item.Baton
 import me.shedaniel.architectury.platform.forge.EventBuses
-import net.minecraft.world.item.CreativeModeTab
-import net.minecraft.world.item.Item
+import net.minecraft.item.Item
+import net.minecraft.item.ItemGroup
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext
 
@@ -16,6 +17,6 @@ class SoundBoundsForge {
     }
 
     companion object {
-        val baton = SoundBounds.items.register("bounds_baton") { Item(Item.Properties().tab(CreativeModeTab.TAB_TOOLS)) }
+        val baton = SoundBounds.items.register("bounds_baton") { Baton(Item.Settings().group(ItemGroup.TOOLS)) }
     }
 }
