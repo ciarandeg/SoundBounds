@@ -2,7 +2,7 @@ package com.ciarandegroot.soundbounds.common.command
 
 import com.ciarandegroot.soundbounds.common.command.argument.ArgumentContainer
 import com.ciarandegroot.soundbounds.common.util.PlaylistType
-import com.ciarandegroot.soundbounds.server.`interface`.ServerPlayerController
+import com.ciarandegroot.soundbounds.server.ui.ServerPlayerController
 import com.mojang.brigadier.context.CommandContext
 import net.minecraft.command.argument.PosArgument
 import net.minecraft.server.command.ServerCommandSource
