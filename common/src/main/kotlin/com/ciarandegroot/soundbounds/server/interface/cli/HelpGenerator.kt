@@ -9,40 +9,43 @@ import java.security.InvalidParameterException
 
 object HelpGenerator {
     fun generate(root: CommandNode): List<MutableText> {
-        val ld: MutableList<Pair<String, String?>> = MutableList(0) { Pair("", "") }
-        build(root, ld, null)
-        return ld.filter { l -> l.second != null }.map { l ->
-            LiteralText("/${l.first}").formatted(Colors.Help.COMMAND) +
-                LiteralText(" - ").formatted(Colors.SEPARATOR) +
-                LiteralText(l.second).formatted(Colors.Help.DESCRIPTION)
-        }
+        val descriptions: MutableList<Pair<String, String?>> = MutableList(0) { Pair("", "") }
+        parse(root, descriptions)
+        return formatDescriptions(descriptions)
     }
 
-    private fun build(
+    private fun parse(
         n: CommandNode,
         store: MutableList<Pair<String, String?>>,
-        cmd: String?,
+        cmd: String = "",
         parentNodeHadWork: Boolean = false
     ) {
-        var swap = if (cmd == null) "" else "$cmd "
-        swap += instruction(n, parentNodeHadWork)
+        var swap = "$cmd "
+        swap += generateNodeText(n, parentNodeHadWork)
 
         when (n.data) {
             is LiteralNodeData -> store.add(Pair(swap, n.data.description))
             is ArgNodeData<*, *> -> store[store.lastIndex] = Pair(swap, store.last().second)
         }
 
-        for (c in n.children) build(c, store, swap, n.data.work != null)
+        for (c in n.children) parse(c, store, swap, n.data.work != null)
     }
 
-    private fun instruction(n: CommandNode, optArg: Boolean): String =
+    private fun generateNodeText(n: CommandNode, isOptional: Boolean): String =
         when (n.data) {
             is LiteralNodeData -> n.data.literal
             is ArgNodeData<*, *> -> {
-                val br = if (optArg) "[]" else "<>"
+                val br = if (isOptional) "[]" else "<>"
                 "${br[0]}${n.data.arg.name}${br[1]}"
             }
             else -> throw InvalidParameterException()
+        }
+
+    private fun formatDescriptions(descriptions: MutableList<Pair<String, String?>>) =
+        descriptions.filter { entry -> entry.second != null }.map { l ->
+            LiteralText("/${l.first}").formatted(Colors.Help.COMMAND) +
+                    LiteralText(" - ").formatted(Colors.SEPARATOR) +
+                    LiteralText(l.second).formatted(Colors.Help.DESCRIPTION)
         }
 }
 
