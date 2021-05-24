@@ -5,6 +5,8 @@ import com.ciarandegroot.soundbounds.common.command.RootNode
 import com.ciarandegroot.soundbounds.common.util.Paginator
 import com.ciarandegroot.soundbounds.common.util.PlaylistType
 import com.ciarandegroot.soundbounds.server.ui.ServerPlayerView
+import com.ciarandegroot.soundbounds.server.ui.cli.help.HelpGenerator
+import com.ciarandegroot.soundbounds.server.ui.cli.help.HelpTreeNode
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.BlockPos
@@ -23,7 +25,7 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : ServerPlayerView {
 
     fun showHelp(root: CommandNode = RootNode) {
         owner.sendMessage(
-            Paginator.paginate("SoundBounds Help", HelpGenerator.generate(findHelpNode(root) ?: helpTree)),
+            Paginator.paginate("SoundBounds Help", HelpGenerator.readOut(findHelpNode(root) ?: helpTree)),
             false
         )
     }

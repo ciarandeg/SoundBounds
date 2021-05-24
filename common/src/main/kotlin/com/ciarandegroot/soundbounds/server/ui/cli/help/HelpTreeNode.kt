@@ -1,4 +1,4 @@
-package com.ciarandegroot.soundbounds.server.ui.cli
+package com.ciarandegroot.soundbounds.server.ui.cli.help
 
 import com.ciarandegroot.soundbounds.common.command.ArgNodeData
 import com.ciarandegroot.soundbounds.common.command.CommandNode
