@@ -255,26 +255,18 @@ object RootNode : CommandNode(
 )
 
 object RegionEditNode : CommandNode(
-    LiteralNodeData("r", null) { _, ctrl ->
-        Paginator.state = PaginatorState("/sb r help ${Paginator.PAGE_DELIM}", 1)
+        LiteralNodeData("r", "display region-edit command info") { _, ctrl ->
+        Paginator.state = PaginatorState("/sb r ${Paginator.PAGE_DELIM}", 1)
         CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp(RegionEditNode)
     },
     listOf(
         CommandNode(
-            LiteralNodeData("help", "display region-edit command info") { _, ctrl ->
-                Paginator.state = PaginatorState("/sb r help ${Paginator.PAGE_DELIM}", 1)
+            IntArgNodeData(SBArgs.pageNumArgument) { ctx, ctrl ->
+                Paginator.state =
+                    PaginatorState("/sb r ${Paginator.PAGE_DELIM}", SBArgs.pageNumArgument.retrieve(ctx))
                 CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp(RegionEditNode)
             },
-            listOf(
-                CommandNode(
-                    IntArgNodeData(SBArgs.pageNumArgument) { ctx, ctrl ->
-                        Paginator.state =
-                            PaginatorState("/sb r help ${Paginator.PAGE_DELIM}", SBArgs.pageNumArgument.retrieve(ctx))
-                        CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp(RegionEditNode)
-                    },
-                    listOf()
-                )
-            )
+            listOf()
         ),
         CommandNode(
             StringArgNodeData(SBArgs.regionArgument, null),
