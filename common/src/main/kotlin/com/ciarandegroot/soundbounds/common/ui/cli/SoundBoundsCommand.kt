@@ -28,16 +28,9 @@ import net.minecraft.server.command.ServerCommandSource as Source
 
 class SoundBoundsCommand {
     companion object {
-        private val playlistTypeSuggester = registerEnumSuggester<PlaylistType>("playlist_types")
 
         fun register(dispatcher: CommandDispatcher<Source>) {
             dispatcher.register(Assembler.assembleLiteral(RootNode))
-        }
-
-        private inline fun <reified T : Enum<T>> registerEnumSuggester(id: String): SuggestionProvider<Source> {
-            return SuggestionProviders.register(Identifier(SoundBounds.MOD_ID, id)) { _, builder ->
-                CommandSource.suggestMatching(enumValues<T>().map { pl -> pl.name }, builder)
-            }
         }
 
         private object Assembler {
@@ -51,7 +44,6 @@ class SoundBoundsCommand {
             fun assembleArg(root: CommandNode): RequiredArgumentBuilder<Source, out Any?> {
                 if (root.data !is ArgNodeData<*, *>) throw IllegalArgumentException("Must be an argument node")
                 val c = CommandManager.argument(root.data.arg.name, root.data.arg.supply())
-                if (root.data is PlaylistTypeArgData) c.suggests(playlistTypeSuggester)
                 assemblyHelper(c, root)
                 return c
             }
