@@ -1,6 +1,7 @@
 package com.ciarandegroot.soundbounds
 
 import com.ciarandegroot.soundbounds.common.command.SoundBoundsCommand
+import com.ciarandegroot.soundbounds.common.command.argument.PTArgumentType
 import me.shedaniel.architectury.event.events.CommandRegistrationEvent
 import me.shedaniel.architectury.registry.DeferredRegister
 import net.minecraft.item.Item
@@ -11,6 +12,8 @@ import org.apache.logging.log4j.Logger
 class SoundBounds {
     init {
         items.register()
+
+        PTArgumentType.register()
         CommandRegistrationEvent.EVENT.register { dispatcher, _ -> SoundBoundsCommand.register(dispatcher) }
     }
 

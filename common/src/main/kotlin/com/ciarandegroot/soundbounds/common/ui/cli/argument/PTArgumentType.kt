@@ -7,6 +7,8 @@ import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import net.minecraft.command.CommandSource
+import net.minecraft.command.argument.ArgumentTypes
+import net.minecraft.command.argument.serialize.ConstantArgumentSerializer
 import net.minecraft.server.command.ServerCommandSource
 import java.security.InvalidParameterException
 import java.util.concurrent.CompletableFuture
@@ -31,6 +33,12 @@ class PTArgumentType : ArgumentType<PlaylistType> {
         enumValues<PlaylistType>().map { pl -> pl.name }.toMutableList()
 
     companion object {
+        fun register() = ArgumentTypes.register(
+            "playlist_type",
+            PTArgumentType().javaClass,
+            ConstantArgumentSerializer(PTArgumentType::type)
+        )
+
         fun type(): PTArgumentType = PTArgumentType()
 
         fun getPlaylistType(ctx: CommandContext<ServerCommandSource>, name: String): PlaylistType =
