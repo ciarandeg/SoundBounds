@@ -39,63 +39,19 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : ServerPlayerView {
         return null
     }
 
-    override fun showNowPlaying() {
-        TODO("Not yet implemented")
-    }
-
-    override fun notifyPosMarkerSet(marker: PosMarker, pos: BlockPos) {
-        TODO("Not yet implemented")
-    }
-
-    override fun showRegionList(regions: List<String>) {
-        TODO("Not yet implemented")
-    }
-
-    override fun notifyMetadataSynced() {
-        TODO("Not yet implemented")
-    }
-
-    override fun notifyRegionCreated(name: String, priority: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun notifyRegionDestroyed(name: String) {
-        TODO("Not yet implemented")
-    }
-
-    override fun notifyRegionRenamed(from: String, to: String) {
-        TODO("Not yet implemented")
-    }
-
-    override fun notifyRegionOverlaps(region1: String, region2: String, overlaps: Boolean) {
-        TODO("Not yet implemented")
-    }
-
-    override fun showRegionInfo(region: String) {
-        TODO("Not yet implemented")
-    }
-
-    override fun notifyRegionPrioritySet(name: String, oldPriority: Int, newPriority: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun notifyRegionPlaylistTypeSet(name: String, type: PlaylistType) {
-        TODO("Not yet implemented")
-    }
-
-    override fun notifyRegionPlaylistSongAdded(regionName: String, song: String, pos: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun notifyRegionPlaylistSongRemoved(regionName: String, song: String, pos: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun notifyRegionPlaylistSongReplaced(regionName: String, oldSong: String, newSong: String, pos: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun showRegionContiguous(regionName: String) {
-        TODO("Not yet implemented")
-    }
+    override fun showNowPlaying() {} // TODO
+    override fun notifyPosMarkerSet(marker: PosMarker, pos: BlockPos) {} // TODO
+    override fun showRegionList(regions: List<String>) {} // TODO
+    override fun notifyMetadataSynced() {} // TODO
+    override fun notifyRegionCreated(name: String, priority: Int) {} // TODO
+    override fun notifyRegionDestroyed(name: String) {} // TODO
+    override fun notifyRegionRenamed(from: String, to: String) {} // TODO
+    override fun notifyRegionOverlaps(region1: String, region2: String, overlaps: Boolean) {} // TODO
+    override fun showRegionInfo(region: String) {} // TODO
+    override fun notifyRegionPrioritySet(name: String, oldPriority: Int, newPriority: Int) {} // TODO
+    override fun notifyRegionPlaylistTypeSet(name: String, type: PlaylistType) {} // TODO
+    override fun notifyRegionPlaylistSongAdded(regionName: String, song: String, pos: Int) {} // TODO
+    override fun notifyRegionPlaylistSongRemoved(regionName: String, song: String, pos: Int) {} // TODO
+    override fun notifyRegionPlaylistSongReplaced(regionName: String, oldSong: String, newSong: String, pos: Int) {} // TODO
+    override fun showRegionContiguous(regionName: String) {} // TODO
 }
