@@ -1,28 +1,24 @@
-package com.ciarandegroot.soundbounds.common.command
+package com.ciarandegroot.soundbounds.common.ui.cli
 
 import com.ciarandegroot.soundbounds.server.ui.cli.CLIServerPlayerView
 import com.ciarandegroot.soundbounds.server.ui.cli.PosMarker
-import com.ciarandegroot.soundbounds.SoundBounds
+import com.ciarandegroot.soundbounds.common.command.*
 import com.ciarandegroot.soundbounds.common.command.argument.BlockPosArgumentContainer
 import com.ciarandegroot.soundbounds.common.command.argument.IntArgumentContainer
 import com.ciarandegroot.soundbounds.common.command.argument.PlaylistTypeArgumentContainer
 import com.ciarandegroot.soundbounds.common.command.argument.WordArgumentContainer
 import com.ciarandegroot.soundbounds.common.util.Paginator
 import com.ciarandegroot.soundbounds.common.util.PaginatorState
-import com.ciarandegroot.soundbounds.common.util.PlaylistType
+import com.ciarandegroot.soundbounds.server.ServerUtils
 import com.ciarandegroot.soundbounds.server.ui.ServerPlayerController
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
-import com.mojang.brigadier.suggestion.SuggestionProvider
-import net.minecraft.command.CommandSource
-import net.minecraft.command.suggestion.SuggestionProviders
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.command.CommandManager
 import net.minecraft.text.TranslatableText
-import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.server.command.ServerCommandSource as Source
 
@@ -68,10 +64,11 @@ class SoundBoundsCommand {
                 val source = ctx.source
                 val entity = source?.entity
                 if (entity is PlayerEntity) {
-                    command(
-                        ctx,
-                        ServerPlayerController(entity, CLIServerPlayerView(entity))
-                    ) // TODO pass in an actual PlayerController
+                    command(ctx,
+                        ServerUtils.playerControllers[entity] ?: throw RuntimeException(
+                            "Player's controller ought to exist, as it is constructed upon world join"
+                        )
+                    )
                 } else {
                     // TODO add formatting for error message
                     source.sendError(TranslatableText("Invalid command source. Please run in-game as a player"))
@@ -118,11 +115,15 @@ object RootNode : CommandNode(
             LiteralNodeData(
                 "list",
                 "list all regions in current world"
-            ) { _, ctrl -> ctrl.listRegions() },
+            ) { ctx, ctrl ->
+                Paginator.state = PaginatorState("/sb list ${Paginator.PAGE_DELIM}", 1)
+                ctrl.listRegions(ctx.source.world) },
             listOf(
                 CommandNode(
                     IntArgNodeData(SBArgs.pageNumArgument) { ctx, ctrl ->
-                        ctrl.listRegions(page = SBArgs.pageNumArgument.retrieve(ctx))
+                        Paginator.state =
+                            PaginatorState("/sb list ${Paginator.PAGE_DELIM}", SBArgs.pageNumArgument.retrieve(ctx))
+                        ctrl.listRegions(ctx.source.world)
                     },
                     listOf()
                 ),
@@ -133,14 +134,14 @@ object RootNode : CommandNode(
             listOf(
                 CommandNode(
                     IntArgNodeData(SBArgs.radiusArgument) { ctx, ctrl ->
-                        ctrl.listRegions(SBArgs.radiusArgument.retrieve(ctx))
+                        ctrl.listRegions(ctx.source.world, SBArgs.radiusArgument.retrieve(ctx))
                     },
                     listOf(
                         CommandNode(
                             IntArgNodeData(SBArgs.pageNumArgument) { ctx, ctrl ->
                                 ctrl.listRegions(
+                                    ctx.source.world,
                                     SBArgs.radiusArgument.retrieve(ctx),
-                                    SBArgs.pageNumArgument.retrieve(ctx)
                                 )
                             },
                             listOf()
@@ -154,7 +155,7 @@ object RootNode : CommandNode(
             listOf(
                 CommandNode(
                     StringArgNodeData(SBArgs.regionArgument) { ctx, ctrl ->
-                        ctrl.showRegionInfo(SBArgs.regionArgument.retrieve(ctx))
+                        ctrl.showRegionInfo(ctx.source.world, SBArgs.regionArgument.retrieve(ctx))
                     },
                     listOf()
                 )
@@ -202,7 +203,8 @@ object RootNode : CommandNode(
                         CommandNode(
                             IntArgNodeData(SBArgs.regionPriorityArgument) { ctx, ctrl ->
                                 ctrl.createRegion(
-                                    SBArgs.regionArgument.retrieve(ctx),
+                                    ctx.source.world,
+                                    SBArgs.nameArgument.retrieve(ctx),
                                     SBArgs.regionPriorityArgument.retrieve(ctx)
                                 )
                             },
@@ -217,7 +219,7 @@ object RootNode : CommandNode(
             listOf(
                 CommandNode(
                     StringArgNodeData(SBArgs.regionArgument) { ctx, ctrl ->
-                        ctrl.destroyRegion(SBArgs.regionArgument.retrieve(ctx))
+                        ctrl.destroyRegion(ctx.source.world, SBArgs.regionArgument.retrieve(ctx))
                     },
                     listOf()
                 )
@@ -269,6 +271,7 @@ object RegionEditNode : CommandNode(
                         CommandNode(
                             StringArgNodeData(SBArgs.regionNameNewArgument) { ctx, ctrl ->
                                 ctrl.renameRegion(
+                                    ctx.source.world,
                                     SBArgs.regionArgument.retrieve(ctx),
                                     SBArgs.regionNameNewArgument.retrieve(ctx)
                                 )
@@ -287,6 +290,7 @@ object RegionEditNode : CommandNode(
                         CommandNode(
                             IntArgNodeData(SBArgs.regionPriorityArgument) { ctx, ctrl ->
                                 ctrl.setRegionPriority(
+                                    ctx.source.world,
                                     SBArgs.regionArgument.retrieve(ctx),
                                     SBArgs.regionPriorityArgument.retrieve(ctx)
                                 )
@@ -306,15 +310,15 @@ object RegionEditNode : CommandNode(
                     LiteralNodeData("v", null, null),
                     listOf(
                         CommandNode(
-                            LiteralNodeData("add", "add selected volume to region") { ctx, ctrl -> },
+                            LiteralNodeData("add", "add selected volume to region") { _, _ -> },
                             listOf()
                         ),
                         CommandNode(
-                            LiteralNodeData("remove", "remove volume from region") { ctx, ctrl -> },
+                            LiteralNodeData("remove", "remove volume from region") { _, _ -> },
                             listOf()
                         ),
                         CommandNode(
-                            LiteralNodeData("list", "list volumes in region") { ctx, ctrl -> },
+                            LiteralNodeData("list", "list volumes in region") { _, _ -> },
                             listOf()
                         )
                     )
@@ -328,6 +332,7 @@ object RegionEditNode : CommandNode(
                                 CommandNode(
                                     PlaylistTypeArgData(SBArgs.playlistTypeArgument) { ctx, ctrl ->
                                         ctrl.setRegionPlaylistType(
+                                            ctx.source.world,
                                             SBArgs.regionArgument.retrieve(ctx),
                                             SBArgs.playlistTypeArgument.retrieve(ctx)
                                         )

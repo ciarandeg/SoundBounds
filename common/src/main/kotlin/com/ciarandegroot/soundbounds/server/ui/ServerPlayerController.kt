@@ -1,15 +1,28 @@
 package com.ciarandegroot.soundbounds.server.ui
 
+import com.ciarandegroot.soundbounds.common.persistence.Region
+import com.ciarandegroot.soundbounds.common.persistence.WorldState
 import com.ciarandegroot.soundbounds.server.ui.cli.PosMarker
 import com.ciarandegroot.soundbounds.common.util.PlaylistType
+import com.ciarandegroot.soundbounds.server.ui.ServerPlayerView.FailureReason
+import com.ciarandegroot.soundbounds.server.ui.cli.CLIServerPlayerView
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
 
 class ServerPlayerController(
     val owner: PlayerEntity,
-    private val view: ServerPlayerView,
+    private val view: ServerPlayerView = CLIServerPlayerView(owner),
     private val model: PlayerModel = PlayerModel()
 ) {
+    companion object {
+        private const val DATA_KEY = "sb-data"
+        private fun getWorldState(world: ServerWorld) =
+            world.persistentStateManager.getOrCreate({ WorldState(DATA_KEY) }, DATA_KEY)
+        private fun setWorldState(world: ServerWorld, state: WorldState) =
+            world.persistentStateManager.set(state)
+    }
+
     fun showNowPlaying() = view.showNowPlaying()
     fun setPosMarker(marker: PosMarker, pos: BlockPos) {
         when (marker) {
@@ -19,29 +32,49 @@ class ServerPlayerController(
         view.notifyPosMarkerSet(marker, pos)
     }
 
-    fun listRegions(radius: Int = -1, page: Int = 1) {
-        // TODO fetch region data according to radius, pass it through
-        view.showRegionList(listOf(""))
-    }
+    fun listRegions(world: ServerWorld, radius: Int = -1) =
+        view.showRegionList(getWorldState(world).getAllRegions().sortedBy { it.key })
 
     fun syncMetadata() {
         // TODO sync the metadata
         view.notifyMetadataSynced()
     }
 
-    fun createRegion(regionName: String, priority: Int) {
-        // TODO create the region
-        view.notifyRegionCreated("", 0)
+    fun createRegion(world: ServerWorld, regionName: String, priority: Int) {
+        val state = getWorldState(world)
+        val m1 = model.marker1
+        val m2 = model.marker2
+
+        if (state.regionExists(regionName)) view.notifyFailed(FailureReason.REGION_NAME_CONFLICT)
+        else if (m1 !=  null && m2 != null) {
+            state.putRegion(regionName, Region(priority, bounds = listOf(Pair(m1, m2))))
+            setWorldState(world, state)
+            view.notifyRegionCreated(regionName, priority)
+        } else view.notifyFailed(FailureReason.POS_MARKERS_MISSING)
     }
 
-    fun destroyRegion(regionName: String) {
-        // TODO destroy the region
-        view.notifyRegionDestroyed("")
+    fun destroyRegion(world: ServerWorld, regionName: String) {
+        val state = getWorldState(world)
+        val removed = state.removeRegion(regionName)
+        if (removed == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
+        else {
+            setWorldState(world, state)
+            view.notifyRegionDestroyed(regionName)
+        }
     }
 
-    fun renameRegion(from: String, to: String) {
-        // TODO rename the region
-        view.notifyRegionRenamed("", "")
+    fun renameRegion(world: ServerWorld, from: String, to: String) {
+        val state = getWorldState(world)
+        val removed = state.removeRegion(from)
+        when {
+            removed == null -> view.notifyFailed(FailureReason.NO_SUCH_REGION)
+            state.regionExists(to) -> view.notifyFailed(FailureReason.REGION_NAME_CONFLICT)
+            else -> {
+                state.putRegion(to, removed)
+                setWorldState(world, state)
+                view.notifyRegionRenamed(from, to)
+            }
+        }
     }
 
     fun showIfRegionsOverlap(firstRegion: String, secondRegion: String) {
@@ -49,19 +82,36 @@ class ServerPlayerController(
         view.notifyRegionOverlaps("", "", false)
     }
 
-    fun showRegionInfo(regionName: String) {
-        // TODO fetch region data from name
-        view.showRegionInfo("")
+    fun showRegionInfo(world: ServerWorld, regionName: String) {
+        val region = getWorldState(world).getRegion(regionName)
+        if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
+        else view.showRegionInfo(regionName, region)
     }
 
-    fun setRegionPriority(regionName: String, priority: Int) {
-        // TODO set region priority
-        view.notifyRegionPrioritySet("", 0, 0)
+    fun setRegionPriority(world: ServerWorld, regionName: String, priority: Int) {
+        val state = getWorldState(world)
+        val region = state.getRegion(regionName)
+        if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
+        else {
+            val oldPriority = region.priority
+            region.priority = priority
+            state.putRegion(regionName, region)
+            setWorldState(world, state)
+            view.notifyRegionPrioritySet(regionName, oldPriority, priority)
+        }
     }
 
-    fun setRegionPlaylistType(regionName: String, type: PlaylistType) {
-        // TODO set region playlist type
-        view.notifyRegionPlaylistTypeSet("", PlaylistType.SEQUENTIAL)
+    fun setRegionPlaylistType(world: ServerWorld, regionName: String, type: PlaylistType) {
+        val state = getWorldState(world)
+        val region = state.getRegion(regionName)
+        if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
+        else {
+            val oldType = region.playlistType
+            region.playlistType = type
+            state.putRegion(regionName, region)
+            setWorldState(world, state)
+            view.notifyRegionPlaylistTypeSet(regionName, oldType, type)
+        }
     }
 
     fun appendRegionPlaylistSong(regionName: String, songID: String) {
@@ -94,7 +144,7 @@ class ServerPlayerController(
 }
 
 data class PlayerModel(
-    var curSongID: String = "",
-    var marker1: BlockPos = BlockPos(0, 0, 0),
-    var marker2: BlockPos = BlockPos(0, 0, 0)
+    var curSongID: String? = null,
+    var marker1: BlockPos? = null,
+    var marker2: BlockPos? = null
 )

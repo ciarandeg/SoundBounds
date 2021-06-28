@@ -1,7 +1,8 @@
 package com.ciarandegroot.soundbounds.server.ui.cli
 
 import com.ciarandegroot.soundbounds.common.command.CommandNode
-import com.ciarandegroot.soundbounds.common.command.RootNode
+import com.ciarandegroot.soundbounds.common.persistence.Region
+import com.ciarandegroot.soundbounds.common.ui.cli.RootNode
 import com.ciarandegroot.soundbounds.common.util.Paginator
 import com.ciarandegroot.soundbounds.common.util.PlaylistType
 import com.ciarandegroot.soundbounds.server.ui.ServerPlayerView
@@ -9,6 +10,7 @@ import com.ciarandegroot.soundbounds.server.ui.cli.help.HelpGenerator
 import com.ciarandegroot.soundbounds.server.ui.cli.help.HelpTreeNode
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.text.LiteralText
 import net.minecraft.util.math.BlockPos
 
 class CLIServerPlayerView(override val owner: PlayerEntity) : ServerPlayerView {
@@ -40,18 +42,67 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : ServerPlayerView {
     }
 
     override fun showNowPlaying() {} // TODO
-    override fun notifyPosMarkerSet(marker: PosMarker, pos: BlockPos) {} // TODO
-    override fun showRegionList(regions: List<String>) {} // TODO
+
+    override fun notifyPosMarkerSet(marker: PosMarker, pos: BlockPos) = owner.sendMessage(
+        LiteralText("Set marker $marker to $pos"), false
+    )
+
+    override fun showRegionList(regions: List<Map.Entry<String, Region>>) = owner.sendMessage(
+        Paginator.paginate("Region List", regions.mapIndexed { index, entry ->
+            val n = index + 1
+            val name = entry.key
+            val playlistType = entry.value.playlistType.toString().toLowerCase()
+            val priority = entry.value.priority
+            LiteralText("$n. $name - $playlistType, priority $priority")
+        }),
+        false
+    )
+
     override fun notifyMetadataSynced() {} // TODO
-    override fun notifyRegionCreated(name: String, priority: Int) {} // TODO
-    override fun notifyRegionDestroyed(name: String) {} // TODO
-    override fun notifyRegionRenamed(from: String, to: String) {} // TODO
+    override fun notifyRegionCreated(name: String, priority: Int) {
+        owner.sendMessage(
+            LiteralText("Created region $name, priority $priority"),
+            false
+        )
+    }
+    override fun notifyRegionDestroyed(name: String) = owner.sendMessage(
+        LiteralText("Region $name destroyed"), false
+    )
+
+    override fun notifyRegionRenamed(from: String, to: String) {
+        owner.sendMessage(LiteralText("Region $from renamed to $to"), false)
+    }
+
     override fun notifyRegionOverlaps(region1: String, region2: String, overlaps: Boolean) {} // TODO
-    override fun showRegionInfo(region: String) {} // TODO
-    override fun notifyRegionPrioritySet(name: String, oldPriority: Int, newPriority: Int) {} // TODO
-    override fun notifyRegionPlaylistTypeSet(name: String, type: PlaylistType) {} // TODO
+    override fun showRegionInfo(regionName: String, region: Region) {
+        owner.sendMessage(LiteralText(
+            "Region $regionName: type ${region.playlistType}, " +
+                    "song count ${region.playlist.size}, " +
+                    "bounds count ${region.bounds.size}"),
+            false)
+    }
+    override fun notifyRegionPrioritySet(name: String, oldPriority: Int, newPriority: Int) {
+        owner.sendMessage(LiteralText(
+            "Region $name priority changed from $oldPriority to $newPriority"
+        ), false)
+    }
+
+    override fun notifyRegionPlaylistTypeSet(name: String, from: PlaylistType, to: PlaylistType) {
+        owner.sendMessage(LiteralText(
+            if (from == to) "Region $name is already of type $to!"
+            else "Region $name changed from type $from to type $to"
+        ), false)
+    }
+
     override fun notifyRegionPlaylistSongAdded(regionName: String, song: String, pos: Int) {} // TODO
     override fun notifyRegionPlaylistSongRemoved(regionName: String, song: String, pos: Int) {} // TODO
     override fun notifyRegionPlaylistSongReplaced(regionName: String, oldSong: String, newSong: String, pos: Int) {} // TODO
     override fun showRegionContiguous(regionName: String) {} // TODO
+
+    override fun notifyFailed(reason: ServerPlayerView.FailureReason) = owner.sendMessage(
+        LiteralText(when (reason) {
+            ServerPlayerView.FailureReason.POS_MARKERS_MISSING -> "position markers not set"
+            ServerPlayerView.FailureReason.NO_SUCH_REGION -> "requested region does not exist"
+            ServerPlayerView.FailureReason.REGION_NAME_CONFLICT -> "requested region name is taken"
+        }), false)
 }

@@ -1,8 +1,11 @@
 package com.ciarandegroot.soundbounds
 
-import com.ciarandegroot.soundbounds.common.command.SoundBoundsCommand
 import com.ciarandegroot.soundbounds.common.command.argument.PTArgumentType
+import com.ciarandegroot.soundbounds.common.ui.cli.SoundBoundsCommand
+import com.ciarandegroot.soundbounds.server.ServerUtils
+import com.ciarandegroot.soundbounds.server.ui.ServerPlayerController
 import me.shedaniel.architectury.event.events.CommandRegistrationEvent
+import me.shedaniel.architectury.event.events.PlayerEvent
 import me.shedaniel.architectury.registry.DeferredRegister
 import net.minecraft.item.Item
 import net.minecraft.util.registry.Registry
@@ -15,6 +18,9 @@ class SoundBounds {
 
         PTArgumentType.register()
         CommandRegistrationEvent.EVENT.register { dispatcher, _ -> SoundBoundsCommand.register(dispatcher) }
+        PlayerEvent.PLAYER_JOIN.register {
+            ServerUtils.playerControllers.putIfAbsent( it, ServerPlayerController(it) )
+        }
     }
 
     companion object {
