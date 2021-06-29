@@ -1,6 +1,14 @@
 package com.ciarandegroot.soundbounds.forge.common.item
 
 import com.ciarandegroot.soundbounds.SoundBounds
+import com.ciarandegroot.soundbounds.forge.SoundBoundsForge
+import com.ciarandegroot.soundbounds.forge.common.network.PosMarkerUpdateMessage
+import com.ciarandegroot.soundbounds.server.ui.cli.PosMarker
+import io.netty.buffer.Unpooled
+import me.shedaniel.architectury.networking.NetworkManager
+import me.shedaniel.architectury.platform.Platform
+import me.shedaniel.architectury.utils.Env.CLIENT
+import me.shedaniel.architectury.utils.Env.SERVER
 import net.minecraft.block.BlockState
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.item.TooltipContext
@@ -9,6 +17,7 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.item.ItemUsageContext
 import net.minecraft.item.NetherStarItem
+import net.minecraft.network.PacketByteBuf
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.ActionResult
@@ -42,20 +51,29 @@ class Baton(settings: Settings?) : NetherStarItem(settings) {
     }
 
     private fun setCorner(corner: Corner) {
-        val currentTime = System.currentTimeMillis()
-        val trace: HitResult? = MinecraftClient.getInstance().crosshairTarget
-
+        val trace: HitResult? = when (Platform.getEnvironment()) {
+            CLIENT -> MinecraftClient.getInstance().crosshairTarget
+            SERVER -> null
+            null -> null
+        }
         if (trace !is BlockHitResult) return
 
         // useOnBlock (the right-click handler) gets called from several threads at once
         synchronized(this) {
+            val currentTime = System.currentTimeMillis()
             val isCoolingDown = currentTime - corner.timestamp < cooldown
             val isNewBlock = !trace.blockPos.equals(corner.pos)
             if (!isCoolingDown || isNewBlock) {
                 SoundBounds.LOGGER.info("Set corner $corner to ${trace.blockPos.toImmutable()}")
                 corner.pos = trace.blockPos
                 corner.timestamp = currentTime
-                // TODO send marker update message to server
+
+                NetworkManager.sendToServer(
+                    SoundBoundsForge.SOUNDBOUNDS_POS_MARKER_UPDATE_CHANNEL,
+                    PosMarkerUpdateMessage.buildBuffer(when (corner) {
+                        Corner.FIRST -> PosMarker.FIRST
+                        Corner.SECOND -> PosMarker.SECOND
+                    }, corner.pos))
             }
         }
     }
