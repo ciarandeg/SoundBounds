@@ -47,7 +47,7 @@ class ServerPlayerController(
 
         if (state.regionExists(regionName)) view.notifyFailed(FailureReason.REGION_NAME_CONFLICT)
         else if (m1 !=  null && m2 != null) {
-            state.putRegion(regionName, Region(priority, bounds = listOf(Pair(m1, m2))))
+            state.putRegion(regionName, Region(priority, volumes = listOf(Pair(m1, m2))))
             setWorldState(world, state)
             view.notifyRegionCreated(regionName, priority)
         } else view.notifyFailed(FailureReason.POS_MARKERS_MISSING)
@@ -112,6 +112,12 @@ class ServerPlayerController(
             setWorldState(world, state)
             view.notifyRegionPlaylistTypeSet(regionName, oldType, type)
         }
+    }
+
+    fun listRegionVolumes(world: ServerWorld, regionName: String) {
+        val region = getWorldState(world).getRegion(regionName)
+        if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
+        else view.showRegionVolumeList(regionName, region.volumes)
     }
 
     fun appendRegionPlaylistSong(regionName: String, songID: String) {

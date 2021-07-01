@@ -78,7 +78,7 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : ServerPlayerView {
         owner.sendMessage(LiteralText(
             "Region $regionName: type ${region.playlistType}, " +
                     "song count ${region.playlist.size}, " +
-                    "bounds count ${region.bounds.size}"),
+                    "bounds count ${region.volumes.size}"),
             false)
     }
     override fun notifyRegionPrioritySet(name: String, oldPriority: Int, newPriority: Int) {
@@ -93,6 +93,15 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : ServerPlayerView {
             else "Region $name changed from type $from to type $to"
         ), false)
     }
+
+    override fun showRegionVolumeList(regionName: String, volumes: List<Pair<BlockPos, BlockPos>>) =
+        owner.sendMessage(
+            Paginator.paginate("Volumes in $regionName", volumes.mapIndexed { i, vol ->
+                val pos = i + 1
+                LiteralText("$pos.\nCORNER 1: ${vol.first}\nCORNER 2: ${vol.second}" +
+                  if (pos < volumes.size) "\n" else ""
+                )
+            }), false)
 
     override fun notifyRegionPlaylistSongAdded(regionName: String, song: String, pos: Int) {} // TODO
     override fun notifyRegionPlaylistSongRemoved(regionName: String, song: String, pos: Int) {} // TODO

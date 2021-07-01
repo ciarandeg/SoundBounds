@@ -318,8 +318,26 @@ object RegionEditNode : CommandNode(
                             listOf()
                         ),
                         CommandNode(
-                            LiteralNodeData("list", "list volumes in region") { _, _ -> },
-                            listOf()
+                            LiteralNodeData(
+                                "list",
+                                "list volumes in region")
+                            { ctx, ctrl ->
+                                val regionName = SBArgs.regionArgument.retrieve(ctx)
+                                Paginator.state = PaginatorState(
+                                    "/sb r $regionName v list ${Paginator.PAGE_DELIM}", 1
+                                )
+                                ctrl.listRegionVolumes(ctx.source.world, regionName)
+                            },
+                            listOf(
+                                CommandNode(IntArgNodeData(SBArgs.pageNumArgument) { ctx, ctrl ->
+                                    val regionName = SBArgs.regionArgument.retrieve(ctx)
+                                    Paginator.state = PaginatorState(
+                                        "/sb r $regionName v list ${Paginator.PAGE_DELIM}",
+                                        SBArgs.pageNumArgument.retrieve(ctx)
+                                    )
+                                    ctrl.listRegionVolumes(ctx.source.world, regionName)
+                                }, listOf())
+                            )
                         )
                     )
                 ),

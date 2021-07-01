@@ -9,7 +9,7 @@ data class Region(
     var priority: Int = 0,
     var playlistType: PlaylistType = SEQUENTIAL,
     val playlist: List<String> = ArrayList(),
-    val bounds: List<Pair<BlockPos, BlockPos>> = ArrayList()
+    val volumes: List<Pair<BlockPos, BlockPos>> = ArrayList()
 ) {
     fun toTag(): CompoundTag {
         val tag = CompoundTag()
