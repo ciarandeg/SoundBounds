@@ -310,8 +310,12 @@ object RegionEditNode : CommandNode(
                     LiteralNodeData("v", null, null),
                     listOf(
                         CommandNode(
-                            LiteralNodeData("add", "add selected volume to region") { _, _ -> },
-                            listOf()
+                            LiteralNodeData(
+                                "add",
+                                "add selected volume to region"
+                            ) { ctx, ctrl ->
+                                ctrl.addRegionVolume(ctx.source.world, SBArgs.regionArgument.retrieve(ctx))
+                              }, listOf()
                         ),
                         CommandNode(
                             LiteralNodeData("remove", "remove volume from region") { _, _ -> },

@@ -94,6 +94,9 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : ServerPlayerView {
         ), false)
     }
 
+    override fun notifyRegionVolumeAdded(regionName: String, volume: Pair<BlockPos, BlockPos>) =
+        owner.sendMessage(LiteralText("Added new volume to $regionName: $volume"), false)
+
     override fun showRegionVolumeList(regionName: String, volumes: List<Pair<BlockPos, BlockPos>>) =
         owner.sendMessage(
             Paginator.paginate("Volumes in $regionName", volumes.mapIndexed { i, vol ->

@@ -19,6 +19,7 @@ interface ServerPlayerView {
     fun showRegionInfo(regionName: String, region: Region)
     fun notifyRegionPrioritySet(name: String, oldPriority: Int, newPriority: Int)
     fun notifyRegionPlaylistTypeSet(name: String, from: PlaylistType, to: PlaylistType)
+    fun notifyRegionVolumeAdded(regionName: String, volume: Pair<BlockPos, BlockPos>)
     fun showRegionVolumeList(regionName: String, volumes: List<Pair<BlockPos, BlockPos>>)
     fun notifyRegionPlaylistSongAdded(regionName: String, song: String, pos: Int)
     fun notifyRegionPlaylistSongRemoved(regionName: String, song: String, pos: Int)

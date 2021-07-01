@@ -13,7 +13,7 @@ data class Region(
     var priority: Int = 0,
     var playlistType: PlaylistType = SEQUENTIAL,
     val playlist: List<String> = ArrayList(),
-    val volumes: List<Pair<BlockPos, BlockPos>> = ArrayList()
+    val volumes: MutableList<Pair<BlockPos, BlockPos>> = ArrayList()
 ) {
     fun toTag(): CompoundTag {
         val tag = CompoundTag()
@@ -60,7 +60,7 @@ data class Region(
                 throw InvalidParameterException("Corner tags must be compound")
 
             Pair(tagToBlockPos(corner1), tagToBlockPos(corner2))
-        }
+        }.toMutableList()
 
         private fun tagToBlockPos(tag: CompoundTag) = BlockPos(
             tag.getInt(Tag.CORNER_X.key),
