@@ -129,6 +129,18 @@ class ServerPlayerController(
         } else view.notifyFailed(FailureReason.POS_MARKERS_MISSING)
     }
 
+    fun removeRegionVolume(world: ServerWorld, regionName: String, index: Int) {
+        val state = getWorldState(world)
+        val region = state.getRegion(regionName)
+        if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
+        else if (index < 0 || index >= region.volumes.size) view.notifyFailed(FailureReason.VOLUME_INDEX_OOB)
+        else if (region.volumes.size == 1) view.notifyFailed(FailureReason.REGION_MUST_HAVE_VOLUME)
+        else {
+            val volume = region.volumes.removeAt(index)
+            view.notifyRegionVolumeRemoved(regionName, index, volume)
+        }
+    }
+
     fun listRegionVolumes(world: ServerWorld, regionName: String) {
         val region = getWorldState(world).getRegion(regionName)
         if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)

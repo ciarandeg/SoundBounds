@@ -318,8 +318,18 @@ object RegionEditNode : CommandNode(
                               }, listOf()
                         ),
                         CommandNode(
-                            LiteralNodeData("remove", "remove volume from region") { _, _ -> },
-                            listOf()
+                            LiteralNodeData("remove", "remove volume from region", null),
+                            listOf(
+                                CommandNode(
+                                    IntArgNodeData(SBArgs.regionVolumeIndexArgument) { ctx, ctrl ->
+                                        ctrl.removeRegionVolume(
+                                            ctx.source.world,
+                                            SBArgs.regionArgument.retrieve(ctx),
+                                            SBArgs.regionVolumeIndexArgument.retrieve(ctx) - 1
+                                        )
+                                    }, listOf()
+                                )
+                            )
                         ),
                         CommandNode(
                             LiteralNodeData(
@@ -449,6 +459,7 @@ object SBArgs {
     val regionNameNewArgument = WordArgumentContainer("new-name")
     val regionNameFirstArgument = WordArgumentContainer("first")
     val regionNameSecondArgument = WordArgumentContainer("second")
+    val regionVolumeIndexArgument = IntArgumentContainer("volume-index", 1)
     val songIDArgument = WordArgumentContainer("song-id")
     val newSongIDArgument = WordArgumentContainer("new-song-id")
     val playlistTypeArgument = PlaylistTypeArgumentContainer("playlist-type")

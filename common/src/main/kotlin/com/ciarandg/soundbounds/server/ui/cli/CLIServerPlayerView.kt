@@ -97,6 +97,12 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : ServerPlayerView {
     override fun notifyRegionVolumeAdded(regionName: String, volume: Pair<BlockPos, BlockPos>) =
         owner.sendMessage(LiteralText("Added new volume to $regionName: $volume"), false)
 
+    override fun notifyRegionVolumeRemoved(regionName: String, position: Int, volume: Pair<BlockPos, BlockPos>) =
+        owner.sendMessage(
+            LiteralText("Removed volume from $regionName at position $position: $volume"),
+            false
+        )
+
     override fun showRegionVolumeList(regionName: String, volumes: List<Pair<BlockPos, BlockPos>>) =
         owner.sendMessage(
             Paginator.paginate("Volumes in $regionName", volumes.mapIndexed { i, vol ->
@@ -116,5 +122,7 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : ServerPlayerView {
             ServerPlayerView.FailureReason.POS_MARKERS_MISSING -> "position markers not set"
             ServerPlayerView.FailureReason.NO_SUCH_REGION -> "requested region does not exist"
             ServerPlayerView.FailureReason.REGION_NAME_CONFLICT -> "requested region name is taken"
+            ServerPlayerView.FailureReason.VOLUME_INDEX_OOB -> "requested volume index is out of bounds"
+            ServerPlayerView.FailureReason.REGION_MUST_HAVE_VOLUME -> "requested region only has one volume"
         }), false)
 }
