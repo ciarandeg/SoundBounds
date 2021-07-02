@@ -249,15 +249,15 @@ object RootNode : CommandNode(
 )
 
 object RegionEditNode : CommandNode(
-        LiteralNodeData("r", "display region-edit command info") { _, ctrl ->
-        Paginator.state = PaginatorState("/sb r ${Paginator.PAGE_DELIM}", 1)
+        LiteralNodeData("edit", "display region edit command info") { _, ctrl ->
+        Paginator.state = PaginatorState("/sb edit ${Paginator.PAGE_DELIM}", 1)
         CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp(RegionEditNode)
     },
     listOf(
         CommandNode(
             IntArgNodeData(SBArgs.pageNumArgument) { ctx, ctrl ->
                 Paginator.state =
-                    PaginatorState("/sb r ${Paginator.PAGE_DELIM}", SBArgs.pageNumArgument.retrieve(ctx))
+                    PaginatorState("/sb edit ${Paginator.PAGE_DELIM}", SBArgs.pageNumArgument.retrieve(ctx))
                 CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp(RegionEditNode)
             },
             listOf()
@@ -307,7 +307,7 @@ object RegionEditNode : CommandNode(
                     listOf()
                 ),
                 CommandNode(
-                    LiteralNodeData("v", null, null),
+                    LiteralNodeData("volumes", null, null),
                     listOf(
                         CommandNode(
                             LiteralNodeData(
@@ -356,10 +356,10 @@ object RegionEditNode : CommandNode(
                     )
                 ),
                 CommandNode(
-                    LiteralNodeData("p", null, null),
+                    LiteralNodeData("playlist", null, null),
                     listOf(
                         CommandNode(
-                            LiteralNodeData("type", "set region's playlist type", null),
+                            LiteralNodeData("set-type", "set region's playlist type", null),
                             listOf(
                                 CommandNode(
                                     PlaylistTypeArgData(SBArgs.playlistTypeArgument) { ctx, ctrl ->
