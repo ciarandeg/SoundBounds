@@ -165,7 +165,7 @@ object RootNode : CommandNode(
             LiteralNodeData(
                 "sync-meta",
                 "sync client-side metadata to server"
-            ) { _, ctrl -> ctrl.syncMetadata() },
+            ) { ctx, ctrl -> ctrl.syncMetadata(ctx.source.player) },
             listOf()
         ),
         CommandNode(

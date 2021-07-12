@@ -1,12 +1,17 @@
 package com.ciarandg.soundbounds.server.ui
 
+import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.common.persistence.Region
 import com.ciarandg.soundbounds.common.persistence.WorldState
 import com.ciarandg.soundbounds.server.ui.cli.PosMarker
 import com.ciarandg.soundbounds.common.util.PlaylistType
 import com.ciarandg.soundbounds.server.ui.ServerPlayerView.FailureReason
 import com.ciarandg.soundbounds.server.ui.cli.CLIServerPlayerView
+import io.netty.buffer.Unpooled
+import me.shedaniel.architectury.networking.NetworkManager
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.network.PacketByteBuf
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
 
@@ -35,9 +40,18 @@ class ServerPlayerController(
     fun listRegions(world: ServerWorld, radius: Int = -1) =
         view.showRegionList(getWorldState(world).getAllRegions().sortedBy { it.key })
 
-    fun syncMetadata() {
-        // TODO sync the metadata
-        view.notifyMetadataSynced()
+    fun syncMetadata(player: ServerPlayerEntity) {
+        NetworkManager.sendToPlayer(
+            player,
+            SoundBounds.SYNC_METADATA_CHANNEL_S2C,
+            PacketByteBuf(Unpooled.buffer())
+        )
+    }
+
+    // this method breaks the MVC pattern a little, but is necessary since syncMetadata is networked
+    fun notifyMetadataSynced(successful: Boolean) {
+        if (successful) view.notifyMetadataSynced()
+        else view.notifyMetadataSyncFailed()
     }
 
     fun createRegion(world: ServerWorld, regionName: String, priority: Int) {

@@ -1,6 +1,7 @@
 package com.ciarandg.soundbounds.server.ui.cli
 
 import com.ciarandg.soundbounds.common.command.CommandNode
+import com.ciarandg.soundbounds.common.metadata.SBMeta
 import com.ciarandg.soundbounds.common.persistence.Region
 import com.ciarandg.soundbounds.common.ui.cli.RootNode
 import com.ciarandg.soundbounds.common.util.Paginator
@@ -58,7 +59,24 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : ServerPlayerView {
         false
     )
 
-    override fun notifyMetadataSynced() {} // TODO
+    override fun notifyMetadataSynced() {
+        val meta = SBMeta.meta ?: return
+        owner.sendMessage(
+            LiteralText("Successfully synced metadata: " +
+                    "${meta.composers.size} composers, " +
+                    "${meta.groups.size} groups, " +
+                    "${meta.songs.size} songs"),
+            false
+        )
+    }
+
+    override fun notifyMetadataSyncFailed() {
+        owner.sendMessage(
+            LiteralText("Failed to sync metadata"),
+            false
+        )
+    }
+
     override fun notifyRegionCreated(name: String, priority: Int) {
         owner.sendMessage(
             LiteralText("Created region $name, priority $priority"),

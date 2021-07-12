@@ -12,6 +12,7 @@ interface ServerPlayerView {
     fun notifyPosMarkerSet(marker: PosMarker, pos: BlockPos)
     fun showRegionList(regions: List<Map.Entry<String, Region>>)
     fun notifyMetadataSynced()
+    fun notifyMetadataSyncFailed()
     fun notifyRegionCreated(name: String, priority: Int)
     fun notifyRegionDestroyed(name: String)
     fun notifyRegionRenamed(from: String, to: String)
