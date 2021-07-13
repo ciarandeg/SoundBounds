@@ -1,4 +1,4 @@
-package com.ciarandg.soundbounds.common.persistence
+package com.ciarandg.soundbounds.common.regions
 
 import com.ciarandg.soundbounds.common.util.PlaylistType
 import com.ciarandg.soundbounds.common.util.PlaylistType.*

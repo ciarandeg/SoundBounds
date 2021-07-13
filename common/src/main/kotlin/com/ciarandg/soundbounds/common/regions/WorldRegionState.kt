@@ -1,9 +1,9 @@
-package com.ciarandg.soundbounds.common.persistence
+package com.ciarandg.soundbounds.common.regions
 
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.PersistentState
 
-class WorldState(key: String?) : PersistentState(key) {
+class WorldRegionState(key: String?) : PersistentState(key) {
     private val regions: MutableMap<String, Region> = HashMap()
 
     override fun fromTag(tag: CompoundTag) {

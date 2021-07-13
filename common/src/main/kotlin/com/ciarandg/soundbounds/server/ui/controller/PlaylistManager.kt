@@ -1,7 +1,7 @@
 package com.ciarandg.soundbounds.server.ui.controller
 
 import com.ciarandg.soundbounds.common.metadata.JsonMeta
-import com.ciarandg.soundbounds.common.persistence.Region
+import com.ciarandg.soundbounds.common.regions.Region
 import com.ciarandg.soundbounds.server.PersistenceUtils
 import com.ciarandg.soundbounds.server.ui.PlayerView
 import net.minecraft.server.world.ServerWorld

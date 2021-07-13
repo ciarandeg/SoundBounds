@@ -1,7 +1,7 @@
 package com.ciarandg.soundbounds.server.ui.controller
 
 import com.ciarandg.soundbounds.SoundBounds
-import com.ciarandg.soundbounds.common.persistence.Region
+import com.ciarandg.soundbounds.common.regions.Region
 import com.ciarandg.soundbounds.server.ui.cli.PosMarker
 import com.ciarandg.soundbounds.common.util.PlaylistType
 import com.ciarandg.soundbounds.server.PersistenceUtils

@@ -1,18 +1,18 @@
 package com.ciarandg.soundbounds.server
 
-import com.ciarandg.soundbounds.common.persistence.WorldState
+import com.ciarandg.soundbounds.common.regions.WorldRegionState
 import com.ciarandg.soundbounds.server.metadata.ServerMetaState
 import me.shedaniel.architectury.utils.GameInstance
 import net.minecraft.server.world.ServerWorld
 import java.lang.RuntimeException
 
 object PersistenceUtils {
-    private const val WORLD_REGIONS_KEY = "sb-data"
+    private const val WORLD_REGIONS_KEY = "sb-regions"
     private const val SERVER_METADATA_KEY = "sb-meta"
 
-    fun getWorldState(world: ServerWorld): WorldState =
-        world.persistentStateManager.getOrCreate({ WorldState(WORLD_REGIONS_KEY) }, WORLD_REGIONS_KEY)
-    fun setWorldState(world: ServerWorld, state: WorldState) =
+    fun getWorldState(world: ServerWorld): WorldRegionState =
+        world.persistentStateManager.getOrCreate({ WorldRegionState(WORLD_REGIONS_KEY) }, WORLD_REGIONS_KEY)
+    fun setWorldState(world: ServerWorld, state: WorldRegionState) =
         world.persistentStateManager.set(state)
     fun getWorldRegion(world: ServerWorld, regionName: String) =
         getWorldState(world).getRegion(regionName)
