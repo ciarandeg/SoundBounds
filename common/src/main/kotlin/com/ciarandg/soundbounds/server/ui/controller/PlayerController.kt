@@ -1,11 +1,12 @@
-package com.ciarandg.soundbounds.server.ui
+package com.ciarandg.soundbounds.server.ui.controller
 
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.common.persistence.Region
-import com.ciarandg.soundbounds.common.persistence.WorldState
 import com.ciarandg.soundbounds.server.ui.cli.PosMarker
 import com.ciarandg.soundbounds.common.util.PlaylistType
-import com.ciarandg.soundbounds.server.ui.ServerPlayerView.FailureReason
+import com.ciarandg.soundbounds.server.ui.PlayerModel
+import com.ciarandg.soundbounds.server.ui.PlayerView
+import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason
 import com.ciarandg.soundbounds.server.ui.cli.CLIServerPlayerView
 import io.netty.buffer.Unpooled
 import me.shedaniel.architectury.networking.NetworkManager
@@ -15,18 +16,11 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
 
-class ServerPlayerController(
+class PlayerController(
     val owner: PlayerEntity,
-    private val view: ServerPlayerView = CLIServerPlayerView(owner),
+    private val view: PlayerView = CLIServerPlayerView(owner),
     private val model: PlayerModel = PlayerModel()
-) {
-    companion object {
-        private const val DATA_KEY = "sb-data"
-        private fun getWorldState(world: ServerWorld) =
-            world.persistentStateManager.getOrCreate({ WorldState(DATA_KEY) }, DATA_KEY)
-        private fun setWorldState(world: ServerWorld, state: WorldState) =
-            world.persistentStateManager.set(state)
-    }
+) : PlaylistManager(view) {
 
     fun showNowPlaying() = view.showNowPlaying()
     fun setPosMarker(marker: PosMarker, pos: BlockPos) {
@@ -38,7 +32,7 @@ class ServerPlayerController(
     }
 
     fun listRegions(world: ServerWorld, radius: Int = -1) =
-        view.showRegionList(getWorldState(world).getAllRegions().sortedBy { it.key })
+        view.showRegionList(Utils.getWorldState(world).getAllRegions().sortedBy { it.key })
 
     fun syncMetadata(player: ServerPlayerEntity) {
         NetworkManager.sendToPlayer(
@@ -55,37 +49,37 @@ class ServerPlayerController(
     }
 
     fun createRegion(world: ServerWorld, regionName: String, priority: Int) {
-        val state = getWorldState(world)
+        val state = Utils.getWorldState(world)
         val m1 = model.marker1
         val m2 = model.marker2
 
         if (state.regionExists(regionName)) view.notifyFailed(FailureReason.REGION_NAME_CONFLICT)
         else if (m1 !=  null && m2 != null) {
             state.putRegion(regionName, Region(priority, volumes = mutableListOf(Pair(m1, m2))))
-            setWorldState(world, state)
+            Utils.setWorldState(world, state)
             view.notifyRegionCreated(regionName, priority)
         } else view.notifyFailed(FailureReason.POS_MARKERS_MISSING)
     }
 
     fun destroyRegion(world: ServerWorld, regionName: String) {
-        val state = getWorldState(world)
+        val state = Utils.getWorldState(world)
         val removed = state.removeRegion(regionName)
         if (removed == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
         else {
-            setWorldState(world, state)
+            Utils.setWorldState(world, state)
             view.notifyRegionDestroyed(regionName)
         }
     }
 
     fun renameRegion(world: ServerWorld, from: String, to: String) {
-        val state = getWorldState(world)
+        val state = Utils.getWorldState(world)
         val removed = state.removeRegion(from)
         when {
             removed == null -> view.notifyFailed(FailureReason.NO_SUCH_REGION)
             state.regionExists(to) -> view.notifyFailed(FailureReason.REGION_NAME_CONFLICT)
             else -> {
                 state.putRegion(to, removed)
-                setWorldState(world, state)
+                Utils.setWorldState(world, state)
                 view.notifyRegionRenamed(from, to)
             }
         }
@@ -97,39 +91,39 @@ class ServerPlayerController(
     }
 
     fun showRegionInfo(world: ServerWorld, regionName: String) {
-        val region = getWorldState(world).getRegion(regionName)
+        val region = Utils.getWorldState(world).getRegion(regionName)
         if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
         else view.showRegionInfo(regionName, region)
     }
 
     fun setRegionPriority(world: ServerWorld, regionName: String, priority: Int) {
-        val state = getWorldState(world)
+        val state = Utils.getWorldState(world)
         val region = state.getRegion(regionName)
         if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
         else {
             val oldPriority = region.priority
             region.priority = priority
             state.putRegion(regionName, region)
-            setWorldState(world, state)
+            Utils.setWorldState(world, state)
             view.notifyRegionPrioritySet(regionName, oldPriority, priority)
         }
     }
 
     fun setRegionPlaylistType(world: ServerWorld, regionName: String, type: PlaylistType) {
-        val state = getWorldState(world)
+        val state = Utils.getWorldState(world)
         val region = state.getRegion(regionName)
         if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
         else {
             val oldType = region.playlistType
             region.playlistType = type
             state.putRegion(regionName, region)
-            setWorldState(world, state)
+            Utils.setWorldState(world, state)
             view.notifyRegionPlaylistTypeSet(regionName, oldType, type)
         }
     }
 
     fun addRegionVolume(world: ServerWorld, regionName: String) {
-        val state = getWorldState(world)
+        val state = Utils.getWorldState(world)
         val region = state.getRegion(regionName)
         val m1 = model.marker1
         val m2 = model.marker2
@@ -138,13 +132,13 @@ class ServerPlayerController(
         else if (m1 != null && m2 != null) {
             val volume = Pair(m1, m2)
             region.volumes.add(volume)
-            setWorldState(world, state)
+            Utils.setWorldState(world, state)
             view.notifyRegionVolumeAdded(regionName, volume)
         } else view.notifyFailed(FailureReason.POS_MARKERS_MISSING)
     }
 
     fun removeRegionVolume(world: ServerWorld, regionName: String, index: Int) {
-        val state = getWorldState(world)
+        val state = Utils.getWorldState(world)
         val region = state.getRegion(regionName)
         if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
         else if (index < 0 || index >= region.volumes.size) view.notifyFailed(FailureReason.VOLUME_INDEX_OOB)
@@ -156,42 +150,14 @@ class ServerPlayerController(
     }
 
     fun listRegionVolumes(world: ServerWorld, regionName: String) {
-        val region = getWorldState(world).getRegion(regionName)
+        val region = Utils.getWorldState(world).getRegion(regionName)
         if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
         else view.showRegionVolumeList(regionName, region.volumes)
     }
 
-    fun appendRegionPlaylistSong(regionName: String, songID: String) {
-        // TODO append song to region playlist
-        view.notifyRegionPlaylistSongAdded("", "", 0)
-    }
-
-    fun removeRegionPlaylistSong(regionName: String, songPosition: Int) {
-        // TODO remove song from region playlist
-        view.notifyRegionPlaylistSongRemoved("", "", 0)
-    }
-
-    fun insertRegionPlaylistSong(regionName: String, songID: String, songPosition: Int) {
-        // TODO insert song into region playlist
-        view.notifyRegionPlaylistSongAdded("", "", 0)
-    }
-
-    fun replaceRegionPlaylistSong(regionName: String, songPosition: Int, newSongID: String) {
-        // TODO replace song in region playlist
-        view.notifyRegionPlaylistSongReplaced("", "", "", 0)
-    }
-
-    fun checkRegionContiguous(regionName: String) {
+    fun checkRegionContiguous(world: ServerWorld, regionName: String) {
         // TODO check if region is contiguous
         view.showRegionContiguous(regionName)
     }
-
-    fun setCurrentSong(songID: String) {
-    }
 }
 
-data class PlayerModel(
-    var curSongID: String? = null,
-    var marker1: BlockPos? = null,
-    var marker2: BlockPos? = null
-)

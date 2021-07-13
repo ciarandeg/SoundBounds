@@ -12,7 +12,7 @@ import java.security.InvalidParameterException
 data class Region(
     var priority: Int = 0,
     var playlistType: PlaylistType = SEQUENTIAL,
-    val playlist: List<String> = ArrayList(),
+    val playlist: MutableList<String> = ArrayList(),
     val volumes: MutableList<Pair<BlockPos, BlockPos>> = ArrayList()
 ) {
     fun toTag(): CompoundTag {
@@ -49,7 +49,7 @@ data class Region(
         private fun tagToPlaylist(tag: ListTag) = tag.map {
             if (it !is StringTag) throw InvalidParameterException("Playlist entry tags must be strings")
             it.asString()
-        }
+        }.toMutableList()
 
         private fun tagToVolumeList(tag: ListTag) = tag.map {
             if (it !is CompoundTag) throw InvalidParameterException("Volume tags must be compound")

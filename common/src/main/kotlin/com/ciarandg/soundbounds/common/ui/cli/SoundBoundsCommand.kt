@@ -10,7 +10,7 @@ import com.ciarandg.soundbounds.common.command.argument.WordArgumentContainer
 import com.ciarandg.soundbounds.common.util.Paginator
 import com.ciarandg.soundbounds.common.util.PaginatorState
 import com.ciarandg.soundbounds.server.ServerUtils
-import com.ciarandg.soundbounds.server.ui.ServerPlayerController
+import com.ciarandg.soundbounds.server.ui.controller.PlayerController
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
@@ -59,7 +59,7 @@ class SoundBoundsCommand {
 
             private fun runCommand(
                 ctx: CommandContext<Source>,
-                command: (CommandContext<Source>, ServerPlayerController) -> Unit
+                command: (CommandContext<Source>, PlayerController) -> Unit
             ): Int {
                 val source = ctx.source
                 val entity = source?.entity
@@ -303,7 +303,10 @@ object RegionEditNode : CommandNode(
                     LiteralNodeData(
                         "contiguous",
                         "check if region's volumes are contiguous"
-                    ) { ctx, ctrl -> ctrl.checkRegionContiguous(SBArgs.regionArgument.retrieve(ctx)) },
+                    ) { ctx, ctrl -> ctrl.checkRegionContiguous(
+                        ctx.source.world,
+                        SBArgs.regionArgument.retrieve(ctx)
+                    ) },
                     listOf()
                 ),
                 CommandNode(
@@ -379,6 +382,7 @@ object RegionEditNode : CommandNode(
                                 CommandNode(
                                     StringArgNodeData(SBArgs.songIDArgument) { ctx, ctrl ->
                                         ctrl.appendRegionPlaylistSong(
+                                            ctx.source.world,
                                             SBArgs.regionArgument.retrieve(ctx),
                                             SBArgs.songIDArgument.retrieve(ctx)
                                         )
@@ -393,6 +397,7 @@ object RegionEditNode : CommandNode(
                                 CommandNode(
                                     IntArgNodeData(SBArgs.songPositionArgument) { ctx, ctrl ->
                                         ctrl.removeRegionPlaylistSong(
+                                            ctx.source.world,
                                             SBArgs.regionArgument.retrieve(ctx),
                                             SBArgs.songPositionArgument.retrieve(ctx)
                                         )
@@ -410,6 +415,7 @@ object RegionEditNode : CommandNode(
                                         CommandNode(
                                             IntArgNodeData(SBArgs.songPositionArgument) { ctx, ctrl ->
                                                 ctrl.insertRegionPlaylistSong(
+                                                    ctx.source.world,
                                                     SBArgs.regionArgument.retrieve(ctx),
                                                     SBArgs.songIDArgument.retrieve(ctx),
                                                     SBArgs.songPositionArgument.retrieve(ctx)
@@ -430,6 +436,7 @@ object RegionEditNode : CommandNode(
                                         CommandNode(
                                             StringArgNodeData(SBArgs.newSongIDArgument) { ctx, ctrl ->
                                                 ctrl.replaceRegionPlaylistSong(
+                                                    ctx.source.world,
                                                     SBArgs.regionArgument.retrieve(ctx),
                                                     SBArgs.songPositionArgument.retrieve(ctx),
                                                     SBArgs.newSongIDArgument.retrieve(ctx)

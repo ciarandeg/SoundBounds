@@ -5,7 +5,7 @@ import com.ciarandg.soundbounds.common.command.argument.PTArgumentType
 import com.ciarandg.soundbounds.common.network.MetadataSyncMessage
 import com.ciarandg.soundbounds.common.ui.cli.SoundBoundsCommand
 import com.ciarandg.soundbounds.server.ServerUtils
-import com.ciarandg.soundbounds.server.ui.ServerPlayerController
+import com.ciarandg.soundbounds.server.ui.controller.PlayerController
 import me.shedaniel.architectury.event.events.CommandRegistrationEvent
 import me.shedaniel.architectury.event.events.GuiEvent
 import me.shedaniel.architectury.event.events.PlayerEvent
@@ -30,7 +30,7 @@ class SoundBounds {
 
         // MVC setup
         PlayerEvent.PLAYER_JOIN.register {
-            ServerUtils.playerControllers.putIfAbsent( it, ServerPlayerController(it) )
+            ServerUtils.playerControllers.putIfAbsent( it, PlayerController(it) )
         }
 
         // Metadata sync/update util registration

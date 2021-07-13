@@ -6,7 +6,7 @@ import com.ciarandg.soundbounds.common.util.PlaylistType
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.BlockPos
 
-interface ServerPlayerView {
+interface PlayerView {
     val owner: PlayerEntity
     fun showNowPlaying()
     fun notifyPosMarkerSet(marker: PosMarker, pos: BlockPos)
@@ -34,6 +34,9 @@ interface ServerPlayerView {
         NO_SUCH_REGION,
         REGION_NAME_CONFLICT,
         VOLUME_INDEX_OOB,
-        REGION_MUST_HAVE_VOLUME
+        REGION_MUST_HAVE_VOLUME,
+        NO_METADATA_PRESENT,
+        NO_SUCH_SONG,
+        SONG_POS_OOB
     }
 }

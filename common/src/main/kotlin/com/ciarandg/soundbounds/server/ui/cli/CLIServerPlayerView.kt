@@ -6,7 +6,7 @@ import com.ciarandg.soundbounds.common.persistence.Region
 import com.ciarandg.soundbounds.common.ui.cli.RootNode
 import com.ciarandg.soundbounds.common.util.Paginator
 import com.ciarandg.soundbounds.common.util.PlaylistType
-import com.ciarandg.soundbounds.server.ui.ServerPlayerView
+import com.ciarandg.soundbounds.server.ui.PlayerView
 import com.ciarandg.soundbounds.server.ui.cli.help.HelpGenerator
 import com.ciarandg.soundbounds.server.ui.cli.help.HelpTreeNode
 import net.minecraft.entity.Entity
@@ -14,7 +14,7 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.text.LiteralText
 import net.minecraft.util.math.BlockPos
 
-class CLIServerPlayerView(override val owner: PlayerEntity) : ServerPlayerView {
+class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
     private val helpTree = HelpTreeNode(RootNode)
 
     init {
@@ -130,17 +130,35 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : ServerPlayerView {
                 )
             }), false)
 
-    override fun notifyRegionPlaylistSongAdded(regionName: String, song: String, pos: Int) {} // TODO
-    override fun notifyRegionPlaylistSongRemoved(regionName: String, song: String, pos: Int) {} // TODO
-    override fun notifyRegionPlaylistSongReplaced(regionName: String, oldSong: String, newSong: String, pos: Int) {} // TODO
+    override fun notifyRegionPlaylistSongAdded(regionName: String, song: String, pos: Int) =
+        owner.sendMessage(
+            LiteralText("Added song $song to $regionName at position $pos"),
+            false
+        )
+
+    override fun notifyRegionPlaylistSongRemoved(regionName: String, song: String, pos: Int) =
+        owner.sendMessage(
+            LiteralText("Removed song $song from $regionName at position $pos"),
+            false
+        )
+
+    override fun notifyRegionPlaylistSongReplaced(regionName: String, oldSong: String, newSong: String, pos: Int) =
+        owner.sendMessage(
+            LiteralText("Replaced song $oldSong with $newSong in region $regionName at position $pos"),
+            false
+        )
+
     override fun showRegionContiguous(regionName: String) {} // TODO
 
-    override fun notifyFailed(reason: ServerPlayerView.FailureReason) = owner.sendMessage(
+    override fun notifyFailed(reason: PlayerView.FailureReason) = owner.sendMessage(
         LiteralText(when (reason) {
-            ServerPlayerView.FailureReason.POS_MARKERS_MISSING -> "position markers not set"
-            ServerPlayerView.FailureReason.NO_SUCH_REGION -> "requested region does not exist"
-            ServerPlayerView.FailureReason.REGION_NAME_CONFLICT -> "requested region name is taken"
-            ServerPlayerView.FailureReason.VOLUME_INDEX_OOB -> "requested volume index is out of bounds"
-            ServerPlayerView.FailureReason.REGION_MUST_HAVE_VOLUME -> "requested region only has one volume"
+            PlayerView.FailureReason.POS_MARKERS_MISSING -> "position markers not set"
+            PlayerView.FailureReason.NO_SUCH_REGION -> "requested region does not exist"
+            PlayerView.FailureReason.REGION_NAME_CONFLICT -> "requested region name is taken"
+            PlayerView.FailureReason.VOLUME_INDEX_OOB -> "requested volume index is out of bounds"
+            PlayerView.FailureReason.REGION_MUST_HAVE_VOLUME -> "requested region only has one volume"
+            PlayerView.FailureReason.NO_METADATA_PRESENT -> "no metadata has been provided to server (try /sb sync-meta)"
+            PlayerView.FailureReason.NO_SUCH_SONG -> "requested song ID does not exist"
+            PlayerView.FailureReason.SONG_POS_OOB -> "requested song position is out of bounds"
         }), false)
 }
