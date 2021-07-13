@@ -1,6 +1,6 @@
 package com.ciarandg.soundbounds
 
-import com.ciarandg.soundbounds.common.metadata.SBMeta
+import com.ciarandg.soundbounds.client.metadata.ClientMeta
 import com.ciarandg.soundbounds.common.command.argument.PTArgumentType
 import com.ciarandg.soundbounds.common.network.MetadataSyncMessage
 import com.ciarandg.soundbounds.common.ui.cli.SoundBoundsCommand
@@ -40,7 +40,7 @@ class SoundBounds {
             MetadataSyncMessage()
         )
         if (Platform.getEnv() == EnvType.CLIENT) {
-            GuiEvent.INIT_POST.register { _, _, _ -> SBMeta.refreshClientMeta() }
+            GuiEvent.INIT_POST.register { _, _, _ -> ClientMeta.update() }
             NetworkManager.registerReceiver(
                 NetworkManager.Side.S2C,
                 SYNC_METADATA_CHANNEL_S2C,

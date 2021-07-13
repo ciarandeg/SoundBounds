@@ -1,8 +1,8 @@
 package com.ciarandg.soundbounds.server.ui.controller
 
 import com.ciarandg.soundbounds.common.metadata.JsonMeta
-import com.ciarandg.soundbounds.common.metadata.SBMeta
 import com.ciarandg.soundbounds.common.persistence.Region
+import com.ciarandg.soundbounds.server.PersistenceUtils
 import com.ciarandg.soundbounds.server.ui.PlayerView
 import net.minecraft.server.world.ServerWorld
 
@@ -44,13 +44,9 @@ open class PlaylistManager internal constructor(private val view: PlayerView) {
         }
 
     private fun checkNulls(world: ServerWorld, regionName: String, work: (Region, JsonMeta) -> Unit) {
-        val region = Utils.getWorldRegion(world, regionName)
-        val meta = SBMeta.meta
-        when {
-            region == null -> view.notifyFailed(PlayerView.FailureReason.NO_SUCH_REGION)
-            meta == null -> view.notifyFailed(PlayerView.FailureReason.NO_METADATA_PRESENT)
-            else -> work(region, meta)
-        }
+        val region = PersistenceUtils.getWorldRegion(world, regionName)
+        if (region == null) view.notifyFailed(PlayerView.FailureReason.NO_SUCH_REGION)
+        else work(region, PersistenceUtils.getServerMetaState().meta)
     }
 
     private fun checkSongPresent(meta: JsonMeta, songID: String, work: () -> Unit) =

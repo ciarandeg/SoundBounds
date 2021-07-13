@@ -1,8 +1,9 @@
 package com.ciarandg.soundbounds.common.network
 
 import com.ciarandg.soundbounds.SoundBounds
-import com.ciarandg.soundbounds.common.metadata.SBMeta
+import com.ciarandg.soundbounds.client.metadata.ClientMeta
 import com.ciarandg.soundbounds.common.metadata.JsonMeta
+import com.ciarandg.soundbounds.server.PersistenceUtils
 import com.ciarandg.soundbounds.server.ServerUtils
 import com.google.gson.Gson
 import io.netty.buffer.Unpooled
@@ -24,7 +25,9 @@ class MetadataSyncMessage : NetworkManager.NetworkReceiver {
                 val requester: PlayerEntity? = GameInstance.getServer()?.playerManager?.getPlayer(buf.readUuid())
                 val requesterController = ServerUtils.playerControllers[requester]
                 try {
-                    SBMeta.setServerMeta(gson.fromJson(buf.readString(STR_LIMIT), JsonMeta::class.java))
+                    val state = PersistenceUtils.getServerMetaState()
+                    state.meta = gson.fromJson(buf.readString(STR_LIMIT), JsonMeta::class.java)
+                    PersistenceUtils.setServerMetaState(state)
                     requesterController?.notifyMetadataSynced(true)
                 } catch (e: Exception) {
                     requesterController?.notifyMetadataSynced(false)
@@ -43,7 +46,7 @@ class MetadataSyncMessage : NetworkManager.NetworkReceiver {
             assert(Platform.getEnvironment() == Env.CLIENT)
             val buf = PacketByteBuf(Unpooled.buffer())
             buf.writeUuid(MinecraftClient.getInstance().player?.uuid) // used for success/failure message
-            buf.writeString(gson.toJson(SBMeta.meta, JsonMeta::class.java))
+            buf.writeString(gson.toJson(ClientMeta.meta ?: JsonMeta(), JsonMeta::class.java))
             return buf
         }
     }

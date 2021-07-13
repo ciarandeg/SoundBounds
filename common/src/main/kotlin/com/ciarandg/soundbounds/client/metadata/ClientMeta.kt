@@ -1,6 +1,7 @@
-package com.ciarandg.soundbounds.common.metadata
+package com.ciarandg.soundbounds.client.metadata
 
 import com.ciarandg.soundbounds.SoundBounds
+import com.ciarandg.soundbounds.common.metadata.JsonMeta
 import com.google.gson.Gson
 import me.shedaniel.architectury.platform.Platform
 import net.fabricmc.api.EnvType
@@ -9,18 +10,14 @@ import net.minecraft.util.Identifier
 import java.io.InputStreamReader
 import java.lang.RuntimeException
 
-// A nice big metadata singleton
-// On the client, the data is provided by a local resource pack
-// On the server, the data is provided via `/sb sync-meta`
-// The server's dataset is treated as the master copy
-object SBMeta {
+object ClientMeta {
     private const val JSON_FILENAME = "sb.json"
     private val META_ID = Identifier(SoundBounds.MOD_ID, JSON_FILENAME)
-    private var refreshedWhileNull = false // flag used to avoid logger spam on client
+    private var refreshedWhileNull = false // flag used to avoid logger spam
     var meta: JsonMeta? = null
         private set
 
-    fun refreshClientMeta() {
+    fun update() {
         if (Platform.getEnv() != EnvType.CLIENT)
             throw RuntimeException("Can only fetch resource pack data from client side")
 
@@ -37,11 +34,5 @@ object SBMeta {
             meta = null
             SoundBounds.LOGGER.warn("No local metadata available")
         }
-    }
-
-    fun setServerMeta(meta: JsonMeta) {
-        if (Platform.getEnv() != EnvType.SERVER)
-            throw RuntimeException("Can only set metadata directly when on server side")
-        this.meta = meta
     }
 }
