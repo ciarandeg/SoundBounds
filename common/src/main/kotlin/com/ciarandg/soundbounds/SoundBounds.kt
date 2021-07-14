@@ -11,7 +11,6 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.lang.RuntimeException
 
 class SoundBounds {
     init {

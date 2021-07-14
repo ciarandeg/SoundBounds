@@ -35,7 +35,7 @@ open class PlaylistManager internal constructor(private val view: PlayerView) {
         }
 
     fun replaceRegionPlaylistSong(world: ServerWorld, regionName: String, songPosition: Int, newSongID: String) =
-        checkNulls(world,  regionName) { region, meta ->
+        checkNulls(world, regionName) { region, meta ->
             checkSongPresent(meta, newSongID) {
                 checkSongInBounds(region, songPosition) {
                     val oldSongID = region.playlist.set(songPosition - 1, newSongID)

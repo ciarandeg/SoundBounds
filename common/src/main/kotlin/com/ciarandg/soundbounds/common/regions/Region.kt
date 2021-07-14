@@ -1,7 +1,7 @@
 package com.ciarandg.soundbounds.common.regions
 
 import com.ciarandg.soundbounds.common.util.PlaylistType
-import com.ciarandg.soundbounds.common.util.PlaylistType.*
+import com.ciarandg.soundbounds.common.util.PlaylistType.SEQUENTIAL
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.IntTag
 import net.minecraft.nbt.ListTag
@@ -75,12 +75,14 @@ data class Region(
 
         private fun volumesToTag(volumes: List<Pair<BlockPos, BlockPos>>): ListTag {
             val volumesTag = ListTag()
-            volumesTag.addAll(volumes.map {
-                val boundingBox = CompoundTag()
-                boundingBox.put(Tag.CORNER1.key, blockPosToTag(it.first))
-                boundingBox.put(Tag.CORNER2.key, blockPosToTag(it.second))
-                boundingBox
-            })
+            volumesTag.addAll(
+                volumes.map {
+                    val boundingBox = CompoundTag()
+                    boundingBox.put(Tag.CORNER1.key, blockPosToTag(it.first))
+                    boundingBox.put(Tag.CORNER2.key, blockPosToTag(it.second))
+                    boundingBox
+                }
+            )
             return volumesTag
         }
 

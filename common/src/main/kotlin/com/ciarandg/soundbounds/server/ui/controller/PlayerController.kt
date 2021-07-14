@@ -3,12 +3,12 @@ package com.ciarandg.soundbounds.server.ui.controller
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.common.regions.Region
 import com.ciarandg.soundbounds.common.regions.WorldRegionState
-import com.ciarandg.soundbounds.server.ui.cli.PosMarker
 import com.ciarandg.soundbounds.common.util.PlaylistType
 import com.ciarandg.soundbounds.server.ui.PlayerModel
 import com.ciarandg.soundbounds.server.ui.PlayerView
 import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason
 import com.ciarandg.soundbounds.server.ui.cli.CLIServerPlayerView
+import com.ciarandg.soundbounds.server.ui.cli.PosMarker
 import io.netty.buffer.Unpooled
 import me.shedaniel.architectury.networking.NetworkManager
 import net.minecraft.entity.player.PlayerEntity
@@ -55,7 +55,7 @@ class PlayerController(
         val m2 = model.marker2
 
         if (state.regionExists(regionName)) view.notifyFailed(FailureReason.REGION_NAME_CONFLICT)
-        else if (m1 !=  null && m2 != null) {
+        else if (m1 != null && m2 != null) {
             state.putRegion(regionName, Region(priority, volumes = mutableListOf(Pair(m1, m2))))
             WorldRegionState.set(world, state)
             view.notifyRegionCreated(regionName, priority)
@@ -161,4 +161,3 @@ class PlayerController(
         view.showRegionContiguous(regionName)
     }
 }
-

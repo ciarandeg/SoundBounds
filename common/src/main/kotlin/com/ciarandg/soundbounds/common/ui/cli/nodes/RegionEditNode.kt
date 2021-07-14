@@ -1,6 +1,11 @@
 package com.ciarandg.soundbounds.common.ui.cli.nodes
 
-import com.ciarandg.soundbounds.common.ui.cli.*
+import com.ciarandg.soundbounds.common.ui.cli.Arguments
+import com.ciarandg.soundbounds.common.ui.cli.CommandNode
+import com.ciarandg.soundbounds.common.ui.cli.IntArgNodeData
+import com.ciarandg.soundbounds.common.ui.cli.LiteralNodeData
+import com.ciarandg.soundbounds.common.ui.cli.PlaylistTypeArgData
+import com.ciarandg.soundbounds.common.ui.cli.StringArgNodeData
 import com.ciarandg.soundbounds.common.util.Paginator
 import com.ciarandg.soundbounds.common.util.PaginatorState
 import com.ciarandg.soundbounds.server.ui.cli.CLIServerPlayerView
@@ -77,7 +82,8 @@ object RegionEditNode : CommandNode(
                                 "add selected volume to region"
                             ) { ctx, ctrl ->
                                 ctrl.addRegionVolume(ctx.source.world, Arguments.regionArgument.retrieve(ctx))
-                            }, listOf()
+                            },
+                            listOf()
                         ),
                         CommandNode(
                             LiteralNodeData("remove", "remove volume from region", null),
@@ -89,7 +95,8 @@ object RegionEditNode : CommandNode(
                                             Arguments.regionArgument.retrieve(ctx),
                                             Arguments.regionVolumeIndexArgument.retrieve(ctx) - 1
                                         )
-                                    }, listOf()
+                                    },
+                                    listOf()
                                 )
                             )
                         ),
@@ -97,8 +104,7 @@ object RegionEditNode : CommandNode(
                             LiteralNodeData(
                                 "list",
                                 "list volumes in region"
-                            )
-                            { ctx, ctrl ->
+                            ) { ctx, ctrl ->
                                 val regionName = Arguments.regionArgument.retrieve(ctx)
                                 Paginator.state = PaginatorState(
                                     "/sb r $regionName v list ${Paginator.PAGE_DELIM}", 1
@@ -106,14 +112,17 @@ object RegionEditNode : CommandNode(
                                 ctrl.listRegionVolumes(ctx.source.world, regionName)
                             },
                             listOf(
-                                CommandNode(IntArgNodeData(Arguments.pageNumArgument) { ctx, ctrl ->
-                                    val regionName = Arguments.regionArgument.retrieve(ctx)
-                                    Paginator.state = PaginatorState(
-                                        "/sb r $regionName v list ${Paginator.PAGE_DELIM}",
-                                        Arguments.pageNumArgument.retrieve(ctx)
-                                    )
-                                    ctrl.listRegionVolumes(ctx.source.world, regionName)
-                                }, listOf())
+                                CommandNode(
+                                    IntArgNodeData(Arguments.pageNumArgument) { ctx, ctrl ->
+                                        val regionName = Arguments.regionArgument.retrieve(ctx)
+                                        Paginator.state = PaginatorState(
+                                            "/sb r $regionName v list ${Paginator.PAGE_DELIM}",
+                                            Arguments.pageNumArgument.retrieve(ctx)
+                                        )
+                                        ctrl.listRegionVolumes(ctx.source.world, regionName)
+                                    },
+                                    listOf()
+                                )
                             )
                         )
                     )

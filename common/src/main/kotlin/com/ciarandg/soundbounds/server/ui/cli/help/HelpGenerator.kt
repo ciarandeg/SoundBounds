@@ -9,8 +9,8 @@ object HelpGenerator {
         if (node.description != null) {
             entries.add(
                 LiteralText("/${node.command}").formatted(Colors.Help.COMMAND) +
-                        LiteralText(" - ").formatted(Colors.SEPARATOR) +
-                        LiteralText(node.description).formatted(Colors.Help.DESCRIPTION)
+                    LiteralText(" - ").formatted(Colors.SEPARATOR) +
+                    LiteralText(node.description).formatted(Colors.Help.DESCRIPTION)
             )
         }
 

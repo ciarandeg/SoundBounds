@@ -14,7 +14,6 @@ import me.shedaniel.architectury.utils.GameInstance
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.network.PacketByteBuf
-import java.lang.RuntimeException
 
 // Two-way message for metadata supply. Server requests metadata from client, and client sends json metadata back.
 class MetadataSyncMessage : NetworkManager.NetworkReceiver {

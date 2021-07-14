@@ -8,7 +8,6 @@ import net.fabricmc.api.EnvType
 import net.minecraft.client.MinecraftClient
 import net.minecraft.util.Identifier
 import java.io.InputStreamReader
-import java.lang.RuntimeException
 
 object ClientMeta {
     private const val JSON_FILENAME = "sb.json"

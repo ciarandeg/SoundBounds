@@ -7,7 +7,7 @@ object ServerEvents {
     fun register() {
         // MVC setup
         PlayerEvent.PLAYER_JOIN.register {
-            ServerUtils.playerControllers.putIfAbsent( it, PlayerController(it) )
+            ServerUtils.playerControllers.putIfAbsent(it, PlayerController(it))
         }
     }
 }

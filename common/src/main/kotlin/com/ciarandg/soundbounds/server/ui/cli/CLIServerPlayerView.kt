@@ -1,14 +1,14 @@
 package com.ciarandg.soundbounds.server.ui.cli
 
-import com.ciarandg.soundbounds.common.ui.cli.CommandNode
 import com.ciarandg.soundbounds.common.regions.Region
+import com.ciarandg.soundbounds.common.ui.cli.CommandNode
 import com.ciarandg.soundbounds.common.ui.cli.nodes.RootNode
 import com.ciarandg.soundbounds.common.util.Paginator
 import com.ciarandg.soundbounds.common.util.PlaylistType
+import com.ciarandg.soundbounds.server.metadata.ServerMetaState
 import com.ciarandg.soundbounds.server.ui.PlayerView
 import com.ciarandg.soundbounds.server.ui.cli.help.HelpGenerator
 import com.ciarandg.soundbounds.server.ui.cli.help.HelpTreeNode
-import com.ciarandg.soundbounds.server.metadata.ServerMetaState
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.text.LiteralText
@@ -49,23 +49,28 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
     )
 
     override fun showRegionList(regions: List<Map.Entry<String, Region>>) = owner.sendMessage(
-        Paginator.paginate("Region List", regions.mapIndexed { index, entry ->
-            val n = index + 1
-            val name = entry.key
-            val playlistType = entry.value.playlistType.toString().toLowerCase()
-            val priority = entry.value.priority
-            LiteralText("$n. $name - $playlistType, priority $priority")
-        }),
+        Paginator.paginate(
+            "Region List",
+            regions.mapIndexed { index, entry ->
+                val n = index + 1
+                val name = entry.key
+                val playlistType = entry.value.playlistType.toString().toLowerCase()
+                val priority = entry.value.priority
+                LiteralText("$n. $name - $playlistType, priority $priority")
+            }
+        ),
         false
     )
 
     override fun notifyMetadataSynced() {
         val meta = ServerMetaState.get().meta
         owner.sendMessage(
-            LiteralText("Successfully synced metadata: " +
+            LiteralText(
+                "Successfully synced metadata: " +
                     "${meta.composers.size} composers, " +
                     "${meta.groups.size} groups, " +
-                    "${meta.songs.size} songs"),
+                    "${meta.songs.size} songs"
+            ),
             false
         )
     }
@@ -93,23 +98,32 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
 
     override fun notifyRegionOverlaps(region1: String, region2: String, overlaps: Boolean) {} // TODO
     override fun showRegionInfo(regionName: String, region: Region) {
-        owner.sendMessage(LiteralText(
-            "Region $regionName: type ${region.playlistType}, " +
+        owner.sendMessage(
+            LiteralText(
+                "Region $regionName: type ${region.playlistType}, " +
                     "song count ${region.playlist.size}, " +
-                    "bounds count ${region.volumes.size}"),
-            false)
+                    "bounds count ${region.volumes.size}"
+            ),
+            false
+        )
     }
     override fun notifyRegionPrioritySet(name: String, oldPriority: Int, newPriority: Int) {
-        owner.sendMessage(LiteralText(
-            "Region $name priority changed from $oldPriority to $newPriority"
-        ), false)
+        owner.sendMessage(
+            LiteralText(
+                "Region $name priority changed from $oldPriority to $newPriority"
+            ),
+            false
+        )
     }
 
     override fun notifyRegionPlaylistTypeSet(name: String, from: PlaylistType, to: PlaylistType) {
-        owner.sendMessage(LiteralText(
-            if (from == to) "Region $name is already of type $to!"
-            else "Region $name changed from type $from to type $to"
-        ), false)
+        owner.sendMessage(
+            LiteralText(
+                if (from == to) "Region $name is already of type $to!"
+                else "Region $name changed from type $from to type $to"
+            ),
+            false
+        )
     }
 
     override fun notifyRegionVolumeAdded(regionName: String, volume: Pair<BlockPos, BlockPos>) =
@@ -123,12 +137,18 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
 
     override fun showRegionVolumeList(regionName: String, volumes: List<Pair<BlockPos, BlockPos>>) =
         owner.sendMessage(
-            Paginator.paginate("Volumes in $regionName", volumes.mapIndexed { i, vol ->
-                val pos = i + 1
-                LiteralText("$pos.\nCORNER 1: ${vol.first}\nCORNER 2: ${vol.second}" +
-                  if (pos < volumes.size) "\n" else ""
-                )
-            }), false)
+            Paginator.paginate(
+                "Volumes in $regionName",
+                volumes.mapIndexed { i, vol ->
+                    val pos = i + 1
+                    LiteralText(
+                        "$pos.\nCORNER 1: ${vol.first}\nCORNER 2: ${vol.second}" +
+                            if (pos < volumes.size) "\n" else ""
+                    )
+                }
+            ),
+            false
+        )
 
     override fun notifyRegionPlaylistSongAdded(regionName: String, song: String, pos: Int) =
         owner.sendMessage(
@@ -151,14 +171,18 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
     override fun showRegionContiguous(regionName: String) {} // TODO
 
     override fun notifyFailed(reason: PlayerView.FailureReason) = owner.sendMessage(
-        LiteralText(when (reason) {
-            PlayerView.FailureReason.POS_MARKERS_MISSING -> "position markers not set"
-            PlayerView.FailureReason.NO_SUCH_REGION -> "requested region does not exist"
-            PlayerView.FailureReason.REGION_NAME_CONFLICT -> "requested region name is taken"
-            PlayerView.FailureReason.VOLUME_INDEX_OOB -> "requested volume index is out of bounds"
-            PlayerView.FailureReason.REGION_MUST_HAVE_VOLUME -> "requested region only has one volume"
-            PlayerView.FailureReason.NO_METADATA_PRESENT -> "no metadata has been provided to server (try /sb sync-meta)"
-            PlayerView.FailureReason.NO_SUCH_SONG -> "requested song ID does not exist"
-            PlayerView.FailureReason.SONG_POS_OOB -> "requested song position is out of bounds"
-        }), false)
+        LiteralText(
+            when (reason) {
+                PlayerView.FailureReason.POS_MARKERS_MISSING -> "position markers not set"
+                PlayerView.FailureReason.NO_SUCH_REGION -> "requested region does not exist"
+                PlayerView.FailureReason.REGION_NAME_CONFLICT -> "requested region name is taken"
+                PlayerView.FailureReason.VOLUME_INDEX_OOB -> "requested volume index is out of bounds"
+                PlayerView.FailureReason.REGION_MUST_HAVE_VOLUME -> "requested region only has one volume"
+                PlayerView.FailureReason.NO_METADATA_PRESENT -> "no metadata has been provided to server (try /sb sync-meta)"
+                PlayerView.FailureReason.NO_SUCH_SONG -> "requested song ID does not exist"
+                PlayerView.FailureReason.SONG_POS_OOB -> "requested song position is out of bounds"
+            }
+        ),
+        false
+    )
 }

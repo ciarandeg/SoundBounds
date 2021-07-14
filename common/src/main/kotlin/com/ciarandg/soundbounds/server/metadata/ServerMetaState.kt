@@ -6,7 +6,6 @@ import me.shedaniel.architectury.utils.GameInstance
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.PersistentState
 import net.minecraft.world.PersistentStateManager
-import java.lang.RuntimeException
 
 class ServerMetaState(key: String?) : PersistentState(key) {
     var meta = JsonMeta()
