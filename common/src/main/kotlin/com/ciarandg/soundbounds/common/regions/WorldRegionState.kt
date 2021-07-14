@@ -19,8 +19,14 @@ class WorldRegionState(key: String?) : PersistentState(key) {
     }
 
     fun regionExists(regionName: String) = regions.containsKey(regionName)
-    fun getRegion(regionName: String) = regions[regionName]
-    fun getAllRegions() = regions.entries
+    fun getRegion(regionName: String): Region? {
+        this.markDirty()
+        return regions[regionName]
+    }
+    fun getAllRegions(): Set<Map.Entry<String, Region>> {
+        this.markDirty()
+        return regions.entries
+    }
     fun removeRegion(regionName: String): Region? {
         val r = regions.remove(regionName)
         if (r != null) this.markDirty()
