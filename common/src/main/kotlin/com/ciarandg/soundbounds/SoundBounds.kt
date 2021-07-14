@@ -1,7 +1,7 @@
 package com.ciarandg.soundbounds
 
 import com.ciarandg.soundbounds.client.metadata.ClientMeta
-import com.ciarandg.soundbounds.common.command.argument.PTArgumentType
+import com.ciarandg.soundbounds.common.ui.cli.argument.PTArgumentType
 import com.ciarandg.soundbounds.common.network.MetadataSyncMessage
 import com.ciarandg.soundbounds.common.ui.cli.SoundBoundsCommand
 import com.ciarandg.soundbounds.server.ServerUtils

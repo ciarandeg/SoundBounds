@@ -1,9 +1,9 @@
 package com.ciarandg.soundbounds.common.ui.cli
 
-import com.ciarandg.soundbounds.common.command.argument.BlockPosArgumentContainer
-import com.ciarandg.soundbounds.common.command.argument.IntArgumentContainer
-import com.ciarandg.soundbounds.common.command.argument.PlaylistTypeArgumentContainer
-import com.ciarandg.soundbounds.common.command.argument.WordArgumentContainer
+import com.ciarandg.soundbounds.common.ui.cli.argument.BlockPosArgumentContainer
+import com.ciarandg.soundbounds.common.ui.cli.argument.IntArgumentContainer
+import com.ciarandg.soundbounds.common.ui.cli.argument.PlaylistTypeArgumentContainer
+import com.ciarandg.soundbounds.common.ui.cli.argument.WordArgumentContainer
 
 object Arguments {
     val pageNumArgument = IntArgumentContainer("page", 1)

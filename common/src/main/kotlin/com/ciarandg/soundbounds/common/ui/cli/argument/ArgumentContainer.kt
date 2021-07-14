@@ -1,4 +1,4 @@
-package com.ciarandg.soundbounds.common.command.argument
+package com.ciarandg.soundbounds.common.ui.cli.argument
 
 import com.ciarandg.soundbounds.common.util.PlaylistType
 import com.mojang.brigadier.arguments.ArgumentType

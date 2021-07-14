@@ -1,4 +1,4 @@
-package com.ciarandg.soundbounds.common.command.argument
+package com.ciarandg.soundbounds.common.ui.cli.argument
 
 import com.ciarandg.soundbounds.common.util.PlaylistType
 import com.mojang.brigadier.StringReader
@@ -36,7 +36,7 @@ class PTArgumentType : ArgumentType<PlaylistType> {
         fun register() = ArgumentTypes.register(
             "playlist_type",
             PTArgumentType().javaClass,
-            ConstantArgumentSerializer(PTArgumentType::type)
+            ConstantArgumentSerializer(Companion::type)
         )
 
         fun type(): PTArgumentType = PTArgumentType()
