@@ -1,8 +1,8 @@
 package com.ciarandg.soundbounds.server.ui.cli.help
 
-import com.ciarandg.soundbounds.common.command.ArgNodeData
-import com.ciarandg.soundbounds.common.command.CommandNode
-import com.ciarandg.soundbounds.common.command.LiteralNodeData
+import com.ciarandg.soundbounds.common.ui.cli.ArgNodeData
+import com.ciarandg.soundbounds.common.ui.cli.CommandNode
+import com.ciarandg.soundbounds.common.ui.cli.LiteralNodeData
 import java.security.InvalidParameterException
 
 class HelpTreeNode(

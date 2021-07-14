@@ -1,4 +1,4 @@
-package com.ciarandg.soundbounds.common.command
+package com.ciarandg.soundbounds.common.ui.cli
 
 import com.ciarandg.soundbounds.common.command.argument.ArgumentContainer
 import com.ciarandg.soundbounds.common.util.PlaylistType

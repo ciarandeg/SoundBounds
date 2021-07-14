@@ -1,8 +1,8 @@
 package com.ciarandg.soundbounds.server.ui.cli
 
-import com.ciarandg.soundbounds.common.command.CommandNode
+import com.ciarandg.soundbounds.common.ui.cli.CommandNode
 import com.ciarandg.soundbounds.common.regions.Region
-import com.ciarandg.soundbounds.common.ui.cli.RootNode
+import com.ciarandg.soundbounds.common.ui.cli.nodes.RootNode
 import com.ciarandg.soundbounds.common.util.Paginator
 import com.ciarandg.soundbounds.common.util.PlaylistType
 import com.ciarandg.soundbounds.server.ui.PlayerView
