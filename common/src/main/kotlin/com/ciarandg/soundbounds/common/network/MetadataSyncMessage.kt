@@ -3,8 +3,8 @@ package com.ciarandg.soundbounds.common.network
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.metadata.ClientMeta
 import com.ciarandg.soundbounds.common.metadata.JsonMeta
-import com.ciarandg.soundbounds.server.PersistenceUtils
 import com.ciarandg.soundbounds.server.ServerUtils
+import com.ciarandg.soundbounds.server.metadata.ServerMetaState
 import com.google.gson.Gson
 import io.netty.buffer.Unpooled
 import me.shedaniel.architectury.networking.NetworkManager
@@ -25,9 +25,9 @@ class MetadataSyncMessage : NetworkManager.NetworkReceiver {
                 val requester: PlayerEntity? = GameInstance.getServer()?.playerManager?.getPlayer(buf.readUuid())
                 val requesterController = ServerUtils.playerControllers[requester]
                 try {
-                    val state = PersistenceUtils.getServerMetaState()
+                    val state = ServerMetaState.get()
                     state.meta = gson.fromJson(buf.readString(STR_LIMIT), JsonMeta::class.java)
-                    PersistenceUtils.setServerMetaState(state)
+                    ServerMetaState.set(state)
                     requesterController?.notifyMetadataSynced(true)
                 } catch (e: Exception) {
                     requesterController?.notifyMetadataSynced(false)

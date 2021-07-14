@@ -1,6 +1,7 @@
 package com.ciarandg.soundbounds.common.regions
 
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.server.world.ServerWorld
 import net.minecraft.world.PersistentState
 
 class WorldRegionState(key: String?) : PersistentState(key) {
@@ -28,5 +29,14 @@ class WorldRegionState(key: String?) : PersistentState(key) {
     fun putRegion(regionName: String, region: Region) {
         regions[regionName] = region
         this.markDirty()
+    }
+
+    companion object {
+        private const val WORLD_REGIONS_KEY = "sb-regions"
+
+        fun get(world: ServerWorld): WorldRegionState =
+            world.persistentStateManager.getOrCreate({ WorldRegionState(WORLD_REGIONS_KEY) }, WORLD_REGIONS_KEY)
+        fun set(world: ServerWorld, state: WorldRegionState) =
+            world.persistentStateManager.set(state)
     }
 }

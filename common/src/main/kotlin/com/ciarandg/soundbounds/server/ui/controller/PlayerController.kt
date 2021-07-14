@@ -2,9 +2,9 @@ package com.ciarandg.soundbounds.server.ui.controller
 
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.common.regions.Region
+import com.ciarandg.soundbounds.common.regions.WorldRegionState
 import com.ciarandg.soundbounds.server.ui.cli.PosMarker
 import com.ciarandg.soundbounds.common.util.PlaylistType
-import com.ciarandg.soundbounds.server.PersistenceUtils
 import com.ciarandg.soundbounds.server.ui.PlayerModel
 import com.ciarandg.soundbounds.server.ui.PlayerView
 import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason
@@ -33,7 +33,7 @@ class PlayerController(
     }
 
     fun listRegions(world: ServerWorld, radius: Int = -1) =
-        view.showRegionList(PersistenceUtils.getWorldState(world).getAllRegions().sortedBy { it.key })
+        view.showRegionList(WorldRegionState.get(world).getAllRegions().sortedBy { it.key })
 
     fun syncMetadata(player: ServerPlayerEntity) {
         NetworkManager.sendToPlayer(
@@ -50,37 +50,37 @@ class PlayerController(
     }
 
     fun createRegion(world: ServerWorld, regionName: String, priority: Int) {
-        val state = PersistenceUtils.getWorldState(world)
+        val state = WorldRegionState.get(world)
         val m1 = model.marker1
         val m2 = model.marker2
 
         if (state.regionExists(regionName)) view.notifyFailed(FailureReason.REGION_NAME_CONFLICT)
         else if (m1 !=  null && m2 != null) {
             state.putRegion(regionName, Region(priority, volumes = mutableListOf(Pair(m1, m2))))
-            PersistenceUtils.setWorldState(world, state)
+            WorldRegionState.set(world, state)
             view.notifyRegionCreated(regionName, priority)
         } else view.notifyFailed(FailureReason.POS_MARKERS_MISSING)
     }
 
     fun destroyRegion(world: ServerWorld, regionName: String) {
-        val state = PersistenceUtils.getWorldState(world)
+        val state = WorldRegionState.get(world)
         val removed = state.removeRegion(regionName)
         if (removed == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
         else {
-            PersistenceUtils.setWorldState(world, state)
+            WorldRegionState.set(world, state)
             view.notifyRegionDestroyed(regionName)
         }
     }
 
     fun renameRegion(world: ServerWorld, from: String, to: String) {
-        val state = PersistenceUtils.getWorldState(world)
+        val state = WorldRegionState.get(world)
         val removed = state.removeRegion(from)
         when {
             removed == null -> view.notifyFailed(FailureReason.NO_SUCH_REGION)
             state.regionExists(to) -> view.notifyFailed(FailureReason.REGION_NAME_CONFLICT)
             else -> {
                 state.putRegion(to, removed)
-                PersistenceUtils.setWorldState(world, state)
+                WorldRegionState.set(world, state)
                 view.notifyRegionRenamed(from, to)
             }
         }
@@ -92,39 +92,39 @@ class PlayerController(
     }
 
     fun showRegionInfo(world: ServerWorld, regionName: String) {
-        val region = PersistenceUtils.getWorldState(world).getRegion(regionName)
+        val region = WorldRegionState.get(world).getRegion(regionName)
         if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
         else view.showRegionInfo(regionName, region)
     }
 
     fun setRegionPriority(world: ServerWorld, regionName: String, priority: Int) {
-        val state = PersistenceUtils.getWorldState(world)
+        val state = WorldRegionState.get(world)
         val region = state.getRegion(regionName)
         if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
         else {
             val oldPriority = region.priority
             region.priority = priority
             state.putRegion(regionName, region)
-            PersistenceUtils.setWorldState(world, state)
+            WorldRegionState.set(world, state)
             view.notifyRegionPrioritySet(regionName, oldPriority, priority)
         }
     }
 
     fun setRegionPlaylistType(world: ServerWorld, regionName: String, type: PlaylistType) {
-        val state = PersistenceUtils.getWorldState(world)
+        val state = WorldRegionState.get(world)
         val region = state.getRegion(regionName)
         if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
         else {
             val oldType = region.playlistType
             region.playlistType = type
             state.putRegion(regionName, region)
-            PersistenceUtils.setWorldState(world, state)
+            WorldRegionState.set(world, state)
             view.notifyRegionPlaylistTypeSet(regionName, oldType, type)
         }
     }
 
     fun addRegionVolume(world: ServerWorld, regionName: String) {
-        val state = PersistenceUtils.getWorldState(world)
+        val state = WorldRegionState.get(world)
         val region = state.getRegion(regionName)
         val m1 = model.marker1
         val m2 = model.marker2
@@ -133,13 +133,13 @@ class PlayerController(
         else if (m1 != null && m2 != null) {
             val volume = Pair(m1, m2)
             region.volumes.add(volume)
-            PersistenceUtils.setWorldState(world, state)
+            WorldRegionState.set(world, state)
             view.notifyRegionVolumeAdded(regionName, volume)
         } else view.notifyFailed(FailureReason.POS_MARKERS_MISSING)
     }
 
     fun removeRegionVolume(world: ServerWorld, regionName: String, index: Int) {
-        val state = PersistenceUtils.getWorldState(world)
+        val state = WorldRegionState.get(world)
         val region = state.getRegion(regionName)
         if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
         else if (index < 0 || index >= region.volumes.size) view.notifyFailed(FailureReason.VOLUME_INDEX_OOB)
@@ -151,7 +151,7 @@ class PlayerController(
     }
 
     fun listRegionVolumes(world: ServerWorld, regionName: String) {
-        val region = PersistenceUtils.getWorldState(world).getRegion(regionName)
+        val region = WorldRegionState.get(world).getRegion(regionName)
         if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
         else view.showRegionVolumeList(regionName, region.volumes)
     }

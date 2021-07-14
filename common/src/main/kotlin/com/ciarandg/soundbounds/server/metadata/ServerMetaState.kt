@@ -2,8 +2,11 @@ package com.ciarandg.soundbounds.server.metadata
 
 import com.ciarandg.soundbounds.common.metadata.JsonMeta
 import com.google.gson.Gson
+import me.shedaniel.architectury.utils.GameInstance
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.PersistentState
+import net.minecraft.world.PersistentStateManager
+import java.lang.RuntimeException
 
 class ServerMetaState(key: String?) : PersistentState(key) {
     var meta = JsonMeta()
@@ -24,6 +27,20 @@ class ServerMetaState(key: String?) : PersistentState(key) {
     }
 
     companion object {
+        private const val SERVER_METADATA_KEY = "sb-meta"
         val gson = Gson()
+
+        fun get(): ServerMetaState =
+            getStateManager().getOrCreate(
+                { ServerMetaState(SERVER_METADATA_KEY) },
+                SERVER_METADATA_KEY
+            )
+        fun set(state: ServerMetaState) =
+            getStateManager().set(state)
+
+        private fun getStateManager(): PersistentStateManager {
+            val server = GameInstance.getServer() ?: throw RuntimeException("Must be run from server side")
+            return server.overworld.persistentStateManager
+        }
     }
 }

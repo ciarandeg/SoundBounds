@@ -8,7 +8,7 @@ import com.ciarandg.soundbounds.common.util.PlaylistType
 import com.ciarandg.soundbounds.server.ui.PlayerView
 import com.ciarandg.soundbounds.server.ui.cli.help.HelpGenerator
 import com.ciarandg.soundbounds.server.ui.cli.help.HelpTreeNode
-import com.ciarandg.soundbounds.server.PersistenceUtils
+import com.ciarandg.soundbounds.server.metadata.ServerMetaState
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.text.LiteralText
@@ -60,7 +60,7 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
     )
 
     override fun notifyMetadataSynced() {
-        val meta = PersistenceUtils.getServerMetaState().meta
+        val meta = ServerMetaState.get().meta
         owner.sendMessage(
             LiteralText("Successfully synced metadata: " +
                     "${meta.composers.size} composers, " +
