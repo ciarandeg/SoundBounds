@@ -2,14 +2,7 @@ package com.ciarandg.soundbounds
 
 import com.ciarandg.soundbounds.client.ClientEvents
 import com.ciarandg.soundbounds.common.CommonEvents
-import com.ciarandg.soundbounds.common.ui.cli.argument.PTArgumentType
-import com.ciarandg.soundbounds.common.network.MetadataSyncMessage
-import com.ciarandg.soundbounds.common.ui.cli.SoundBoundsCommand
-import com.ciarandg.soundbounds.server.ServerUtils
-import com.ciarandg.soundbounds.server.ui.controller.PlayerController
-import me.shedaniel.architectury.event.events.CommandRegistrationEvent
-import me.shedaniel.architectury.event.events.PlayerEvent
-import me.shedaniel.architectury.networking.NetworkManager
+import com.ciarandg.soundbounds.server.ServerEvents
 import me.shedaniel.architectury.platform.Platform
 import me.shedaniel.architectury.registry.DeferredRegister
 import net.fabricmc.api.EnvType
@@ -18,11 +11,15 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.lang.RuntimeException
 
 class SoundBounds {
     init {
         CommonEvents.register()
-        if (Platform.getEnv() == EnvType.CLIENT) ClientEvents.register()
+        when (Platform.getEnv() ?: throw RuntimeException("Why would you ever have a null environment?")) {
+            EnvType.CLIENT -> ClientEvents.register()
+            EnvType.SERVER -> ServerEvents.register()
+        }
     }
 
     companion object {
