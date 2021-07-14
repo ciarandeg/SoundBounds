@@ -1,13 +1,13 @@
 package com.ciarandg.soundbounds
 
-import com.ciarandg.soundbounds.client.metadata.ClientMeta
+import com.ciarandg.soundbounds.client.ClientEvents
+import com.ciarandg.soundbounds.common.CommonEvents
 import com.ciarandg.soundbounds.common.ui.cli.argument.PTArgumentType
 import com.ciarandg.soundbounds.common.network.MetadataSyncMessage
 import com.ciarandg.soundbounds.common.ui.cli.SoundBoundsCommand
 import com.ciarandg.soundbounds.server.ServerUtils
 import com.ciarandg.soundbounds.server.ui.controller.PlayerController
 import me.shedaniel.architectury.event.events.CommandRegistrationEvent
-import me.shedaniel.architectury.event.events.GuiEvent
 import me.shedaniel.architectury.event.events.PlayerEvent
 import me.shedaniel.architectury.networking.NetworkManager
 import me.shedaniel.architectury.platform.Platform
@@ -21,32 +21,8 @@ import org.apache.logging.log4j.Logger
 
 class SoundBounds {
     init {
-        // Item registration
-        items.register()
-
-        // Command registration
-        PTArgumentType.register()
-        CommandRegistrationEvent.EVENT.register { dispatcher, _ -> SoundBoundsCommand.register(dispatcher) }
-
-        // MVC setup
-        PlayerEvent.PLAYER_JOIN.register {
-            ServerUtils.playerControllers.putIfAbsent( it, PlayerController(it) )
-        }
-
-        // Metadata sync/update util registration
-        NetworkManager.registerReceiver(
-            NetworkManager.Side.C2S,
-            SYNC_METADATA_CHANNEL_C2S,
-            MetadataSyncMessage()
-        )
-        if (Platform.getEnv() == EnvType.CLIENT) {
-            GuiEvent.INIT_POST.register { _, _, _ -> ClientMeta.update() }
-            NetworkManager.registerReceiver(
-                NetworkManager.Side.S2C,
-                SYNC_METADATA_CHANNEL_S2C,
-                MetadataSyncMessage()
-            )
-        }
+        CommonEvents.register()
+        if (Platform.getEnv() == EnvType.CLIENT) ClientEvents.register()
     }
 
     companion object {
