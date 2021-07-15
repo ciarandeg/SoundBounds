@@ -1,13 +1,17 @@
 package com.ciarandg.soundbounds.forge
 
 import com.ciarandg.soundbounds.SoundBounds
+import com.ciarandg.soundbounds.forge.client.ForgeClientEvents
 import com.ciarandg.soundbounds.forge.common.item.Baton
 import com.ciarandg.soundbounds.forge.common.network.PosMarkerUpdateMessage
 import me.shedaniel.architectury.networking.NetworkManager
+import me.shedaniel.architectury.platform.Platform
 import me.shedaniel.architectury.platform.forge.EventBuses
 import net.minecraft.item.Item
 import net.minecraft.item.ItemGroup
 import net.minecraft.util.Identifier
+import net.minecraftforge.api.distmarker.Dist
+import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext
 
@@ -23,6 +27,9 @@ class SoundBoundsForge {
             SOUNDBOUNDS_POS_MARKER_UPDATE_CHANNEL,
             PosMarkerUpdateMessage()
         )
+
+        if (Platform.getEnv() == Dist.CLIENT)
+            MinecraftForge.EVENT_BUS.register(ForgeClientEvents())
     }
 
     companion object {
