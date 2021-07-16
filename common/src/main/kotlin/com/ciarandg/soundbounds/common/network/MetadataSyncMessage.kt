@@ -3,8 +3,8 @@ package com.ciarandg.soundbounds.common.network
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.metadata.ClientMeta
 import com.ciarandg.soundbounds.common.metadata.JsonMeta
-import com.ciarandg.soundbounds.server.ServerUtils
 import com.ciarandg.soundbounds.server.metadata.ServerMetaState
+import com.ciarandg.soundbounds.server.ui.controller.Controllers
 import com.google.gson.Gson
 import io.netty.buffer.Unpooled
 import me.shedaniel.architectury.networking.NetworkManager
@@ -22,7 +22,7 @@ class MetadataSyncMessage : NetworkManager.NetworkReceiver {
             Env.CLIENT -> NetworkManager.sendToServer(SoundBounds.SYNC_METADATA_CHANNEL_C2S, buildBuffer())
             Env.SERVER -> {
                 val requester: PlayerEntity? = GameInstance.getServer()?.playerManager?.getPlayer(buf.readUuid())
-                val requesterController = ServerUtils.playerControllers[requester]
+                val requesterController = Controllers[requester]
                 try {
                     val state = ServerMetaState.get()
                     state.meta = gson.fromJson(buf.readString(STR_LIMIT), JsonMeta::class.java)

@@ -1,7 +1,7 @@
 package com.ciarandg.soundbounds.forge.common.network
 
-import com.ciarandg.soundbounds.server.ServerUtils
 import com.ciarandg.soundbounds.server.ui.cli.PosMarker
+import com.ciarandg.soundbounds.server.ui.controller.Controllers
 import io.netty.buffer.Unpooled
 import me.shedaniel.architectury.networking.NetworkManager
 import net.minecraft.network.PacketByteBuf
@@ -11,7 +11,7 @@ class PosMarkerUpdateMessage : NetworkManager.NetworkReceiver {
     override fun receive(buf: PacketByteBuf, ctx: NetworkManager.PacketContext) {
         val marker = buf.readEnumConstant(PosMarker.FIRST.javaClass)
         val pos = buf.readBlockPos()
-        ServerUtils.playerControllers[ctx.player]?.setPosMarker(marker, pos)
+        Controllers[ctx.player]?.setPosMarker(marker, pos)
     }
 
     companion object {
