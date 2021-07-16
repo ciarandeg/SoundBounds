@@ -2,6 +2,7 @@ package com.ciarandg.soundbounds
 
 import com.ciarandg.soundbounds.client.ClientEvents
 import com.ciarandg.soundbounds.common.CommonEvents
+import com.ciarandg.soundbounds.common.regions.Region
 import com.ciarandg.soundbounds.server.ServerEvents
 import me.shedaniel.architectury.platform.Platform
 import me.shedaniel.architectury.registry.DeferredRegister
@@ -29,5 +30,8 @@ class SoundBounds {
         val SYNC_METADATA_CHANNEL_C2S = Identifier(MOD_ID, "sync_metadata_c2s")
         val SYNC_METADATA_CHANNEL_S2C = Identifier(MOD_ID, "sync_metadata_s2c")
         val UPDATE_REGIONS_CHANNEL_S2C = Identifier(MOD_ID, "update_regions")
+        val DESTROY_REGION_CHANNEL_S2C = Identifier(MOD_ID, "destroy_region")
     }
 }
+
+typealias RegionEntry = Pair<String, Region>

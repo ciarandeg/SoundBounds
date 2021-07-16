@@ -1,5 +1,6 @@
 package com.ciarandg.soundbounds.server.ui.controller
 
+import com.ciarandg.soundbounds.RegionEntry
 import com.ciarandg.soundbounds.common.metadata.JsonMeta
 import com.ciarandg.soundbounds.common.regions.Region
 import com.ciarandg.soundbounds.common.regions.WorldRegionState
@@ -12,6 +13,7 @@ open class PlaylistManager internal constructor(private val view: PlayerView) {
         checkNulls(world, regionName) { region, meta ->
             checkSongPresent(meta, songID) {
                 region.playlist.add(songID)
+                PlayerController.pushRegionToClients(world, RegionEntry(regionName, region))
                 view.notifyRegionPlaylistSongAdded(regionName, songID, region.playlist.size)
             }
         }
@@ -20,6 +22,7 @@ open class PlaylistManager internal constructor(private val view: PlayerView) {
         checkNulls(world, regionName) { region, _ ->
             checkSongInBounds(region, songPosition) {
                 val songID = region.playlist.removeAt(songPosition - 1)
+                PlayerController.pushRegionToClients(world, RegionEntry(regionName, region))
                 view.notifyRegionPlaylistSongRemoved(regionName, songID, songPosition)
             }
         }
@@ -29,6 +32,7 @@ open class PlaylistManager internal constructor(private val view: PlayerView) {
             checkSongPresent(meta, songID) {
                 checkSongInBounds(region, songPosition) {
                     region.playlist.add(songPosition - 1, songID)
+                    PlayerController.pushRegionToClients(world, RegionEntry(regionName, region))
                     view.notifyRegionPlaylistSongAdded(regionName, songID, songPosition)
                 }
             }
@@ -39,6 +43,7 @@ open class PlaylistManager internal constructor(private val view: PlayerView) {
             checkSongPresent(meta, newSongID) {
                 checkSongInBounds(region, songPosition) {
                     val oldSongID = region.playlist.set(songPosition - 1, newSongID)
+                    PlayerController.pushRegionToClients(world, RegionEntry(regionName, region))
                     view.notifyRegionPlaylistSongReplaced(regionName, oldSongID, newSongID, songPosition)
                 }
             }

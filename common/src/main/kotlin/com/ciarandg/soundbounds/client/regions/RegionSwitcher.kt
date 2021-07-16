@@ -1,8 +1,8 @@
 package com.ciarandg.soundbounds.client.regions
 
+import com.ciarandg.soundbounds.RegionEntry
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.Fader
-import com.ciarandg.soundbounds.common.regions.Region
 import me.shedaniel.architectury.utils.GameInstance
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.BlockPos
@@ -10,8 +10,6 @@ import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
 import java.lang.RuntimeException
 import kotlin.math.floor
-
-typealias RegionEntry = Pair<String, Region>
 
 object RegionSwitcher {
     private val playerData = PlayerData(null, null) // used to prevent unnecessary iteration

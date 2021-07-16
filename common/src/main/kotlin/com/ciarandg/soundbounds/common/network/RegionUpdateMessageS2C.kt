@@ -1,8 +1,8 @@
 package com.ciarandg.soundbounds.common.network
 
+import com.ciarandg.soundbounds.RegionEntry
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.regions.ClientWorldRegions
-import com.ciarandg.soundbounds.client.regions.RegionEntry
 import com.ciarandg.soundbounds.common.regions.Region
 import io.netty.buffer.Unpooled
 import me.shedaniel.architectury.networking.NetworkManager

@@ -6,6 +6,7 @@ import com.ciarandg.soundbounds.client.audio.GameMusicVolume
 import com.ciarandg.soundbounds.client.metadata.ClientMeta
 import com.ciarandg.soundbounds.client.regions.RegionSwitcher
 import com.ciarandg.soundbounds.common.network.MetadataSyncMessage
+import com.ciarandg.soundbounds.common.network.RegionDestroyMessageS2C
 import com.ciarandg.soundbounds.common.network.RegionUpdateMessageS2C
 import me.shedaniel.architectury.event.events.GuiEvent
 import me.shedaniel.architectury.event.events.TickEvent
@@ -40,6 +41,11 @@ object ClientEvents {
             NetworkManager.Side.S2C,
             SoundBounds.UPDATE_REGIONS_CHANNEL_S2C,
             RegionUpdateMessageS2C()
+        )
+        NetworkManager.registerReceiver(
+            NetworkManager.Side.S2C,
+            SoundBounds.DESTROY_REGION_CHANNEL_S2C,
+            RegionDestroyMessageS2C()
         )
     }
 }

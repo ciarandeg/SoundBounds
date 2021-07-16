@@ -3,8 +3,8 @@ package com.ciarandg.soundbounds.server
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.common.network.RegionUpdateMessageS2C
 import com.ciarandg.soundbounds.common.regions.WorldRegionState
-import com.ciarandg.soundbounds.server.ui.controller.PlayerController
 import com.ciarandg.soundbounds.server.ui.controller.Controllers
+import com.ciarandg.soundbounds.server.ui.controller.PlayerController
 import me.shedaniel.architectury.event.events.PlayerEvent
 import me.shedaniel.architectury.networking.NetworkManager
 import net.minecraft.server.network.ServerPlayerEntity

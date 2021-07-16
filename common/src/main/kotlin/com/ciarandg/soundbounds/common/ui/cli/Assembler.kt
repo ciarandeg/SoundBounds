@@ -1,7 +1,7 @@
 package com.ciarandg.soundbounds.common.ui.cli
 
-import com.ciarandg.soundbounds.server.ui.controller.PlayerController
 import com.ciarandg.soundbounds.server.ui.controller.Controllers
+import com.ciarandg.soundbounds.server.ui.controller.PlayerController
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder

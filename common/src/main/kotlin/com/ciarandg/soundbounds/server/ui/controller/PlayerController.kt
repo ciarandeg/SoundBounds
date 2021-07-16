@@ -1,6 +1,9 @@
 package com.ciarandg.soundbounds.server.ui.controller
 
+import com.ciarandg.soundbounds.RegionEntry
 import com.ciarandg.soundbounds.SoundBounds
+import com.ciarandg.soundbounds.common.network.RegionDestroyMessageS2C
+import com.ciarandg.soundbounds.common.network.RegionUpdateMessageS2C
 import com.ciarandg.soundbounds.common.regions.Region
 import com.ciarandg.soundbounds.common.regions.WorldRegionState
 import com.ciarandg.soundbounds.common.util.PlaylistType
@@ -56,8 +59,10 @@ class PlayerController(
 
         if (state.regionExists(regionName)) view.notifyFailed(FailureReason.REGION_NAME_CONFLICT)
         else if (m1 != null && m2 != null) {
-            state.putRegion(regionName, Region(priority, volumes = mutableListOf(Pair(m1, m2))))
+            val region = RegionEntry(regionName, Region(priority, volumes = mutableListOf(Pair(m1, m2))))
+            state.putRegion(region.first, region.second)
             WorldRegionState.set(world, state)
+            pushRegionToClients(world, region)
             view.notifyRegionCreated(regionName, priority)
         } else view.notifyFailed(FailureReason.POS_MARKERS_MISSING)
     }
@@ -68,6 +73,7 @@ class PlayerController(
         if (removed == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
         else {
             WorldRegionState.set(world, state)
+            destroyRegionOnClients(world, regionName)
             view.notifyRegionDestroyed(regionName)
         }
     }
@@ -81,6 +87,8 @@ class PlayerController(
             else -> {
                 state.putRegion(to, removed)
                 WorldRegionState.set(world, state)
+                destroyRegionOnClients(world, from)
+                pushRegionToClients(world, RegionEntry(to, removed))
                 view.notifyRegionRenamed(from, to)
             }
         }
@@ -106,6 +114,7 @@ class PlayerController(
             region.priority = priority
             state.putRegion(regionName, region)
             WorldRegionState.set(world, state)
+            pushRegionToClients(world, RegionEntry(regionName, region))
             view.notifyRegionPrioritySet(regionName, oldPriority, priority)
         }
     }
@@ -119,6 +128,7 @@ class PlayerController(
             region.playlistType = type
             state.putRegion(regionName, region)
             WorldRegionState.set(world, state)
+            pushRegionToClients(world, RegionEntry(regionName, region))
             view.notifyRegionPlaylistTypeSet(regionName, oldType, type)
         }
     }
@@ -134,6 +144,7 @@ class PlayerController(
             val volume = Pair(m1, m2)
             region.volumes.add(volume)
             WorldRegionState.set(world, state)
+            pushRegionToClients(world, RegionEntry(regionName, region))
             view.notifyRegionVolumeAdded(regionName, volume)
         } else view.notifyFailed(FailureReason.POS_MARKERS_MISSING)
     }
@@ -146,6 +157,7 @@ class PlayerController(
         else if (region.volumes.size == 1) view.notifyFailed(FailureReason.REGION_MUST_HAVE_VOLUME)
         else {
             val volume = region.volumes.removeAt(index)
+            pushRegionToClients(world, RegionEntry(regionName, region))
             view.notifyRegionVolumeRemoved(regionName, index, volume)
         }
     }
@@ -159,5 +171,20 @@ class PlayerController(
     fun checkRegionContiguous(world: ServerWorld, regionName: String) {
         // TODO check if region is contiguous
         view.showRegionContiguous(regionName)
+    }
+
+    companion object {
+        internal fun pushRegionToClients(world: ServerWorld, region: RegionEntry) =
+            NetworkManager.sendToPlayers(
+                world.players,
+                SoundBounds.UPDATE_REGIONS_CHANNEL_S2C,
+                RegionUpdateMessageS2C.buildBuffer(false, listOf(region))
+            )
+        internal fun destroyRegionOnClients(world: ServerWorld, regionName: String) =
+            NetworkManager.sendToPlayers(
+                world.players,
+                SoundBounds.DESTROY_REGION_CHANNEL_S2C,
+                RegionDestroyMessageS2C.buildBuffer(regionName)
+            )
     }
 }
