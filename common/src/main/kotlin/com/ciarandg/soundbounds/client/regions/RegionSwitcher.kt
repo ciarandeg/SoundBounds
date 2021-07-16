@@ -66,15 +66,9 @@ object RegionSwitcher {
         private var pending: T? = null
 
         fun submit(submission: T?) {
-            if (current == null) assert(pending == null)
-            when (current) {
-                null -> {
-                    current = submission
-                    pending = submission
-                }
-                else -> pending = submission
-            }
+            pending = submission
             SoundBounds.LOGGER.warn("SWAPPER: submitted $submission")
+            if (current == null) push()
         }
 
         fun push() {
