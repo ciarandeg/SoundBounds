@@ -28,5 +28,6 @@ class SoundBounds {
         val items: DeferredRegister<Item> = DeferredRegister.create(MOD_ID, Registry.ITEM_KEY)
         val SYNC_METADATA_CHANNEL_C2S = Identifier(MOD_ID, "sync_metadata_c2s")
         val SYNC_METADATA_CHANNEL_S2C = Identifier(MOD_ID, "sync_metadata_s2c")
+        val UPDATE_REGIONS_CHANNEL_S2C = Identifier(MOD_ID, "update_regions")
     }
 }
