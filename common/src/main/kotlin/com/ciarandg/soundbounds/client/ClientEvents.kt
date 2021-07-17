@@ -1,7 +1,6 @@
 package com.ciarandg.soundbounds.client
 
 import com.ciarandg.soundbounds.SoundBounds
-import com.ciarandg.soundbounds.client.audio.ALInstance
 import com.ciarandg.soundbounds.client.audio.GameMusicVolume
 import com.ciarandg.soundbounds.client.metadata.ClientMeta
 import com.ciarandg.soundbounds.client.regions.RegionSwitcher
@@ -21,8 +20,6 @@ object ClientEvents {
     }
 
     private fun registerAudio() {
-        ClientPlayerEvent.CLIENT_PLAYER_JOIN.register { ALInstance.start() }
-        ClientPlayerEvent.CLIENT_PLAYER_QUIT.register { ALInstance.stop() }
         ClientPlayerEvent.CLIENT_PLAYER_JOIN.register { GameMusicVolume.update() }
     }
 

@@ -1,6 +1,7 @@
 package com.ciarandg.soundbounds
 
 import com.ciarandg.soundbounds.client.ClientEvents
+import com.ciarandg.soundbounds.client.regions.ClientRegion
 import com.ciarandg.soundbounds.common.CommonEvents
 import com.ciarandg.soundbounds.common.regions.Region
 import com.ciarandg.soundbounds.server.ServerEvents
@@ -35,3 +36,4 @@ class SoundBounds {
 }
 
 typealias RegionEntry = Pair<String, Region>
+typealias ClientRegionEntry = Pair<String, ClientRegion>
