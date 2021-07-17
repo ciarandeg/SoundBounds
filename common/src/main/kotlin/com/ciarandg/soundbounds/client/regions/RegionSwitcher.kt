@@ -85,7 +85,6 @@ object RegionSwitcher {
 
         fun submit(submission: T?) {
             pending = submission
-            SoundBounds.LOGGER.warn("SWAPPER: submitted $submission")
             if (current == null) push()
         }
 
@@ -93,7 +92,6 @@ object RegionSwitcher {
             val old = current
             current = pending
             postPush(old, current)
-            SoundBounds.LOGGER.warn("SWAPPER: pushed $current to current")
         }
     }
 
