@@ -4,7 +4,7 @@ import com.ciarandg.soundbounds.RegionEntry
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.regions.ClientRegion
 import com.ciarandg.soundbounds.client.regions.ClientWorldRegions
-import com.ciarandg.soundbounds.common.regions.Region
+import com.ciarandg.soundbounds.common.regions.RegionData
 import io.netty.buffer.Unpooled
 import me.shedaniel.architectury.networking.NetworkManager
 import me.shedaniel.architectury.platform.Platform
@@ -32,7 +32,7 @@ class RegionUpdateMessageS2C : NetworkManager.NetworkReceiver {
         if (size == 0) return
         regions.keys.forEach { regionName ->
             val region = regions.getCompound(regionName)
-            ClientWorldRegions[regionName] = ClientRegion(Region.fromTag(region))
+            ClientWorldRegions[regionName] = ClientRegion(RegionData.fromTag(region))
         }
         SoundBounds.LOGGER.info("Synced $size " + if (size == 1) "region" else "regions")
     }

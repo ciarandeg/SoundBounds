@@ -4,7 +4,7 @@ import com.ciarandg.soundbounds.RegionEntry
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.common.network.RegionDestroyMessageS2C
 import com.ciarandg.soundbounds.common.network.RegionUpdateMessageS2C
-import com.ciarandg.soundbounds.common.regions.Region
+import com.ciarandg.soundbounds.common.regions.RegionData
 import com.ciarandg.soundbounds.common.regions.WorldRegionState
 import com.ciarandg.soundbounds.common.util.PlaylistType
 import com.ciarandg.soundbounds.server.ui.PlayerModel
@@ -59,7 +59,7 @@ class PlayerController(
 
         if (state.regionExists(regionName)) view.notifyFailed(FailureReason.REGION_NAME_CONFLICT)
         else if (m1 != null && m2 != null) {
-            val region = RegionEntry(regionName, Region(priority, volumes = mutableListOf(Pair(m1, m2))))
+            val region = RegionEntry(regionName, RegionData(priority, volumes = mutableListOf(Pair(m1, m2))))
             state.putRegion(region.first, region.second)
             WorldRegionState.set(world, state)
             pushRegionToClients(world, region)

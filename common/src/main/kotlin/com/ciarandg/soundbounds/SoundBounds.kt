@@ -3,7 +3,7 @@ package com.ciarandg.soundbounds
 import com.ciarandg.soundbounds.client.ClientEvents
 import com.ciarandg.soundbounds.client.regions.ClientRegion
 import com.ciarandg.soundbounds.common.CommonEvents
-import com.ciarandg.soundbounds.common.regions.Region
+import com.ciarandg.soundbounds.common.regions.RegionData
 import com.ciarandg.soundbounds.server.ServerEvents
 import me.shedaniel.architectury.platform.Platform
 import me.shedaniel.architectury.registry.DeferredRegister
@@ -35,5 +35,5 @@ class SoundBounds {
     }
 }
 
-typealias RegionEntry = Pair<String, Region>
+typealias RegionEntry = Pair<String, RegionData>
 typealias ClientRegionEntry = Pair<String, ClientRegion>

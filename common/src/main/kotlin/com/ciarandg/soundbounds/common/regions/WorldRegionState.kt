@@ -5,10 +5,10 @@ import net.minecraft.server.world.ServerWorld
 import net.minecraft.world.PersistentState
 
 class WorldRegionState(key: String?) : PersistentState(key) {
-    private val regions: MutableMap<String, Region> = HashMap()
+    private val regions: MutableMap<String, RegionData> = HashMap()
 
     override fun fromTag(tag: CompoundTag) {
-        regions.putAll(tag.keys.associateWith { regionName -> Region.fromTag(tag.getCompound(regionName)) })
+        regions.putAll(tag.keys.associateWith { regionName -> RegionData.fromTag(tag.getCompound(regionName)) })
     }
 
     override fun toTag(tag: CompoundTag?): CompoundTag {
@@ -19,21 +19,21 @@ class WorldRegionState(key: String?) : PersistentState(key) {
     }
 
     fun regionExists(regionName: String) = regions.containsKey(regionName)
-    fun getRegion(regionName: String): Region? {
+    fun getRegion(regionName: String): RegionData? {
         this.markDirty()
         return regions[regionName]
     }
-    fun getAllRegions(): Set<Map.Entry<String, Region>> {
+    fun getAllRegions(): Set<Map.Entry<String, RegionData>> {
         this.markDirty()
         return regions.entries
     }
-    fun removeRegion(regionName: String): Region? {
+    fun removeRegion(regionName: String): RegionData? {
         val r = regions.remove(regionName)
         if (r != null) this.markDirty()
         return r
     }
-    fun putRegion(regionName: String, region: Region) {
-        regions[regionName] = region
+    fun putRegion(regionName: String, data: RegionData) {
+        regions[regionName] = data
         this.markDirty()
     }
 

@@ -2,7 +2,7 @@ package com.ciarandg.soundbounds.server.ui.controller
 
 import com.ciarandg.soundbounds.RegionEntry
 import com.ciarandg.soundbounds.common.metadata.JsonMeta
-import com.ciarandg.soundbounds.common.regions.Region
+import com.ciarandg.soundbounds.common.regions.RegionData
 import com.ciarandg.soundbounds.common.regions.WorldRegionState
 import com.ciarandg.soundbounds.server.metadata.ServerMetaState
 import com.ciarandg.soundbounds.server.ui.PlayerView
@@ -49,7 +49,7 @@ open class PlaylistManager internal constructor(private val view: PlayerView) {
             }
         }
 
-    private fun checkNulls(world: ServerWorld, regionName: String, work: (Region, JsonMeta) -> Unit) {
+    private fun checkNulls(world: ServerWorld, regionName: String, work: (RegionData, JsonMeta) -> Unit) {
         val region = WorldRegionState.get(world).getRegion(regionName)
         if (region == null) view.notifyFailed(PlayerView.FailureReason.NO_SUCH_REGION)
         else work(region, ServerMetaState.get().meta)
@@ -60,8 +60,8 @@ open class PlaylistManager internal constructor(private val view: PlayerView) {
             view.notifyFailed(PlayerView.FailureReason.NO_SUCH_SONG)
         else work()
 
-    private fun checkSongInBounds(region: Region, pos: Int, work: () -> Unit) =
-        if (pos > region.playlist.size || pos < 1)
+    private fun checkSongInBounds(data: RegionData, pos: Int, work: () -> Unit) =
+        if (pos > data.playlist.size || pos < 1)
             view.notifyFailed(PlayerView.FailureReason.SONG_POS_OOB)
         else work()
 }

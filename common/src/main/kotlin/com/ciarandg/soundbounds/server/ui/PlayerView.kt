@@ -1,6 +1,6 @@
 package com.ciarandg.soundbounds.server.ui
 
-import com.ciarandg.soundbounds.common.regions.Region
+import com.ciarandg.soundbounds.common.regions.RegionData
 import com.ciarandg.soundbounds.common.util.PlaylistType
 import com.ciarandg.soundbounds.server.ui.cli.PosMarker
 import net.minecraft.entity.player.PlayerEntity
@@ -10,14 +10,14 @@ interface PlayerView {
     val owner: PlayerEntity
     fun showNowPlaying()
     fun notifyPosMarkerSet(marker: PosMarker, pos: BlockPos)
-    fun showRegionList(regions: List<Map.Entry<String, Region>>)
+    fun showRegionList(regions: List<Map.Entry<String, RegionData>>)
     fun notifyMetadataSynced()
     fun notifyMetadataSyncFailed()
     fun notifyRegionCreated(name: String, priority: Int)
     fun notifyRegionDestroyed(name: String)
     fun notifyRegionRenamed(from: String, to: String)
     fun notifyRegionOverlaps(region1: String, region2: String, overlaps: Boolean) // TODO sub String for Region type
-    fun showRegionInfo(regionName: String, region: Region)
+    fun showRegionInfo(regionName: String, data: RegionData)
     fun notifyRegionPrioritySet(name: String, oldPriority: Int, newPriority: Int)
     fun notifyRegionPlaylistTypeSet(name: String, from: PlaylistType, to: PlaylistType)
     fun notifyRegionVolumeAdded(regionName: String, volume: Pair<BlockPos, BlockPos>)

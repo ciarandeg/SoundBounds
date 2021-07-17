@@ -1,6 +1,6 @@
 package com.ciarandg.soundbounds.server.ui.cli
 
-import com.ciarandg.soundbounds.common.regions.Region
+import com.ciarandg.soundbounds.common.regions.RegionData
 import com.ciarandg.soundbounds.common.ui.cli.CommandNode
 import com.ciarandg.soundbounds.common.ui.cli.nodes.RootNode
 import com.ciarandg.soundbounds.common.util.Paginator
@@ -48,7 +48,7 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
         LiteralText("Set marker $marker to $pos"), false
     )
 
-    override fun showRegionList(regions: List<Map.Entry<String, Region>>) = owner.sendMessage(
+    override fun showRegionList(regions: List<Map.Entry<String, RegionData>>) = owner.sendMessage(
         Paginator.paginate(
             "Region List",
             regions.mapIndexed { index, entry ->
@@ -97,12 +97,12 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
     }
 
     override fun notifyRegionOverlaps(region1: String, region2: String, overlaps: Boolean) {} // TODO
-    override fun showRegionInfo(regionName: String, region: Region) {
+    override fun showRegionInfo(regionName: String, data: RegionData) {
         owner.sendMessage(
             LiteralText(
-                "Region $regionName: type ${region.playlistType}, " +
-                    "song count ${region.playlist.size}, " +
-                    "bounds count ${region.volumes.size}"
+                "Region $regionName: type ${data.playlistType}, " +
+                    "song count ${data.playlist.size}, " +
+                    "bounds count ${data.volumes.size}"
             ),
             false
         )

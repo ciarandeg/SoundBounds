@@ -9,7 +9,7 @@ import net.minecraft.nbt.StringTag
 import net.minecraft.util.math.BlockPos
 import java.security.InvalidParameterException
 
-data class Region(
+data class RegionData(
     var priority: Int = 0,
     var playlistType: PlaylistType = SEQUENTIAL,
     val playlist: MutableList<String> = ArrayList(),
@@ -37,8 +37,8 @@ data class Region(
             CORNER_Z("z"),
         }
 
-        fun fromTag(tag: CompoundTag): Region {
-            return Region(
+        fun fromTag(tag: CompoundTag): RegionData {
+            return RegionData(
                 tag.getInt(Tag.PRIORITY.key),
                 PlaylistType.valueOf(tag.getString(Tag.PLAYLIST_TYPE.key)),
                 tagToPlaylist(tag.getList(Tag.PLAYLIST.key, 8)),
