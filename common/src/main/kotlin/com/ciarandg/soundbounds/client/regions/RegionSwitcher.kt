@@ -4,37 +4,43 @@ import com.ciarandg.soundbounds.ClientRegionEntry
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.Fader
 import com.ciarandg.soundbounds.client.exceptions.EmptyPlaylistException
+import com.ciarandg.soundbounds.client.exceptions.MissingAudioException
 import com.ciarandg.soundbounds.client.exceptions.NoMetadataException
 import me.shedaniel.architectury.utils.GameInstance
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
-import java.lang.Exception
-import java.lang.RuntimeException
 import kotlin.math.floor
 
 object RegionSwitcher {
-    private val playerData = PlayerData(null, null) // used to prevent unnecessary iteration
-    private val swapper = Swapper<ClientRegionEntry> { old, new -> // determines which region the player is hearing music from
-        if (old != new) {
-            old?.second?.player?.stop()
-            try { new?.second?.player?.start() } catch (e: Exception) {
-                SoundBounds.LOGGER.warn(
-                    when (e) {
-                        is EmptyPlaylistException -> "Attempted to play music in region ${new?.first}, but playlist is empty"
-                        is NoMetadataException -> "No SoundBounds metadata present"
-                        else -> throw e
-                    }
-                )
+    // used to prevent unnecessary iteration
+    private val playerData = PlayerData(null, null)
+
+    // determines which region the player is hearing music from
+    private val swapper = Swapper<ClientRegionEntry> { old, new ->
+        fun handleException(e: Exception) = SoundBounds.LOGGER.warn(
+            when (e) {
+                is EmptyPlaylistException -> "Attempted to play music in region ${new?.first}, but playlist is empty"
+                is MissingAudioException -> "Missing audio file: ${e.fileName}"
+                is NoMetadataException -> "No SoundBounds metadata present"
+                else -> throw e
             }
+        )
+        if (old != new) {
+            try { old?.second?.player?.stop() } catch (e: Exception) { handleException(e) }
+            try { new?.second?.player?.start() } catch (e: Exception) { handleException(e) }
         }
     }
-    private val fader = Fader({}, { swapper.push() })
+    val fader = Fader { swapper.push() }
 
     fun update() {
+        swapper.current?.second?.player?.tick()
+
         val oldPos = playerData.blockPos
-        try { playerData.updatePos() } catch (e: RuntimeException) {
+        try {
+            playerData.updatePos()
+        } catch (e: RuntimeException) {
             SoundBounds.LOGGER.error("Attempted to update player position for nonexistent player")
             return
         }

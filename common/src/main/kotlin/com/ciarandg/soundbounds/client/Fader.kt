@@ -1,15 +1,15 @@
 package com.ciarandg.soundbounds.client
 
 import com.ciarandg.soundbounds.SoundBounds
+import java.util.Observable
 import java.util.Timer
 import java.util.TimerTask
 import kotlin.math.abs
 import kotlin.math.max
 
 class Fader(
-    private val postIncrementCallback: (Float) -> Unit,
     private val postFadeCallback: () -> Unit
-) {
+) : Observable() {
     private val state = State(MAX_GAIN, false)
     private val timer = Timer()
     private var incrementFadeTask = IncrementFadeTask(this)
@@ -24,9 +24,11 @@ class Fader(
             incrementFadeTask = IncrementFadeTask(this)
             state.isFading = false
             state.gain = MAX_GAIN
-            postIncrementCallback(state.gain)
+            notifyGainChange()
         }
     }
+
+    fun getGain() = state.gain
 
     private fun startFade() {
         synchronized(state) {
@@ -39,13 +41,18 @@ class Fader(
     private fun incrementFade() {
         synchronized(state) {
             state.gain = max(MIN_GAIN, state.gain - gainPerTick)
-            postIncrementCallback(state.gain)
+            notifyGainChange()
             if (state.gain == MIN_GAIN) {
                 state.isFading = false
                 reset()
                 postFadeCallback()
             }
         }
+    }
+
+    private fun notifyGainChange() {
+        setChanged()
+        notifyObservers(state.gain)
     }
 
     companion object {
