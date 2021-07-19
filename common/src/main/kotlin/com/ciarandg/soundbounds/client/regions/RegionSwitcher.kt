@@ -48,6 +48,13 @@ object RegionSwitcher {
         updateRegion()
     }
 
+    fun purge() {
+        swapper.submit(null)
+        swapper.push()
+        playerData.blockPos = null
+        playerData.region = null
+    }
+
     fun currentSongID() = swapper.current?.second?.player?.currentSongID()
 
     private fun updateRegion() {

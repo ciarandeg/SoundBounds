@@ -23,6 +23,7 @@ object ClientEvents {
 
     private fun registerAudio() {
         ClientPlayerEvent.CLIENT_PLAYER_JOIN.register { GameMusicVolume.update() }
+        ClientPlayerEvent.CLIENT_PLAYER_QUIT.register { RegionSwitcher.purge() }
     }
 
     private fun registerNowPlaying() {
