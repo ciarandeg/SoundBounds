@@ -3,8 +3,8 @@ package com.ciarandg.soundbounds.common
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.common.network.MetadataSyncMessage
 import com.ciarandg.soundbounds.common.network.NowPlayingMessage
-import com.ciarandg.soundbounds.common.ui.cli.SoundBoundsCommand
 import com.ciarandg.soundbounds.common.ui.cli.argument.PTArgumentType
+import com.ciarandg.soundbounds.common.ui.cli.command.SoundBoundsCommand
 import me.shedaniel.architectury.event.events.CommandRegistrationEvent
 import me.shedaniel.architectury.networking.NetworkManager
 

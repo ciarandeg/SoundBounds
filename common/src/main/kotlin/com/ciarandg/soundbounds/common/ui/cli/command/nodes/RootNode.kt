@@ -1,4 +1,4 @@
-package com.ciarandg.soundbounds.common.ui.cli.nodes
+package com.ciarandg.soundbounds.common.ui.cli.command.nodes
 
 import com.ciarandg.soundbounds.common.ui.cli.Arguments
 import com.ciarandg.soundbounds.common.ui.cli.BlockPosArgNodeData
@@ -83,17 +83,7 @@ object RootNode : CommandNode(
                 )
             )
         ),
-        CommandNode(
-            LiteralNodeData("info", "display a region's properties", null),
-            listOf(
-                CommandNode(
-                    StringArgNodeData(Arguments.regionArgument) { ctx, ctrl ->
-                        ctrl.showRegionInfo(ctx.source.world, Arguments.regionArgument.retrieve(ctx))
-                    },
-                    listOf()
-                )
-            )
-        ),
+        InfoNode,
         CommandNode(
             LiteralNodeData(
                 "sync-meta",

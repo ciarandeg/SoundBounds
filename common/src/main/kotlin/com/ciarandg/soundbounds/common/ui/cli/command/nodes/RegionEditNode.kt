@@ -1,4 +1,4 @@
-package com.ciarandg.soundbounds.common.ui.cli.nodes
+package com.ciarandg.soundbounds.common.ui.cli.command.nodes
 
 import com.ciarandg.soundbounds.common.ui.cli.Arguments
 import com.ciarandg.soundbounds.common.ui.cli.CommandNode
@@ -62,18 +62,6 @@ object RegionEditNode : CommandNode(
                     )
                 ),
                 CommandNode(
-                    LiteralNodeData(
-                        "contiguous",
-                        "check if region's volumes are contiguous"
-                    ) { ctx, ctrl ->
-                        ctrl.checkRegionContiguous(
-                            ctx.source.world,
-                            Arguments.regionArgument.retrieve(ctx)
-                        )
-                    },
-                    listOf()
-                ),
-                CommandNode(
                     LiteralNodeData("volumes", null, null),
                     listOf(
                         CommandNode(
@@ -99,31 +87,6 @@ object RegionEditNode : CommandNode(
                                     listOf()
                                 )
                             )
-                        ),
-                        CommandNode(
-                            LiteralNodeData(
-                                "list",
-                                "list volumes in region"
-                            ) { ctx, ctrl ->
-                                val regionName = Arguments.regionArgument.retrieve(ctx)
-                                Paginator.state = PaginatorState(
-                                    "/sb r $regionName v list ${Paginator.PAGE_DELIM}", 1
-                                )
-                                ctrl.listRegionVolumes(ctx.source.world, regionName)
-                            },
-                            listOf(
-                                CommandNode(
-                                    IntArgNodeData(Arguments.pageNumArgument) { ctx, ctrl ->
-                                        val regionName = Arguments.regionArgument.retrieve(ctx)
-                                        Paginator.state = PaginatorState(
-                                            "/sb r $regionName v list ${Paginator.PAGE_DELIM}",
-                                            Arguments.pageNumArgument.retrieve(ctx)
-                                        )
-                                        ctrl.listRegionVolumes(ctx.source.world, regionName)
-                                    },
-                                    listOf()
-                                )
-                            )
                         )
                     )
                 ),
@@ -131,7 +94,7 @@ object RegionEditNode : CommandNode(
                     LiteralNodeData("playlist", null, null),
                     listOf(
                         CommandNode(
-                            LiteralNodeData("set-type", "set region's playlist type", null),
+                            LiteralNodeData("type", "set region's playlist type", null),
                             listOf(
                                 CommandNode(
                                     PlaylistTypeArgData(Arguments.playlistTypeArgument) { ctx, ctrl ->
