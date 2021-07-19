@@ -8,7 +8,8 @@ import net.minecraft.util.math.BlockPos
 
 interface PlayerView {
     val owner: PlayerEntity
-    fun showNowPlaying()
+    fun showNowPlaying(nowPlaying: String)
+    fun showNoSongPlaying()
     fun notifyPosMarkerSet(marker: PosMarker, pos: BlockPos)
     fun showRegionList(regions: List<Map.Entry<String, RegionData>>)
     fun notifyMetadataSynced()

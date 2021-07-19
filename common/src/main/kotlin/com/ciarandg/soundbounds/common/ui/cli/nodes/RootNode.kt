@@ -40,7 +40,7 @@ object RootNode : CommandNode(
             LiteralNodeData(
                 "now-playing",
                 "show currently playing song"
-            ) { _, ctrl -> ctrl.showNowPlaying() },
+            ) { ctx, ctrl -> ctrl.showNowPlaying(ctx.source.player) },
             listOf()
         ),
         CommandNode(

@@ -42,7 +42,20 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
         return null
     }
 
-    override fun showNowPlaying() {} // TODO
+    override fun showNowPlaying(nowPlaying: String) {
+        val meta = ServerMetaState.get().meta
+        val songMeta = meta.songs[nowPlaying]
+        owner.sendMessage(
+            LiteralText(
+                if (songMeta != null) "Now playing: ${songMeta.artist} - ${songMeta.title}"
+                else "Error: currently playing song does not have server-synced metadata"
+            ),
+            false
+        )
+    }
+
+    override fun showNoSongPlaying() =
+        owner.sendMessage(LiteralText("No song currently playing"), false)
 
     override fun notifyPosMarkerSet(marker: PosMarker, pos: BlockPos) = owner.sendMessage(
         LiteralText("Set marker $marker to $pos"), false

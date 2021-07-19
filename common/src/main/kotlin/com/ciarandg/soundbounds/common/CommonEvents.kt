@@ -2,6 +2,7 @@ package com.ciarandg.soundbounds.common
 
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.common.network.MetadataSyncMessage
+import com.ciarandg.soundbounds.common.network.NowPlayingMessage
 import com.ciarandg.soundbounds.common.ui.cli.SoundBoundsCommand
 import com.ciarandg.soundbounds.common.ui.cli.argument.PTArgumentType
 import me.shedaniel.architectury.event.events.CommandRegistrationEvent
@@ -15,6 +16,13 @@ object CommonEvents {
         // Command registration
         PTArgumentType.register()
         CommandRegistrationEvent.EVENT.register { dispatcher, _ -> SoundBoundsCommand.register(dispatcher) }
+
+        // Now-playing message registration
+        NetworkManager.registerReceiver(
+            NetworkManager.Side.C2S,
+            SoundBounds.NOW_PLAYING_CHANNEL_C2S,
+            NowPlayingMessage()
+        )
 
         // Metadata sync/update util registration
         NetworkManager.registerReceiver(

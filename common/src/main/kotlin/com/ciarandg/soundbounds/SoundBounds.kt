@@ -28,6 +28,8 @@ class SoundBounds {
         val LOGGER: Logger = LogManager.getLogger(MOD_ID)
 
         val items: DeferredRegister<Item> = DeferredRegister.create(MOD_ID, Registry.ITEM_KEY)
+        val NOW_PLAYING_CHANNEL_C2S = Identifier(MOD_ID, "now_playing_c2s")
+        val NOW_PLAYING_CHANNEL_S2C = Identifier(MOD_ID, "now_playing_s2c")
         val SYNC_METADATA_CHANNEL_C2S = Identifier(MOD_ID, "sync_metadata_c2s")
         val SYNC_METADATA_CHANNEL_S2C = Identifier(MOD_ID, "sync_metadata_s2c")
         val UPDATE_REGIONS_CHANNEL_S2C = Identifier(MOD_ID, "update_regions")

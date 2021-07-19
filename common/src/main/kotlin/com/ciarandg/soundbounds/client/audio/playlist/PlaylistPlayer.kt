@@ -37,6 +37,11 @@ class PlaylistPlayer(playlist: List<String>, type: PlaylistType) {
         state = PlaylistPlayerStoppedState(this)
     }
 
+    fun currentSongID() = when (val currentState = state) {
+        is PlaylistPlayerPlayingState -> currentState.currentSongID()
+        else -> null
+    }
+
     companion object {
         internal const val IDLE_DUR_MS: Long = 5000
     }

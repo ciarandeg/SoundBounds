@@ -26,7 +26,15 @@ class PlayerController(
     private val model: PlayerModel = PlayerModel()
 ) : PlaylistManager(view) {
 
-    fun showNowPlaying() = view.showNowPlaying()
+    fun showNowPlaying(player: ServerPlayerEntity) =
+        NetworkManager.sendToPlayer(
+            player,
+            SoundBounds.NOW_PLAYING_CHANNEL_S2C,
+            PacketByteBuf(Unpooled.buffer())
+        )
+    fun showNowPlaying(nowPlaying: String?) =
+        if (nowPlaying == null) view.showNoSongPlaying()
+        else view.showNowPlaying(nowPlaying)
     fun setPosMarker(marker: PosMarker, pos: BlockPos) {
         when (marker) {
             PosMarker.FIRST -> model.marker1 = pos

@@ -48,6 +48,8 @@ object RegionSwitcher {
         updateRegion()
     }
 
+    fun currentSongID() = swapper.current?.second?.player?.currentSongID()
+
     private fun updateRegion() {
         val newRegion = searchPlayerRegion()
         if (newRegion != playerData.region) {
