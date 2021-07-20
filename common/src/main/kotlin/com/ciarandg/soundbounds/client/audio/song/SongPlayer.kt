@@ -8,9 +8,9 @@ import java.lang.Long.max
 import java.util.Timer
 import java.util.TimerTask
 
-class SongPlayer(val songID: String, private val source: AudioSource, song: OggSong, oneShot: Boolean = true) {
+class SongPlayer(val songID: String, private val source: AudioSource, song: OggSong) {
     private val loadedSong = LoadedSong(song, BUFFER_DUR_MS)
-    private val stepper = SongStepper(loadedSong, !oneShot)
+    private val stepper = SongStepper(loadedSong, song.loop)
     private val timer = Timer()
     private var destroyed = false
 

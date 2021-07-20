@@ -11,6 +11,7 @@ import javax.sound.sampled.AudioFormat
 class LoadedSong(song: OggSong, private val bufferDur: Long) : Song<List<Int>> {
     override val head = song.head?.let { loadStream(it) }
     override val bodies = song.bodies.map { loadStream(it) }
+    override val loop = song.loop
 
     fun deallocate() {
         if (head != null) alDeleteBuffers(head.toIntArray())

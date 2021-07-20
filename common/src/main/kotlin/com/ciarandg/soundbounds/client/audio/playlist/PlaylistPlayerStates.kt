@@ -26,7 +26,7 @@ class PlaylistPlayerLoadingState(override val owner: PlaylistPlayer) : PlaylistP
         val songToLoad = owner.dispenser.dispense()
         val ogg = OggSong.fromID(songToLoad)
         loadingSong = ForkJoinPool.commonPool().submit<SongPlayer> {
-            SongPlayer(songToLoad, owner.source, ogg, false)
+            SongPlayer(songToLoad, owner.source, ogg)
         }
     }
 
