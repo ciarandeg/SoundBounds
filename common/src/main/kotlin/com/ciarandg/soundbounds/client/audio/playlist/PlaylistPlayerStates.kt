@@ -63,7 +63,7 @@ class PlaylistPlayerPlayingState(
     }
 
     override fun tick(): PlaylistPlayerState =
-        if (song.source.isStopped()) PlaylistPlayerIdlingState(owner)
+        if (song.hasFinished()) PlaylistPlayerIdlingState(owner)
         else this
 
     override fun cancel() = song.destroy()

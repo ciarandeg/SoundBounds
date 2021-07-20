@@ -9,7 +9,7 @@ import java.util.Timer
 import java.util.TimerTask
 
 class SongPlayer(val songID: String, song: OggSong) {
-    val source = AudioSource()
+    private val source = AudioSource()
     private val loadedSong = LoadedSong(song, BUFFER_DUR_MS)
     private val stepper = SongStepper(loadedSong, song.loop)
     private val timer = Timer()
@@ -29,6 +29,8 @@ class SongPlayer(val songID: String, song: OggSong) {
         loadedSong.deallocate()
         destroyed = true
     }
+
+    fun hasFinished() = source.isStopped()
 
     private fun queueStepWait(makeup: Long = 0): Unit = synchronized(this) {
         fun scheduleRecursion(delay: Long) = timer.schedule(
