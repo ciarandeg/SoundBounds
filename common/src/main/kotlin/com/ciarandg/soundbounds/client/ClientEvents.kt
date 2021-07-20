@@ -16,12 +16,15 @@ import me.shedaniel.architectury.networking.NetworkManager
 
 object ClientEvents {
     fun register() {
+        registerTicker()
         registerAudio()
         registerMetaHashCheck()
         registerNowPlaying()
         registerMetadata()
         registerRegionUpdate()
     }
+
+    private fun registerTicker() = TickEvent.PLAYER_POST.register { ClientTicker.tick() }
 
     private fun registerAudio() {
         ClientPlayerEvent.CLIENT_PLAYER_JOIN.register { GameMusicVolume.update() }

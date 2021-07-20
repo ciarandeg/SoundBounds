@@ -3,6 +3,7 @@ package com.ciarandg.soundbounds.client.audio
 import com.ciarandg.soundbounds.client.Fader
 import com.ciarandg.soundbounds.client.regions.RegionSwitcher
 import org.lwjgl.openal.AL10
+import org.lwjgl.openal.AL10.AL_BUFFERS_PROCESSED
 import org.lwjgl.openal.AL10.alDeleteSources
 import org.lwjgl.openal.AL10.alGenSources
 import org.lwjgl.openal.AL10.alGetSourcei
@@ -32,6 +33,8 @@ class AudioSource : Observer {
     fun play() = alSourcePlay(pointer)
 
     fun queueBuffers(buffers: List<Int>) = alSourceQueueBuffers(pointer, buffers.toIntArray())
+
+    fun buffersProcessed() = alGetSourcei(pointer, AL_BUFFERS_PROCESSED)
 
     fun isPlaying() = alGetSourcei(pointer, AL10.AL_SOURCE_STATE) == AL10.AL_PLAYING
     fun isStopped() = alGetSourcei(pointer, AL10.AL_SOURCE_STATE) == AL10.AL_STOPPED
