@@ -8,19 +8,24 @@ import java.lang.Long.max
 import java.util.Timer
 import java.util.TimerTask
 
-class SongPlayer(val songID: String, private val source: AudioSource, song: OggSong) {
+class SongPlayer(val songID: String, song: OggSong) {
+    val source = AudioSource()
     private val loadedSong = LoadedSong(song, BUFFER_DUR_MS)
     private val stepper = SongStepper(loadedSong, song.loop)
     private val timer = Timer()
     private var destroyed = false
 
     fun start() = synchronized(this) {
-        if (!destroyed) queueStepWait()
-        else throw IllegalStateException("Cannot start a destroyed SongPlayer")
+        when {
+            destroyed -> throw IllegalStateException("Cannot start a destroyed SongPlayer")
+            source.isPlaying() -> throw IllegalStateException("Playlist source shouldn't already be playing before starting")
+            else -> queueStepWait()
+        }
     }
 
     fun destroy() = synchronized(this) {
         timer.cancel()
+        source.delete() // Must delete source before deallocating song buffers
         loadedSong.deallocate()
         destroyed = true
     }

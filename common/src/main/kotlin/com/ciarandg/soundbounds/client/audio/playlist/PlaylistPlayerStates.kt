@@ -26,7 +26,7 @@ class PlaylistPlayerLoadingState(override val owner: PlaylistPlayer) : PlaylistP
         val songToLoad = owner.dispenser.dispense()
         val ogg = OggSong.fromID(songToLoad)
         loadingSong = ForkJoinPool.commonPool().submit<SongPlayer> {
-            SongPlayer(songToLoad, owner.source, ogg)
+            SongPlayer(songToLoad, ogg)
         }
     }
 
@@ -63,7 +63,7 @@ class PlaylistPlayerPlayingState(
     }
 
     override fun tick(): PlaylistPlayerState =
-        if (owner.source.isStopped()) PlaylistPlayerIdlingState(owner)
+        if (song.source.isStopped()) PlaylistPlayerIdlingState(owner)
         else this
 
     override fun cancel() = song.destroy()

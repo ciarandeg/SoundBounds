@@ -1,15 +1,12 @@
 package com.ciarandg.soundbounds.client.audio.playlist
 
 import com.ciarandg.soundbounds.SoundBounds
-import com.ciarandg.soundbounds.client.audio.AudioSource
 import com.ciarandg.soundbounds.client.exceptions.NoMetadataException
 import com.ciarandg.soundbounds.client.exceptions.SongMetaMismatchException
 import com.ciarandg.soundbounds.client.metadata.ClientMeta
 import com.ciarandg.soundbounds.common.util.PlaylistType
 
 class PlaylistPlayer(playlist: List<String>, type: PlaylistType) {
-    var source = AudioSource()
-        private set
     internal val dispenser = PlaylistSongDispenser(playlist, type)
     private var state: PlaylistPlayerState = PlaylistPlayerStoppedState(this)
 
@@ -31,9 +28,7 @@ class PlaylistPlayer(playlist: List<String>, type: PlaylistType) {
     }
 
     fun stop() {
-        source.delete()
         state.cancel()
-        source = AudioSource()
         state = PlaylistPlayerStoppedState(this)
     }
 
