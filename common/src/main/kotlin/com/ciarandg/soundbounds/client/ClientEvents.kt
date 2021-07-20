@@ -4,6 +4,7 @@ import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.audio.GameMusicVolume
 import com.ciarandg.soundbounds.client.metadata.ClientMeta
 import com.ciarandg.soundbounds.client.regions.RegionSwitcher
+import com.ciarandg.soundbounds.common.network.MetaHashCheckMessage
 import com.ciarandg.soundbounds.common.network.MetadataSyncMessage
 import com.ciarandg.soundbounds.common.network.NowPlayingMessage
 import com.ciarandg.soundbounds.common.network.RegionDestroyMessageS2C
@@ -16,6 +17,7 @@ import me.shedaniel.architectury.networking.NetworkManager
 object ClientEvents {
     fun register() {
         registerAudio()
+        registerMetaHashCheck()
         registerNowPlaying()
         registerMetadata()
         registerRegionUpdate()
@@ -24,6 +26,14 @@ object ClientEvents {
     private fun registerAudio() {
         ClientPlayerEvent.CLIENT_PLAYER_JOIN.register { GameMusicVolume.update() }
         ClientPlayerEvent.CLIENT_PLAYER_QUIT.register { RegionSwitcher.purge() }
+    }
+
+    private fun registerMetaHashCheck() {
+        NetworkManager.registerReceiver(
+            NetworkManager.Side.S2C,
+            SoundBounds.META_HASH_CHECK_S2C,
+            MetaHashCheckMessage()
+        )
     }
 
     private fun registerNowPlaying() {

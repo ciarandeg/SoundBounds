@@ -1,6 +1,7 @@
 package com.ciarandg.soundbounds.common
 
 import com.ciarandg.soundbounds.SoundBounds
+import com.ciarandg.soundbounds.common.network.MetaHashCheckMessage
 import com.ciarandg.soundbounds.common.network.MetadataSyncMessage
 import com.ciarandg.soundbounds.common.network.NowPlayingMessage
 import com.ciarandg.soundbounds.common.ui.cli.argument.PTArgumentType
@@ -16,6 +17,13 @@ object CommonEvents {
         // Command registration
         PTArgumentType.register()
         CommandRegistrationEvent.EVENT.register { dispatcher, _ -> SoundBoundsCommand.register(dispatcher) }
+
+        // Metadata hash check registration
+        NetworkManager.registerReceiver(
+            NetworkManager.Side.C2S,
+            SoundBounds.META_HASH_CHECK_C2S,
+            MetaHashCheckMessage()
+        )
 
         // Now-playing message registration
         NetworkManager.registerReceiver(

@@ -43,6 +43,8 @@ class PlayerController(
         view.notifyPosMarkerSet(marker, pos)
     }
 
+    fun notifyMetaMismatch() = view.notifyMetaMismatch()
+
     fun listRegions(world: ServerWorld, radius: Int = -1) =
         view.showRegionList(WorldRegionState.get(world).getAllRegions().sortedBy { it.key })
 
