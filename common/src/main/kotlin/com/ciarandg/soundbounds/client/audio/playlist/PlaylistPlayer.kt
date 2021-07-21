@@ -19,7 +19,11 @@ class PlaylistPlayer(playlist: List<String>, type: PlaylistType) {
     }
 
     fun start() = when (val currentState = state) {
-        is PlaylistPlayerStoppedState -> state = currentState.start()
+        is PlaylistPlayerStoppedState -> try {
+            state = currentState.start()
+        } catch (e: NoMetadataException) {
+            SoundBounds.LOGGER.warn("Attempted to start playlist, but there is no client-side metadata available")
+        }
         else -> SoundBounds.LOGGER.error("Attempted to start a playlist that already started")
     }
 

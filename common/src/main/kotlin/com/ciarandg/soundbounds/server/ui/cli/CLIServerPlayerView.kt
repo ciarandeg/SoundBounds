@@ -67,7 +67,9 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
     }
 
     override fun notifyMetaMismatch() = sendError(
-        "Your local resource pack doesn't match the official server metadata, expect the unexpected"
+        "Client metadata does not match server metadata. " +
+            "Update and enable your resource pack, " +
+            "or sync your client's metadata to the server."
     )
 
     override fun showNoSongPlaying() =

@@ -5,7 +5,6 @@ import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.Fader
 import com.ciarandg.soundbounds.client.exceptions.EmptyPlaylistException
 import com.ciarandg.soundbounds.client.exceptions.MissingAudioException
-import com.ciarandg.soundbounds.client.exceptions.NoMetadataException
 import me.shedaniel.architectury.utils.GameInstance
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.BlockPos
@@ -23,7 +22,6 @@ object RegionSwitcher {
             when (e) {
                 is EmptyPlaylistException -> "Attempted to play music in region ${new?.first}, but playlist is empty"
                 is MissingAudioException -> "Missing audio file: ${e.fileName}"
-                is NoMetadataException -> "No SoundBounds metadata present"
                 else -> throw e
             }
         )

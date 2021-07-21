@@ -2,6 +2,7 @@ package com.ciarandg.soundbounds.common.network
 
 import com.ciarandg.soundbounds.RegionEntry
 import com.ciarandg.soundbounds.SoundBounds
+import com.ciarandg.soundbounds.client.exceptions.NoMetadataException
 import com.ciarandg.soundbounds.client.regions.ClientRegion
 import com.ciarandg.soundbounds.client.regions.ClientWorldRegions
 import com.ciarandg.soundbounds.common.regions.RegionData
@@ -18,7 +19,14 @@ class RegionUpdateMessageS2C : NetworkManager.NetworkReceiver {
         val wipeExisting = buf.readBoolean()
         val regions = buf.readCompoundTag() ?: throw RuntimeException("There should be a compound tag here")
         if (wipeExisting) wipeRegions()
-        updateAll(regions)
+        try {
+            updateAll(regions)
+        } catch (e: NoMetadataException) {
+            SoundBounds.LOGGER.error(
+                "No SoundBounds metadata available on client, refusing to sync regions." +
+                "Reload your resource pack and rejoin the server to sync."
+            )
+        }
     }
 
     private fun wipeRegions() {
