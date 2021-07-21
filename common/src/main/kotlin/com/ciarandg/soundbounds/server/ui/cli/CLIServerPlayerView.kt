@@ -1,5 +1,6 @@
 package com.ciarandg.soundbounds.server.ui.cli
 
+import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.common.regions.RegionData
 import com.ciarandg.soundbounds.common.ui.cli.CommandNode
 import com.ciarandg.soundbounds.common.ui.cli.command.nodes.RootNode
@@ -62,7 +63,7 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
         val songMeta = meta.songs[nowPlaying]
         if (songMeta != null) sendWithBadge(
             bodyText("Now playing: ") +
-                artistText(songMeta.artist) + bodyText(" - ") + songTitleText(songMeta.title)
+                artistText(songMeta.artist, songMeta.featuring) + bodyText(" - ") + songTitleText(songMeta.title)
         ) else sendError("Currently playing song does not have server-synced metadata")
     }
 

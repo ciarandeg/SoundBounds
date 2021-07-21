@@ -12,6 +12,7 @@ data class JsonSongMeta(
     val title: String,
     val byGroup: Boolean,
     val artist: String,
+    val featuring: List<String>?,
     val loop: Boolean,
     val head: String?,
     val bodies: List<String>,
