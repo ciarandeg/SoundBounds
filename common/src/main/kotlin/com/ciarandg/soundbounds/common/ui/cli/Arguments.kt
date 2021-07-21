@@ -3,6 +3,7 @@ package com.ciarandg.soundbounds.common.ui.cli
 import com.ciarandg.soundbounds.common.ui.cli.argument.BlockPosArgumentContainer
 import com.ciarandg.soundbounds.common.ui.cli.argument.IntArgumentContainer
 import com.ciarandg.soundbounds.common.ui.cli.argument.PlaylistTypeArgumentContainer
+import com.ciarandg.soundbounds.common.ui.cli.argument.RegionArgumentContainer
 import com.ciarandg.soundbounds.common.ui.cli.argument.SongIDArgumentContainer
 import com.ciarandg.soundbounds.common.ui.cli.argument.WordArgumentContainer
 
@@ -12,11 +13,11 @@ object Arguments {
     val regionPriorityArgument = IntArgumentContainer("priority", 0)
     val songPositionArgument = IntArgumentContainer("song-position", 1)
     val positionArgument = BlockPosArgumentContainer("position")
-    val regionArgument = WordArgumentContainer("region")
     val nameArgument = WordArgumentContainer("name")
+    val regionNameExistingArgument = RegionArgumentContainer("region")
+    val regionNameExistingFirstArgument = RegionArgumentContainer("first")
+    val regionNameExistingSecondArgument = RegionArgumentContainer("second")
     val regionNameNewArgument = WordArgumentContainer("new-name")
-    val regionNameFirstArgument = WordArgumentContainer("first")
-    val regionNameSecondArgument = WordArgumentContainer("second")
     val regionVolumeIndexArgument = IntArgumentContainer("volume-index", 1)
     val songIDExistingArgument = SongIDArgumentContainer("song-id")
     val songIDNewArgument = WordArgumentContainer("new-song-id")

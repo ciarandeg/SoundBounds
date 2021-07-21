@@ -39,6 +39,13 @@ class BlockPosArgumentContainer(name: String) :
         BlockPosArgumentType::getBlockPos
     )
 
+class RegionArgumentContainer(name: String) :
+    ArgumentContainer<String, String>(
+        name,
+        RegionArgumentType::type,
+        StringArgumentType::getString
+    )
+
 class SongIDArgumentContainer(name: String) :
     ArgumentContainer<String, String>(
         name,

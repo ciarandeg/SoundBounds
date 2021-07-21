@@ -141,8 +141,8 @@ object RootNode : CommandNode(
             LiteralNodeData("destroy", "destroy a region", null),
             listOf(
                 CommandNode(
-                    StringArgNodeData(Arguments.regionArgument) { ctx, ctrl ->
-                        ctrl.destroyRegion(ctx.source.world, Arguments.regionArgument.retrieve(ctx))
+                    StringArgNodeData(Arguments.regionNameExistingArgument) { ctx, ctrl ->
+                        ctrl.destroyRegion(ctx.source.world, Arguments.regionNameExistingArgument.retrieve(ctx))
                     },
                     listOf()
                 )
@@ -152,13 +152,13 @@ object RootNode : CommandNode(
             LiteralNodeData("overlaps", "check if two regions overlap", null),
             listOf(
                 CommandNode(
-                    StringArgNodeData(Arguments.regionNameFirstArgument, null),
+                    StringArgNodeData(Arguments.regionNameExistingFirstArgument, null),
                     listOf(
                         CommandNode(
-                            StringArgNodeData(Arguments.regionNameSecondArgument) { ctx, ctrl ->
+                            StringArgNodeData(Arguments.regionNameExistingSecondArgument) { ctx, ctrl ->
                                 ctrl.showIfRegionsOverlap(
-                                    Arguments.regionNameFirstArgument.retrieve(ctx),
-                                    Arguments.regionNameSecondArgument.retrieve(ctx)
+                                    Arguments.regionNameExistingFirstArgument.retrieve(ctx),
+                                    Arguments.regionNameExistingSecondArgument.retrieve(ctx)
                                 )
                             },
                             listOf()

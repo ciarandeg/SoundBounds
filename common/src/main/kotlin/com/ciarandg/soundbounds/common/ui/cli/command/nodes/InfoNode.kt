@@ -17,8 +17,8 @@ private object RegionInfoNode : CommandNode(
     LiteralNodeData("region", "display region info", null),
     listOf(
         CommandNode(
-            StringArgNodeData(Arguments.regionArgument) { ctx, ctrl ->
-                ctrl.showRegionInfo(ctx.source.world, Arguments.regionArgument.retrieve(ctx))
+            StringArgNodeData(Arguments.regionNameExistingArgument) { ctx, ctrl ->
+                ctrl.showRegionInfo(ctx.source.world, Arguments.regionNameExistingArgument.retrieve(ctx))
             },
             listOf(
                 CommandNode(
@@ -30,7 +30,7 @@ private object RegionInfoNode : CommandNode(
                         "volumes",
                         "list volumes in region"
                     ) { ctx, ctrl ->
-                        val regionName = Arguments.regionArgument.retrieve(ctx)
+                        val regionName = Arguments.regionNameExistingArgument.retrieve(ctx)
                         Paginator.state = PaginatorState(
                             "/sb info region $regionName volumes ${Paginator.PAGE_DELIM}", 1
                         )
@@ -39,7 +39,7 @@ private object RegionInfoNode : CommandNode(
                     listOf(
                         CommandNode(
                             IntArgNodeData(Arguments.pageNumArgument) { ctx, ctrl ->
-                                val regionName = Arguments.regionArgument.retrieve(ctx)
+                                val regionName = Arguments.regionNameExistingArgument.retrieve(ctx)
                                 Paginator.state = PaginatorState(
                                     "/sb info region $regionName volumes ${Paginator.PAGE_DELIM}",
                                     Arguments.pageNumArgument.retrieve(ctx)
@@ -55,7 +55,7 @@ private object RegionInfoNode : CommandNode(
                         "contiguous",
                         "check if region's volumes are contiguous"
                     ) { ctx, ctrl ->
-                        ctrl.checkRegionContiguous(ctx.source.world, Arguments.regionArgument.retrieve(ctx))
+                        ctrl.checkRegionContiguous(ctx.source.world, Arguments.regionNameExistingArgument.retrieve(ctx))
                     },
                     listOf()
                 ),

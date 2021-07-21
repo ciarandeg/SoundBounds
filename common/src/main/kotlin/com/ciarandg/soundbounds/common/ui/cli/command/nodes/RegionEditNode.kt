@@ -25,7 +25,7 @@ object RegionEditNode : CommandNode(
             listOf()
         ),
         CommandNode(
-            StringArgNodeData(Arguments.regionArgument, null),
+            StringArgNodeData(Arguments.regionNameExistingArgument, null),
             listOf(
                 CommandNode(
                     LiteralNodeData("rename", "rename region", null),
@@ -34,7 +34,7 @@ object RegionEditNode : CommandNode(
                             StringArgNodeData(Arguments.regionNameNewArgument) { ctx, ctrl ->
                                 ctrl.renameRegion(
                                     ctx.source.world,
-                                    Arguments.regionArgument.retrieve(ctx),
+                                    Arguments.regionNameExistingArgument.retrieve(ctx),
                                     Arguments.regionNameNewArgument.retrieve(ctx)
                                 )
                             },
@@ -53,7 +53,7 @@ object RegionEditNode : CommandNode(
                             IntArgNodeData(Arguments.regionPriorityArgument) { ctx, ctrl ->
                                 ctrl.setRegionPriority(
                                     ctx.source.world,
-                                    Arguments.regionArgument.retrieve(ctx),
+                                    Arguments.regionNameExistingArgument.retrieve(ctx),
                                     Arguments.regionPriorityArgument.retrieve(ctx)
                                 )
                             },
@@ -69,7 +69,7 @@ object RegionEditNode : CommandNode(
                                 "add",
                                 "add selected volume to region"
                             ) { ctx, ctrl ->
-                                ctrl.addRegionVolume(ctx.source.world, Arguments.regionArgument.retrieve(ctx))
+                                ctrl.addRegionVolume(ctx.source.world, Arguments.regionNameExistingArgument.retrieve(ctx))
                             },
                             listOf()
                         ),
@@ -80,7 +80,7 @@ object RegionEditNode : CommandNode(
                                     IntArgNodeData(Arguments.regionVolumeIndexArgument) { ctx, ctrl ->
                                         ctrl.removeRegionVolume(
                                             ctx.source.world,
-                                            Arguments.regionArgument.retrieve(ctx),
+                                            Arguments.regionNameExistingArgument.retrieve(ctx),
                                             Arguments.regionVolumeIndexArgument.retrieve(ctx) - 1
                                         )
                                     },
@@ -100,7 +100,7 @@ object RegionEditNode : CommandNode(
                                     PlaylistTypeArgData(Arguments.playlistTypeArgument) { ctx, ctrl ->
                                         ctrl.setRegionPlaylistType(
                                             ctx.source.world,
-                                            Arguments.regionArgument.retrieve(ctx),
+                                            Arguments.regionNameExistingArgument.retrieve(ctx),
                                             Arguments.playlistTypeArgument.retrieve(ctx)
                                         )
                                     },
@@ -115,7 +115,7 @@ object RegionEditNode : CommandNode(
                                     StringArgNodeData(Arguments.songIDExistingArgument) { ctx, ctrl ->
                                         ctrl.appendRegionPlaylistSong(
                                             ctx.source.world,
-                                            Arguments.regionArgument.retrieve(ctx),
+                                            Arguments.regionNameExistingArgument.retrieve(ctx),
                                             Arguments.songIDExistingArgument.retrieve(ctx)
                                         )
                                     },
@@ -130,7 +130,7 @@ object RegionEditNode : CommandNode(
                                     IntArgNodeData(Arguments.songPositionArgument) { ctx, ctrl ->
                                         ctrl.removeRegionPlaylistSong(
                                             ctx.source.world,
-                                            Arguments.regionArgument.retrieve(ctx),
+                                            Arguments.regionNameExistingArgument.retrieve(ctx),
                                             Arguments.songPositionArgument.retrieve(ctx)
                                         )
                                     },
@@ -148,7 +148,7 @@ object RegionEditNode : CommandNode(
                                             IntArgNodeData(Arguments.songPositionArgument) { ctx, ctrl ->
                                                 ctrl.insertRegionPlaylistSong(
                                                     ctx.source.world,
-                                                    Arguments.regionArgument.retrieve(ctx),
+                                                    Arguments.regionNameExistingArgument.retrieve(ctx),
                                                     Arguments.songIDExistingArgument.retrieve(ctx),
                                                     Arguments.songPositionArgument.retrieve(ctx)
                                                 )
@@ -169,7 +169,7 @@ object RegionEditNode : CommandNode(
                                             StringArgNodeData(Arguments.songIDNewArgument) { ctx, ctrl ->
                                                 ctrl.replaceRegionPlaylistSong(
                                                     ctx.source.world,
-                                                    Arguments.regionArgument.retrieve(ctx),
+                                                    Arguments.regionNameExistingArgument.retrieve(ctx),
                                                     Arguments.songPositionArgument.retrieve(ctx),
                                                     Arguments.songIDNewArgument.retrieve(ctx)
                                                 )
