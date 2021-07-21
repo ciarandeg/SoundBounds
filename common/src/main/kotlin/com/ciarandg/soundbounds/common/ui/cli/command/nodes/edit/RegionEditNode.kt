@@ -1,4 +1,4 @@
-package com.ciarandg.soundbounds.common.ui.cli.command.nodes
+package com.ciarandg.soundbounds.common.ui.cli.command.nodes.edit
 
 import com.ciarandg.soundbounds.common.ui.cli.Arguments
 import com.ciarandg.soundbounds.common.ui.cli.CommandNode

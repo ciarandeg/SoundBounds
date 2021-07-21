@@ -6,6 +6,9 @@ import com.ciarandg.soundbounds.common.ui.cli.CommandNode
 import com.ciarandg.soundbounds.common.ui.cli.IntArgNodeData
 import com.ciarandg.soundbounds.common.ui.cli.LiteralNodeData
 import com.ciarandg.soundbounds.common.ui.cli.StringArgNodeData
+import com.ciarandg.soundbounds.common.ui.cli.command.nodes.edit.RegionEditNode
+import com.ciarandg.soundbounds.common.ui.cli.command.nodes.info.InfoNode
+import com.ciarandg.soundbounds.common.ui.cli.command.nodes.search.SearchNode
 import com.ciarandg.soundbounds.common.util.Paginator
 import com.ciarandg.soundbounds.common.util.PaginatorState
 import com.ciarandg.soundbounds.server.ui.cli.CLIServerPlayerView
@@ -60,27 +63,6 @@ object RootNode : CommandNode(
                     },
                     listOf()
                 ),
-            )
-        ),
-        CommandNode(
-            LiteralNodeData("nearby", "list all regions within radius", null),
-            listOf(
-                CommandNode(
-                    IntArgNodeData(Arguments.radiusArgument) { ctx, ctrl ->
-                        ctrl.listRegions(ctx.source.world, Arguments.radiusArgument.retrieve(ctx))
-                    },
-                    listOf(
-                        CommandNode(
-                            IntArgNodeData(Arguments.pageNumArgument) { ctx, ctrl ->
-                                ctrl.listRegions(
-                                    ctx.source.world,
-                                    Arguments.radiusArgument.retrieve(ctx),
-                                )
-                            },
-                            listOf()
-                        )
-                    )
-                )
             )
         ),
         InfoNode,
@@ -148,25 +130,8 @@ object RootNode : CommandNode(
                 )
             )
         ),
-        CommandNode(
-            LiteralNodeData("overlaps", "check if two regions overlap", null),
-            listOf(
-                CommandNode(
-                    StringArgNodeData(Arguments.regionNameExistingFirstArgument, null),
-                    listOf(
-                        CommandNode(
-                            StringArgNodeData(Arguments.regionNameExistingSecondArgument) { ctx, ctrl ->
-                                ctrl.showIfRegionsOverlap(
-                                    Arguments.regionNameExistingFirstArgument.retrieve(ctx),
-                                    Arguments.regionNameExistingSecondArgument.retrieve(ctx)
-                                )
-                            },
-                            listOf()
-                        )
-                    )
-                )
-            )
-        ),
-        RegionEditNode
+        RegionEditNode,
+        InfoNode,
+        SearchNode
     )
 )
