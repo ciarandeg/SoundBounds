@@ -9,6 +9,7 @@ import me.shedaniel.architectury.platform.Platform
 import me.shedaniel.architectury.registry.DeferredRegister
 import net.fabricmc.api.EnvType
 import net.minecraft.item.Item
+import net.minecraft.text.MutableText
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 import org.apache.logging.log4j.LogManager
@@ -41,3 +42,4 @@ class SoundBounds {
 
 typealias RegionEntry = Pair<String, RegionData>
 typealias ClientRegionEntry = Pair<String, ClientRegion>
+operator fun MutableText.plus(text: MutableText): MutableText = append(text)

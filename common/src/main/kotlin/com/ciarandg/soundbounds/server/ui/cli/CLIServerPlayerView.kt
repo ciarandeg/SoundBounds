@@ -5,13 +5,28 @@ import com.ciarandg.soundbounds.common.ui.cli.CommandNode
 import com.ciarandg.soundbounds.common.ui.cli.command.nodes.RootNode
 import com.ciarandg.soundbounds.common.util.Paginator
 import com.ciarandg.soundbounds.common.util.PlaylistType
+import com.ciarandg.soundbounds.plus
 import com.ciarandg.soundbounds.server.metadata.ServerMetaState
 import com.ciarandg.soundbounds.server.ui.PlayerView
+import com.ciarandg.soundbounds.server.ui.cli.Colors.ModBadge.formatModBadge
+import com.ciarandg.soundbounds.server.ui.cli.Colors.artistText
+import com.ciarandg.soundbounds.server.ui.cli.Colors.blockPosText
+import com.ciarandg.soundbounds.server.ui.cli.Colors.bodyText
+import com.ciarandg.soundbounds.server.ui.cli.Colors.listPosText
+import com.ciarandg.soundbounds.server.ui.cli.Colors.playlistTypeText
+import com.ciarandg.soundbounds.server.ui.cli.Colors.posMarkerText
+import com.ciarandg.soundbounds.server.ui.cli.Colors.priorityText
+import com.ciarandg.soundbounds.server.ui.cli.Colors.quantityText
+import com.ciarandg.soundbounds.server.ui.cli.Colors.regionNameText
+import com.ciarandg.soundbounds.server.ui.cli.Colors.songTitleText
+import com.ciarandg.soundbounds.server.ui.cli.Colors.volumeText
 import com.ciarandg.soundbounds.server.ui.cli.help.HelpGenerator
 import com.ciarandg.soundbounds.server.ui.cli.help.HelpTreeNode
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.text.LiteralText
+import net.minecraft.text.MutableText
+import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
 
 class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
@@ -24,12 +39,12 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
     companion object {
         private val entityViews: HashMap<Entity, CLIServerPlayerView> = HashMap()
         fun getEntityView(e: Entity) = entityViews[e]
+        private val modBadge: Text = formatModBadge("SoundBounds")
     }
 
     fun showHelp(root: CommandNode = RootNode) {
-        owner.sendMessage(
+        send(
             Paginator.paginate("SoundBounds Help", HelpGenerator.readOut(findHelpNode(root) ?: helpTree)),
-            false
         )
     }
 
@@ -45,164 +60,147 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
     override fun showNowPlaying(nowPlaying: String) {
         val meta = ServerMetaState.get().meta
         val songMeta = meta.songs[nowPlaying]
-        owner.sendMessage(
-            LiteralText(
-                if (songMeta != null) "Now playing: ${songMeta.artist} - ${songMeta.title}"
-                else "Error: currently playing song does not have server-synced metadata"
-            ),
-            false
-        )
+        if (songMeta != null) sendWithBadge(
+            bodyText("Now playing: ") +
+                artistText(songMeta.artist) + bodyText(" - ") + songTitleText(songMeta.title)
+        ) else sendError("Currently playing song does not have server-synced metadata")
     }
 
-    override fun notifyMetaMismatch() = owner.sendMessage(
-        LiteralText(
-            "Your local resource pack doesn't conform to the official server metadata, expect the unexpected"
-        ),
-        false
+    override fun notifyMetaMismatch() = sendError(
+        "Your local resource pack doesn't match the official server metadata, expect the unexpected"
     )
 
     override fun showNoSongPlaying() =
-        owner.sendMessage(LiteralText("No song currently playing"), false)
+        sendWithBadge(bodyText("No song currently playing"))
 
-    override fun notifyPosMarkerSet(marker: PosMarker, pos: BlockPos) = owner.sendMessage(
-        LiteralText("Set marker $marker to $pos"), false
+    override fun notifyPosMarkerSet(marker: PosMarker, pos: BlockPos) = sendWithBadge(
+        bodyText("Set marker ") + posMarkerText(marker) + bodyText(" to ") + blockPosText(pos)
     )
 
-    override fun showRegionList(regions: List<Map.Entry<String, RegionData>>) = owner.sendMessage(
+    override fun showRegionList(regions: List<Map.Entry<String, RegionData>>) = send(
         Paginator.paginate(
             "Region List",
             regions.mapIndexed { index, entry ->
                 val n = index + 1
                 val name = entry.key
-                val playlistType = entry.value.playlistType.toString().toLowerCase()
+                val playlistType = entry.value.playlistType
                 val priority = entry.value.priority
-                LiteralText("$n. $name - $playlistType, priority $priority")
+                listPosText(n) + bodyText(". ") + regionNameText(name) + bodyText(" - ") +
+                    playlistTypeText(playlistType) + bodyText(", priority ") + priorityText(priority)
             }
         ),
-        false
     )
 
     override fun notifyMetadataSynced() {
         val meta = ServerMetaState.get().meta
-        owner.sendMessage(
-            LiteralText(
-                "Successfully synced metadata: " +
-                    "${meta.composers.size} composers, " +
-                    "${meta.groups.size} groups, " +
-                    "${meta.songs.size} songs"
-            ),
-            false
+        sendWithBadge(
+            bodyText("Successfully synced metadata: ") +
+                quantityText(meta.composers.size) + bodyText(" composers, ") +
+                quantityText(meta.groups.size) + bodyText(" groups, ") +
+                quantityText(meta.songs.size) + bodyText(" songs")
         )
     }
 
     override fun notifyMetadataSyncFailed() {
-        owner.sendMessage(
-            LiteralText("Failed to sync metadata"),
-            false
-        )
+        sendError("Failed to sync metadata")
     }
 
     override fun notifyRegionCreated(name: String, priority: Int) {
-        owner.sendMessage(
-            LiteralText("Created region $name, priority $priority"),
-            false
+        sendWithBadge(
+            bodyText("Created region ") + regionNameText(name) +
+                bodyText(", priority ") + priorityText(priority)
         )
     }
-    override fun notifyRegionDestroyed(name: String) = owner.sendMessage(
-        LiteralText("Region $name destroyed"), false
+    override fun notifyRegionDestroyed(name: String) = sendWithBadge(
+        bodyText("Region ") + regionNameText(name) + bodyText(" destroyed")
     )
 
-    override fun notifyRegionRenamed(from: String, to: String) {
-        owner.sendMessage(LiteralText("Region $from renamed to $to"), false)
-    }
+    override fun notifyRegionRenamed(from: String, to: String) = sendWithBadge(
+        bodyText("Region ") + regionNameText(from) + bodyText(" renamed to ") + regionNameText(to)
+    )
 
     override fun notifyRegionOverlaps(region1: String, region2: String, overlaps: Boolean) {} // TODO
     override fun showRegionInfo(regionName: String, data: RegionData) {
-        owner.sendMessage(
-            LiteralText(
-                "Region $regionName: type ${data.playlistType}, " +
-                    "song count ${data.playlist.size}, " +
-                    "bounds count ${data.volumes.size}"
-            ),
-            false
+        sendWithBadge(
+            bodyText("Region ") + regionNameText(regionName) +
+                bodyText(": type ") + playlistTypeText(data.playlistType) +
+                bodyText(", song count ") + quantityText(data.playlist.size) +
+                bodyText(", bounds count ") + quantityText(data.volumes.size)
         )
     }
-    override fun notifyRegionPrioritySet(name: String, oldPriority: Int, newPriority: Int) {
-        owner.sendMessage(
-            LiteralText(
-                "Region $name priority changed from $oldPriority to $newPriority"
-            ),
-            false
-        )
-    }
+    override fun notifyRegionPrioritySet(name: String, oldPriority: Int, newPriority: Int) = sendWithBadge(
+        bodyText("Region ") + regionNameText(name) + bodyText(" priority changed from ") +
+            priorityText(oldPriority) + bodyText(" to ") + priorityText(newPriority)
+    )
 
-    override fun notifyRegionPlaylistTypeSet(name: String, from: PlaylistType, to: PlaylistType) {
-        owner.sendMessage(
-            LiteralText(
-                if (from == to) "Region $name is already of type $to!"
-                else "Region $name changed from type $from to type $to"
-            ),
-            false
-        )
-    }
+    override fun notifyRegionPlaylistTypeSet(name: String, from: PlaylistType, to: PlaylistType) = sendWithBadge(
+        if (from == to) bodyText("Region ") + regionNameText(name) +
+            bodyText(" is already of type ") + playlistTypeText(to) + bodyText("!")
+        else bodyText("Region ") + regionNameText(name) + bodyText(" changed from type ") +
+            playlistTypeText(from) + bodyText(" to type ") + playlistTypeText(to)
+    )
 
-    override fun notifyRegionVolumeAdded(regionName: String, volume: Pair<BlockPos, BlockPos>) =
-        owner.sendMessage(LiteralText("Added new volume to $regionName: $volume"), false)
+    override fun notifyRegionVolumeAdded(regionName: String, volume: Pair<BlockPos, BlockPos>) = sendWithBadge(
+        bodyText("Added new volume to ") + regionNameText(regionName) + bodyText(": ") + volumeText(volume)
+    )
 
     override fun notifyRegionVolumeRemoved(regionName: String, position: Int, volume: Pair<BlockPos, BlockPos>) =
-        owner.sendMessage(
-            LiteralText("Removed volume from $regionName at position $position: $volume"),
-            false
+        sendWithBadge(
+            bodyText("Removed volume from ") + regionNameText(regionName) + bodyText(" at position ") +
+                listPosText(position) + bodyText(": ") + volumeText(volume)
         )
 
     override fun showRegionVolumeList(regionName: String, volumes: List<Pair<BlockPos, BlockPos>>) =
-        owner.sendMessage(
+        send(
             Paginator.paginate(
                 "Volumes in $regionName",
                 volumes.mapIndexed { i, vol ->
                     val pos = i + 1
-                    LiteralText(
-                        "$pos.\nCORNER 1: ${vol.first}\nCORNER 2: ${vol.second}" +
-                            if (pos < volumes.size) "\n" else ""
-                    )
+                    listPosText(pos) + bodyText(". \nCORNER 1: ") + blockPosText(vol.first) +
+                        bodyText("\nCORNER 2: ") + blockPosText(vol.second) +
+                        bodyText(if (pos < volumes.size) "\n" else "")
                 }
             ),
-            false
         )
 
     override fun notifyRegionPlaylistSongAdded(regionName: String, song: String, pos: Int) =
-        owner.sendMessage(
-            LiteralText("Added song $song to $regionName at position $pos"),
-            false
+        sendWithBadge(
+            bodyText("Added song ") + songTitleText(song) + bodyText(" to ") +
+                regionNameText(regionName) + bodyText(" at position ") + listPosText(pos)
         )
 
     override fun notifyRegionPlaylistSongRemoved(regionName: String, song: String, pos: Int) =
-        owner.sendMessage(
-            LiteralText("Removed song $song from $regionName at position $pos"),
-            false
+        sendWithBadge(
+            bodyText("Removed song ") + songTitleText(song) + bodyText(" from ") +
+                regionNameText(regionName) + bodyText(" at position ") + listPosText(pos)
         )
 
     override fun notifyRegionPlaylistSongReplaced(regionName: String, oldSong: String, newSong: String, pos: Int) =
-        owner.sendMessage(
-            LiteralText("Replaced song $oldSong with $newSong in region $regionName at position $pos"),
-            false
+        sendWithBadge(
+            bodyText("Replaced song ") + songTitleText(oldSong) + bodyText(" with ") +
+                songTitleText(newSong) + bodyText(" in region ") + regionNameText(regionName) +
+                bodyText(" at position ") + listPosText(pos)
         )
 
     override fun showRegionContiguous(regionName: String) {} // TODO
 
-    override fun notifyFailed(reason: PlayerView.FailureReason) = owner.sendMessage(
-        LiteralText(
-            when (reason) {
-                PlayerView.FailureReason.POS_MARKERS_MISSING -> "position markers not set"
-                PlayerView.FailureReason.NO_SUCH_REGION -> "requested region does not exist"
-                PlayerView.FailureReason.REGION_NAME_CONFLICT -> "requested region name is taken"
-                PlayerView.FailureReason.VOLUME_INDEX_OOB -> "requested volume index is out of bounds"
-                PlayerView.FailureReason.REGION_MUST_HAVE_VOLUME -> "requested region only has one volume"
-                PlayerView.FailureReason.NO_METADATA_PRESENT -> "no metadata has been provided to server (try /sb sync-meta)"
-                PlayerView.FailureReason.NO_SUCH_SONG -> "requested song ID does not exist"
-                PlayerView.FailureReason.SONG_POS_OOB -> "requested song position is out of bounds"
-            }
-        ),
-        false
+    override fun notifyFailed(reason: PlayerView.FailureReason) = sendError(
+        when (reason) {
+            PlayerView.FailureReason.POS_MARKERS_MISSING -> "Position markers not set"
+            PlayerView.FailureReason.NO_SUCH_REGION -> "Requested region does not exist"
+            PlayerView.FailureReason.REGION_NAME_CONFLICT -> "Requested region name is taken"
+            PlayerView.FailureReason.VOLUME_INDEX_OOB -> "Requested volume index is out of bounds"
+            PlayerView.FailureReason.REGION_MUST_HAVE_VOLUME -> "Requested region only has one volume"
+            PlayerView.FailureReason.NO_METADATA_PRESENT -> "No metadata has been provided to server (try /sb sync-meta)"
+            PlayerView.FailureReason.NO_SUCH_SONG -> "Requested song ID does not exist"
+            PlayerView.FailureReason.SONG_POS_OOB -> "Requested song position is out of bounds"
+        }
     )
+
+    private fun sendWithBadge(msg: MutableText) =
+        send(modBadge.shallowCopy() + LiteralText(" ") + msg)
+    private fun sendError(msg: String) = sendError(LiteralText(msg))
+    private fun sendError(msg: MutableText) =
+        send(modBadge.shallowCopy() + LiteralText(" ") + msg.formatted(Colors.ERROR))
+    private fun send(msg: Text) = owner.sendMessage(msg, false)
 }
