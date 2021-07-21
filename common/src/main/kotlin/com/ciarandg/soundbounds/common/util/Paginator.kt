@@ -11,9 +11,7 @@ import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
 import kotlin.math.ceil
 
-object Paginator {
-    const val PAGE_DELIM: String = "%PAGE"
-
+class Paginator {
     var state = PaginatorState()
     var style = PaginatorStyle()
 
@@ -69,6 +67,10 @@ object Paginator {
             .append(LiteralText(" [$page/$pages] ").formatted(style.pagerColor))
             .append(nextPageButton)
             .append(" ")
+    }
+
+    companion object {
+        const val PAGE_DELIM: String = "%PAGE"
     }
 }
 

@@ -1,6 +1,5 @@
 package com.ciarandg.soundbounds.server.ui.cli
 
-import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.common.regions.RegionData
 import com.ciarandg.soundbounds.common.ui.cli.CommandNode
 import com.ciarandg.soundbounds.common.ui.cli.command.nodes.RootNode
@@ -43,9 +42,9 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
         private val modBadge: Text = formatModBadge("SoundBounds")
     }
 
-    fun showHelp(root: CommandNode = RootNode) {
+    fun showHelp(paginator: Paginator, root: CommandNode = RootNode) {
         send(
-            Paginator.paginate("SoundBounds Help", HelpGenerator.readOut(findHelpNode(root) ?: helpTree)),
+            paginator.paginate("SoundBounds Help", HelpGenerator.readOut(findHelpNode(root) ?: helpTree)),
         )
     }
 
@@ -80,8 +79,8 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
         bodyText("Set marker ") + posMarkerText(marker) + bodyText(" to ") + blockPosText(pos)
     )
 
-    override fun showRegionList(regions: List<Map.Entry<String, RegionData>>) = send(
-        Paginator.paginate(
+    override fun showRegionList(regions: List<Map.Entry<String, RegionData>>, paginator: Paginator) = send(
+        paginator.paginate(
             "Region List",
             regions.mapIndexed { index, entry ->
                 val n = index + 1
@@ -153,9 +152,9 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
                 listPosText(position) + bodyText(": ") + volumeText(volume)
         )
 
-    override fun showRegionVolumeList(regionName: String, volumes: List<Pair<BlockPos, BlockPos>>) =
+    override fun showRegionVolumeList(regionName: String, volumes: List<Pair<BlockPos, BlockPos>>, paginator: Paginator) =
         send(
-            Paginator.paginate(
+            paginator.paginate(
                 "Volumes in $regionName",
                 volumes.mapIndexed { i, vol ->
                     val pos = i + 1

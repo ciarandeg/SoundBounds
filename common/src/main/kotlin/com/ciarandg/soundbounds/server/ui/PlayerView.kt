@@ -1,6 +1,7 @@
 package com.ciarandg.soundbounds.server.ui
 
 import com.ciarandg.soundbounds.common.regions.RegionData
+import com.ciarandg.soundbounds.common.util.Paginator
 import com.ciarandg.soundbounds.common.util.PlaylistType
 import com.ciarandg.soundbounds.server.ui.cli.PosMarker
 import net.minecraft.entity.player.PlayerEntity
@@ -12,7 +13,7 @@ interface PlayerView {
     fun notifyMetaMismatch()
     fun showNoSongPlaying()
     fun notifyPosMarkerSet(marker: PosMarker, pos: BlockPos)
-    fun showRegionList(regions: List<Map.Entry<String, RegionData>>)
+    fun showRegionList(regions: List<Map.Entry<String, RegionData>>, paginator: Paginator)
     fun notifyMetadataSynced()
     fun notifyMetadataSyncFailed()
     fun notifyRegionCreated(name: String, priority: Int)
@@ -24,7 +25,7 @@ interface PlayerView {
     fun notifyRegionPlaylistTypeSet(name: String, from: PlaylistType, to: PlaylistType)
     fun notifyRegionVolumeAdded(regionName: String, volume: Pair<BlockPos, BlockPos>)
     fun notifyRegionVolumeRemoved(regionName: String, position: Int, volume: Pair<BlockPos, BlockPos>)
-    fun showRegionVolumeList(regionName: String, volumes: List<Pair<BlockPos, BlockPos>>)
+    fun showRegionVolumeList(regionName: String, volumes: List<Pair<BlockPos, BlockPos>>, paginator: Paginator)
     fun notifyRegionPlaylistSongAdded(regionName: String, song: String, pos: Int)
     fun notifyRegionPlaylistSongRemoved(regionName: String, song: String, pos: Int)
     fun notifyRegionPlaylistSongReplaced(regionName: String, oldSong: String, newSong: String, pos: Int)

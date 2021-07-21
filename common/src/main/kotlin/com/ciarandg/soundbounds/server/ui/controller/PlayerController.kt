@@ -6,6 +6,7 @@ import com.ciarandg.soundbounds.common.network.RegionDestroyMessageS2C
 import com.ciarandg.soundbounds.common.network.RegionUpdateMessageS2C
 import com.ciarandg.soundbounds.common.regions.RegionData
 import com.ciarandg.soundbounds.common.regions.WorldRegionState
+import com.ciarandg.soundbounds.common.util.Paginator
 import com.ciarandg.soundbounds.common.util.PlaylistType
 import com.ciarandg.soundbounds.server.ui.PlayerModel
 import com.ciarandg.soundbounds.server.ui.PlayerView
@@ -25,6 +26,7 @@ class PlayerController(
     private val view: PlayerView = CLIServerPlayerView(owner),
     private val model: PlayerModel = PlayerModel()
 ) : PlaylistManager(view) {
+    val paginator = Paginator()
 
     fun showNowPlaying(player: ServerPlayerEntity) =
         NetworkManager.sendToPlayer(
@@ -46,7 +48,7 @@ class PlayerController(
     fun notifyMetaMismatch() = view.notifyMetaMismatch()
 
     fun listRegions(world: ServerWorld, radius: Int = -1) =
-        view.showRegionList(WorldRegionState.get(world).getAllRegions().sortedBy { it.key })
+        view.showRegionList(WorldRegionState.get(world).getAllRegions().sortedBy { it.key }, paginator)
 
     fun syncMetadata(player: ServerPlayerEntity) {
         NetworkManager.sendToPlayer(
@@ -175,7 +177,7 @@ class PlayerController(
     fun listRegionVolumes(world: ServerWorld, regionName: String) {
         val region = WorldRegionState.get(world).getRegion(regionName)
         if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
-        else view.showRegionVolumeList(regionName, region.volumes)
+        else view.showRegionVolumeList(regionName, region.volumes, paginator)
     }
 
     fun checkRegionContiguous(world: ServerWorld, regionName: String) {

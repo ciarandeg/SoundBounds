@@ -31,7 +31,7 @@ private object RegionInfoNode : CommandNode(
                         "list volumes in region"
                     ) { ctx, ctrl ->
                         val regionName = Arguments.regionNameExistingArgument.retrieve(ctx)
-                        Paginator.state = PaginatorState(
+                        ctrl.paginator.state = PaginatorState(
                             "/sb info region $regionName volumes ${Paginator.PAGE_DELIM}", 1
                         )
                         ctrl.listRegionVolumes(ctx.source.world, regionName)
@@ -40,7 +40,7 @@ private object RegionInfoNode : CommandNode(
                         CommandNode(
                             IntArgNodeData(Arguments.pageNumArgument) { ctx, ctrl ->
                                 val regionName = Arguments.regionNameExistingArgument.retrieve(ctx)
-                                Paginator.state = PaginatorState(
+                                ctrl.paginator.state = PaginatorState(
                                     "/sb info region $regionName volumes ${Paginator.PAGE_DELIM}",
                                     Arguments.pageNumArgument.retrieve(ctx)
                                 )

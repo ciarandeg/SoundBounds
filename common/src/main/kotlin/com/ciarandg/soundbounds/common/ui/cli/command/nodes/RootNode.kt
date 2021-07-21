@@ -16,21 +16,21 @@ object RootNode : CommandNode(
     LiteralNodeData(
         "sb", null
     ) { _, ctrl ->
-        Paginator.state = PaginatorState("/sb help ${Paginator.PAGE_DELIM}", 1)
-        CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp()
+        ctrl.paginator.state = PaginatorState("/sb help ${Paginator.PAGE_DELIM}", 1)
+        CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp(ctrl.paginator)
     },
     listOf(
         CommandNode(
             LiteralNodeData("help", "display command info") { _, ctrl ->
-                Paginator.state = PaginatorState("/sb help ${Paginator.PAGE_DELIM}", 1)
-                CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp()
+                ctrl.paginator.state = PaginatorState("/sb help ${Paginator.PAGE_DELIM}", 1)
+                CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp(ctrl.paginator)
             },
             listOf(
                 CommandNode(
                     IntArgNodeData(Arguments.pageNumArgument) { ctx, ctrl ->
-                        Paginator.state =
+                        ctrl.paginator.state =
                             PaginatorState("/sb help ${Paginator.PAGE_DELIM}", Arguments.pageNumArgument.retrieve(ctx))
-                        CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp()
+                        CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp(ctrl.paginator)
                     },
                     listOf()
                 )
@@ -48,13 +48,13 @@ object RootNode : CommandNode(
                 "list",
                 "list all regions in current world"
             ) { ctx, ctrl ->
-                Paginator.state = PaginatorState("/sb list ${Paginator.PAGE_DELIM}", 1)
+                ctrl.paginator.state = PaginatorState("/sb list ${Paginator.PAGE_DELIM}", 1)
                 ctrl.listRegions(ctx.source.world)
             },
             listOf(
                 CommandNode(
                     IntArgNodeData(Arguments.pageNumArgument) { ctx, ctrl ->
-                        Paginator.state =
+                        ctrl.paginator.state =
                             PaginatorState("/sb list ${Paginator.PAGE_DELIM}", Arguments.pageNumArgument.retrieve(ctx))
                         ctrl.listRegions(ctx.source.world)
                     },
