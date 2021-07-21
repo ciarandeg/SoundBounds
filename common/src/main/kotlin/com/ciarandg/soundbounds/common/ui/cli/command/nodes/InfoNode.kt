@@ -66,7 +66,7 @@ private object RegionInfoNode : CommandNode(
 
 private object SongInfoNode : CommandNode(
     LiteralNodeData("song", "display information about a song") { ctx, ctrl ->
-        CommandNode(StringArgNodeData(Arguments.songIDArgument) { ctx, ctrl -> }, listOf())
+        CommandNode(StringArgNodeData(Arguments.songIDExistingArgument) { ctx, ctrl -> }, listOf())
     },
     listOf()
 )

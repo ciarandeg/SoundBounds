@@ -24,7 +24,7 @@ class RegionUpdateMessageS2C : NetworkManager.NetworkReceiver {
         } catch (e: NoMetadataException) {
             SoundBounds.LOGGER.error(
                 "No SoundBounds metadata available on client, refusing to sync regions." +
-                "Reload your resource pack and rejoin the server to sync."
+                    "Reload your resource pack and rejoin the server to sync."
             )
         }
     }

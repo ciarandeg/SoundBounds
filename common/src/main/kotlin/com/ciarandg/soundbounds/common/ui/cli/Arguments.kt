@@ -3,6 +3,7 @@ package com.ciarandg.soundbounds.common.ui.cli
 import com.ciarandg.soundbounds.common.ui.cli.argument.BlockPosArgumentContainer
 import com.ciarandg.soundbounds.common.ui.cli.argument.IntArgumentContainer
 import com.ciarandg.soundbounds.common.ui.cli.argument.PlaylistTypeArgumentContainer
+import com.ciarandg.soundbounds.common.ui.cli.argument.SongIDArgumentContainer
 import com.ciarandg.soundbounds.common.ui.cli.argument.WordArgumentContainer
 
 object Arguments {
@@ -17,7 +18,7 @@ object Arguments {
     val regionNameFirstArgument = WordArgumentContainer("first")
     val regionNameSecondArgument = WordArgumentContainer("second")
     val regionVolumeIndexArgument = IntArgumentContainer("volume-index", 1)
-    val songIDArgument = WordArgumentContainer("song-id")
-    val newSongIDArgument = WordArgumentContainer("new-song-id")
+    val songIDExistingArgument = SongIDArgumentContainer("song-id")
+    val songIDNewArgument = WordArgumentContainer("new-song-id")
     val playlistTypeArgument = PlaylistTypeArgumentContainer("playlist-type")
 }

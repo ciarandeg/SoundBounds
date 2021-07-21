@@ -5,6 +5,7 @@ import com.ciarandg.soundbounds.common.network.MetaHashCheckMessage
 import com.ciarandg.soundbounds.common.network.MetadataSyncMessage
 import com.ciarandg.soundbounds.common.network.NowPlayingMessage
 import com.ciarandg.soundbounds.common.ui.cli.argument.PTArgumentType
+import com.ciarandg.soundbounds.common.ui.cli.argument.SongIDArgumentType
 import com.ciarandg.soundbounds.common.ui.cli.command.SoundBoundsCommand
 import me.shedaniel.architectury.event.events.CommandRegistrationEvent
 import me.shedaniel.architectury.networking.NetworkManager
@@ -15,6 +16,7 @@ object CommonEvents {
         SoundBounds.items.register()
 
         // Command registration
+        SongIDArgumentType.register()
         PTArgumentType.register()
         CommandRegistrationEvent.EVENT.register { dispatcher, _ -> SoundBoundsCommand.register(dispatcher) }
 
