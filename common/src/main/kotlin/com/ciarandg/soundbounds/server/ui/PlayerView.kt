@@ -1,5 +1,6 @@
 package com.ciarandg.soundbounds.server.ui
 
+import com.ciarandg.soundbounds.common.metadata.JsonSongMeta
 import com.ciarandg.soundbounds.common.regions.RegionData
 import com.ciarandg.soundbounds.common.util.Paginator
 import com.ciarandg.soundbounds.common.util.PlaylistType
@@ -31,6 +32,7 @@ interface PlayerView {
     fun notifyRegionPlaylistSongRemoved(regionName: String, song: String, pos: Int)
     fun notifyRegionPlaylistSongReplaced(regionName: String, oldSong: String, newSong: String, pos: Int)
     fun showRegionContiguous(regionName: String)
+    fun showSongList(songs: List<Map.Entry<String, JsonSongMeta>>, paginator: Paginator)
     fun notifyFailed(reason: FailureReason)
 
     enum class FailureReason {

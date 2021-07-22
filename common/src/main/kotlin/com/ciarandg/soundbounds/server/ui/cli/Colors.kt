@@ -22,6 +22,7 @@ object Colors {
     fun artistText(artist: String, featuring: List<String>? = null) =
         if (featuring == null) singleArtistText(artist)
         else singleArtistText(artist) + bodyText(" ") + featuredArtistsText(featuring)
+    fun songIDText(title: String) = formatText(title, SONG_PROPERTY)
     fun songTitleText(title: String) = formatText(title, SONG_PROPERTY)
     fun priorityText(priority: Int) = formatText(priority.toString(), REGION_PROPERTY)
     fun listPosText(pos: Int) = formatText(pos.toString(), BODY)

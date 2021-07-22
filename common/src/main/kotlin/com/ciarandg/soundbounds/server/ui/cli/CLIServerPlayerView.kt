@@ -1,5 +1,6 @@
 package com.ciarandg.soundbounds.server.ui.cli
 
+import com.ciarandg.soundbounds.common.metadata.JsonSongMeta
 import com.ciarandg.soundbounds.common.regions.RegionData
 import com.ciarandg.soundbounds.common.ui.cli.CommandNode
 import com.ciarandg.soundbounds.common.ui.cli.command.nodes.RootNode
@@ -18,6 +19,7 @@ import com.ciarandg.soundbounds.server.ui.cli.Colors.posMarkerText
 import com.ciarandg.soundbounds.server.ui.cli.Colors.priorityText
 import com.ciarandg.soundbounds.server.ui.cli.Colors.quantityText
 import com.ciarandg.soundbounds.server.ui.cli.Colors.regionNameText
+import com.ciarandg.soundbounds.server.ui.cli.Colors.songIDText
 import com.ciarandg.soundbounds.server.ui.cli.Colors.songTitleText
 import com.ciarandg.soundbounds.server.ui.cli.Colors.volumeText
 import com.ciarandg.soundbounds.server.ui.cli.help.HelpGenerator
@@ -203,6 +205,21 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
         )
 
     override fun showRegionContiguous(regionName: String) {} // TODO
+
+    override fun showSongList(songs: List<Map.Entry<String, JsonSongMeta>>, paginator: Paginator) = send(
+        paginator.paginate(
+            "Song List",
+            songs.mapIndexed { index, entry ->
+                val n = index + 1
+                val id = entry.key
+                val artist = entry.value.artist
+                val featuring = entry.value.featuring
+                val title = entry.value.title
+                listPosText(n) + bodyText(". ") + songIDText(id) + bodyText(": ") +
+                    artistText(artist, featuring) + bodyText(" - ") + songTitleText(title)
+            }
+        )
+    )
 
     override fun notifyFailed(reason: PlayerView.FailureReason) = sendError(
         when (reason) {

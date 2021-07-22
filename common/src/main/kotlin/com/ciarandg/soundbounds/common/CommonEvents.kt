@@ -7,6 +7,7 @@ import com.ciarandg.soundbounds.common.network.NowPlayingMessage
 import com.ciarandg.soundbounds.common.ui.cli.argument.PTArgumentType
 import com.ciarandg.soundbounds.common.ui.cli.argument.RegionArgumentType
 import com.ciarandg.soundbounds.common.ui.cli.argument.SongIDArgumentType
+import com.ciarandg.soundbounds.common.ui.cli.argument.SongTagArgumentType
 import com.ciarandg.soundbounds.common.ui.cli.command.SoundBoundsCommand
 import me.shedaniel.architectury.event.events.CommandRegistrationEvent
 import me.shedaniel.architectury.networking.NetworkManager
@@ -19,6 +20,7 @@ object CommonEvents {
         // Command registration
         RegionArgumentType.register()
         SongIDArgumentType.register()
+        SongTagArgumentType.register()
         PTArgumentType.register()
         CommandRegistrationEvent.EVENT.register { dispatcher, _ -> SoundBoundsCommand.register(dispatcher) }
 

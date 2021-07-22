@@ -8,6 +8,7 @@ import com.ciarandg.soundbounds.common.regions.RegionData
 import com.ciarandg.soundbounds.common.regions.WorldRegionState
 import com.ciarandg.soundbounds.common.util.Paginator
 import com.ciarandg.soundbounds.common.util.PlaylistType
+import com.ciarandg.soundbounds.server.metadata.ServerMetaState
 import com.ciarandg.soundbounds.server.ui.PlayerModel
 import com.ciarandg.soundbounds.server.ui.PlayerView
 import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason
@@ -61,6 +62,12 @@ class PlayerController(
     fun listRegionsContainingSong(world: ServerWorld, songID: String) {
         val allRegions = WorldRegionState.get(world).getAllRegions()
         view.showRegionList(allRegions.filter { it.value.playlist.contains(songID) }, paginator)
+    }
+
+    fun listSongsContainingTag(tag: String) {
+        val songMeta = ServerMetaState.get().meta.songs
+        val songsContainingTag = songMeta.entries.sortedBy { it.key }.filter { it.value.tags.contains(tag) }
+        view.showSongList(songsContainingTag, paginator)
     }
 
     fun syncMetadata(player: ServerPlayerEntity) {
