@@ -16,10 +16,10 @@ object RegionInfoNode : CommandNode(
                 ctrl.showRegionInfo(ctx.source.world, Arguments.regionNameExistingArgument.retrieve(ctx))
             },
             listOf(
-                CommandNode(
-                    LiteralNodeData("playlist", "list songs in region's playlist") { ctx, ctrl -> },
-                    listOf()
-                ),
+                // CommandNode(
+                //     LiteralNodeData("playlist", "list songs in region's playlist") { ctx, ctrl -> },
+                //     listOf()
+                // ),
                 CommandNode(
                     LiteralNodeData(
                         "volumes",
@@ -44,15 +44,6 @@ object RegionInfoNode : CommandNode(
                             listOf()
                         )
                     )
-                ),
-                CommandNode(
-                    LiteralNodeData(
-                        "contiguous",
-                        "check if region's volumes are contiguous"
-                    ) { ctx, ctrl ->
-                        ctrl.checkRegionContiguous(ctx.source.world, Arguments.regionNameExistingArgument.retrieve(ctx))
-                    },
-                    listOf()
                 ),
             )
         )

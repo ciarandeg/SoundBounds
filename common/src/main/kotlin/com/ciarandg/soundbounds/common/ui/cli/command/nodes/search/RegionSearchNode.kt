@@ -11,10 +11,10 @@ import com.ciarandg.soundbounds.common.util.PaginatorState
 object RegionSearchNode : CommandNode(
     LiteralNodeData("region", "search for regions", null),
     listOf(
-        CommandNode(
-            LiteralNodeData("current", "search for currently active region", null),
-            listOf()
-        ),
+        // CommandNode(
+        //     LiteralNodeData("current", "search for currently active region", null),
+        //     listOf()
+        // ),
         CommandNode(
             LiteralNodeData("proximity", "search for regions within proximity of player", null),
             listOf(
@@ -40,10 +40,10 @@ object RegionSearchNode : CommandNode(
                 )
             )
         ),
-        CommandNode(
-            LiteralNodeData("position", "search for regions that contain a particular block", null),
-            listOf()
-        ),
+        // CommandNode(
+        //     LiteralNodeData("position", "search for regions that contain a particular block", null),
+        //     listOf()
+        // ),
         CommandNode(
             LiteralNodeData("song", "search for regions that contain a particular song", null),
             listOf(
