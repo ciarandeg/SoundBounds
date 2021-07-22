@@ -145,10 +145,10 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
     override fun notifyRegionOverlaps(region1: String, region2: String, overlaps: Boolean) {} // TODO
     override fun showRegionInfo(regionName: String, data: RegionData) {
         sendWithBadge(
-            bodyText("Region ") + regionNameText(regionName) +
-                bodyText(": type ") + playlistTypeText(data.playlistType) +
-                bodyText(", song count ") + quantityText(data.playlist.size) +
-                bodyText(", bounds count ") + quantityText(data.volumes.size)
+            bodyText("\nRegion name: ") + regionNameText(regionName) +
+                bodyText("\nPlaylist type: ") + playlistTypeText(data.playlistType) +
+                bodyText("\nSong count: ") + quantityText(data.playlist.size) +
+                bodyText("\nVolume count: ") + quantityText(data.volumes.size)
         )
     }
     override fun notifyRegionPrioritySet(name: String, oldPriority: Int, newPriority: Int) = sendWithBadge(
