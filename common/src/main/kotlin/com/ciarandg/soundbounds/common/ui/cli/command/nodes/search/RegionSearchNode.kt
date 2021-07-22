@@ -4,6 +4,7 @@ import com.ciarandg.soundbounds.common.ui.cli.Arguments
 import com.ciarandg.soundbounds.common.ui.cli.CommandNode
 import com.ciarandg.soundbounds.common.ui.cli.IntArgNodeData
 import com.ciarandg.soundbounds.common.ui.cli.LiteralNodeData
+import com.ciarandg.soundbounds.common.ui.cli.StringArgNodeData
 import com.ciarandg.soundbounds.common.util.Paginator
 import com.ciarandg.soundbounds.common.util.PaginatorState
 
@@ -45,7 +46,28 @@ object RegionSearchNode : CommandNode(
         ),
         CommandNode(
             LiteralNodeData("song", "search for regions that contain a particular song", null),
-            listOf()
+            listOf(
+                CommandNode(
+                    StringArgNodeData(Arguments.songIDExistingArgument) { ctx, ctrl ->
+                        val song = Arguments.songIDExistingArgument.retrieve(ctx)
+                        ctrl.paginator.state = PaginatorState("/sb search region song $song ${Paginator.PAGE_DELIM}", 1)
+                        ctrl.listRegionsContainingSong(ctx.source.world, song)
+                    },
+                    listOf(
+                        CommandNode(
+                            IntArgNodeData(Arguments.pageNumArgument) { ctx, ctrl ->
+                                val song = Arguments.songIDExistingArgument.retrieve(ctx)
+                                ctrl.paginator.state = PaginatorState(
+                                    "/sb search region song $song ${Paginator.PAGE_DELIM}",
+                                    Arguments.pageNumArgument.retrieve(ctx)
+                                )
+                                ctrl.listRegionsContainingSong(ctx.source.world, song)
+                            },
+                            listOf()
+                        ),
+                    )
+                )
+            )
         )
     )
 )

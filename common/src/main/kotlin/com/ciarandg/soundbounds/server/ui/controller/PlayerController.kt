@@ -58,6 +58,11 @@ class PlayerController(
         view.showRegionProximities(withinRadius, paginator)
     }
 
+    fun listRegionsContainingSong(world: ServerWorld, songID: String) {
+        val allRegions = WorldRegionState.get(world).getAllRegions()
+        view.showRegionList(allRegions.filter { it.value.playlist.contains(songID) }, paginator)
+    }
+
     fun syncMetadata(player: ServerPlayerEntity) {
         NetworkManager.sendToPlayer(
             player,
