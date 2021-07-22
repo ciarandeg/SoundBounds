@@ -6,8 +6,13 @@ import com.ciarandg.soundbounds.common.ui.cli.LiteralNodeData
 import com.ciarandg.soundbounds.common.ui.cli.StringArgNodeData
 
 object SongInfoNode : CommandNode(
-    LiteralNodeData("song", "display information about a song") { ctx, ctrl ->
-        CommandNode(StringArgNodeData(Arguments.songIDExistingArgument) { ctx, ctrl -> }, listOf())
-    },
-    listOf()
+    LiteralNodeData("song", "display information about a song", null),
+    listOf(
+        CommandNode(
+            StringArgNodeData(Arguments.songIDExistingArgument) { ctx, ctrl ->
+                ctrl.showSongInfo(Arguments.songIDExistingArgument.retrieve(ctx))
+            },
+            listOf()
+        )
+    )
 )

@@ -24,11 +24,17 @@ object Colors {
         else singleArtistText(artist) + bodyText(" ") + featuredArtistsText(featuring)
     fun songIDText(title: String) = formatText(title, SONG_PROPERTY)
     fun songTitleText(title: String) = formatText(title, SONG_PROPERTY)
+    fun songTagText(tag: String) = formatText(tag, SONG_PROPERTY)
     fun priorityText(priority: Int) = formatText(priority.toString(), REGION_PROPERTY)
     fun listPosText(pos: Int) = formatText(pos.toString(), BODY)
     fun posMarkerText(marker: PosMarker) = formatText(marker.toString(), POS_MARKER)
     fun blockPosText(pos: BlockPos) = formatText(pos.toString(), BLOCK_POS)
     fun volumeText(volume: Pair<BlockPos, BlockPos>) = formatText(volume.toString(), REGION_PROPERTY)
+    fun songTagListText(tags: List<String>) = tags.mapIndexed { i, tag ->
+        val tagText = songTagText(tag)
+        if (i == tags.size - 1) tagText
+        else tagText + bodyText(", ")
+    }.fold(bodyText("")) { textIn, textOut -> textIn + textOut }
 
     private fun singleArtistText(artist: String) = formatText(artist, SONG_PROPERTY)
     private fun featuredArtistsText(featuring: List<String>): MutableText {

@@ -137,6 +137,12 @@ class PlayerController(
         else view.showRegionInfo(regionName, region)
     }
 
+    fun showSongInfo(songID: String) {
+        val song = ServerMetaState.get().meta.songs[songID]
+        if (song == null) view.notifyFailed(FailureReason.NO_SUCH_SONG)
+        else view.showSongInfo(songID, song)
+    }
+
     fun setRegionPriority(world: ServerWorld, regionName: String, priority: Int) {
         val state = WorldRegionState.get(world)
         val region = state.getRegion(regionName)

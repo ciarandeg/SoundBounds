@@ -20,6 +20,7 @@ import com.ciarandg.soundbounds.server.ui.cli.Colors.priorityText
 import com.ciarandg.soundbounds.server.ui.cli.Colors.quantityText
 import com.ciarandg.soundbounds.server.ui.cli.Colors.regionNameText
 import com.ciarandg.soundbounds.server.ui.cli.Colors.songIDText
+import com.ciarandg.soundbounds.server.ui.cli.Colors.songTagListText
 import com.ciarandg.soundbounds.server.ui.cli.Colors.songTitleText
 import com.ciarandg.soundbounds.server.ui.cli.Colors.volumeText
 import com.ciarandg.soundbounds.server.ui.cli.help.HelpGenerator
@@ -219,6 +220,20 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
                     artistText(artist, featuring) + bodyText(" - ") + songTitleText(title)
             }
         )
+    )
+
+    override fun showSongInfo(songID: String, song: JsonSongMeta) = sendWithBadge(
+        bodyText("\n") +
+            artistText(song.artist, song.featuring) + bodyText(" - ") + songTitleText(song.title) +
+            bodyText("\nID: ") + songIDText(songID) +
+            bodyText(
+                "\nLooping? ${song.loop}" +
+                    "\nHas head? ${song.head != null}" +
+                    "\nBody count: "
+            ) + quantityText(song.bodies.size) +
+            if (song.tags.isEmpty()) bodyText("\nNo tags")
+            else bodyText("\nTags: ") + songTagListText(song.tags)
+
     )
 
     override fun notifyFailed(reason: PlayerView.FailureReason) = sendError(
