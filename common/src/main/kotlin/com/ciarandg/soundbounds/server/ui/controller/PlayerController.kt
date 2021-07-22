@@ -47,8 +47,16 @@ class PlayerController(
 
     fun notifyMetaMismatch() = view.notifyMetaMismatch()
 
-    fun listRegions(world: ServerWorld, radius: Int = -1) =
+    fun listRegions(world: ServerWorld) {
         view.showRegionList(WorldRegionState.get(world).getAllRegions().sortedBy { it.key }, paginator)
+    }
+
+    fun listRegionsWithinRadius(world: ServerWorld, radius: Int) {
+        val allRegions = WorldRegionState.get(world).getAllRegions()
+        val proximityPairs = allRegions.map { Pair(it, it.value.distanceFrom(owner.blockPos)) }
+        val withinRadius = proximityPairs.sortedBy { it.second }.filter { it.second <= radius }
+        view.showRegionProximities(withinRadius, paginator)
+    }
 
     fun syncMetadata(player: ServerPlayerEntity) {
         NetworkManager.sendToPlayer(

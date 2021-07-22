@@ -90,7 +90,25 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
                 listPosText(n) + bodyText(". ") + regionNameText(name) + bodyText(" - ") +
                     playlistTypeText(playlistType) + bodyText(", priority ") + priorityText(priority)
             }
-        ),
+        )
+    )
+
+    override fun showRegionProximities(
+        regions: List<Pair<Map.Entry<String, RegionData>, Double>>,
+        paginator: Paginator
+    ) = send(
+        paginator.paginate(
+            "Nearby Regions",
+            regions.mapIndexed { index, entry ->
+                val n = index + 1
+                val name = entry.first.key
+                val priority = entry.first.value.priority
+                val distance = entry.second.toInt()
+                listPosText(n) + bodyText(". ") + regionNameText(name) + bodyText(" - ") +
+                    bodyText("priority ") + priorityText(priority) +
+                    bodyText(", $distance ${if (distance == 1) "block" else "blocks"} away")
+            }
+        )
     )
 
     override fun notifyMetadataSynced() {

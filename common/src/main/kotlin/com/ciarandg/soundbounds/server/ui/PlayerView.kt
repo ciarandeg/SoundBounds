@@ -14,6 +14,7 @@ interface PlayerView {
     fun showNoSongPlaying()
     fun notifyPosMarkerSet(marker: PosMarker, pos: BlockPos)
     fun showRegionList(regions: List<Map.Entry<String, RegionData>>, paginator: Paginator)
+    fun showRegionProximities(regions: List<Pair<Map.Entry<String, RegionData>, Double>>, paginator: Paginator)
     fun notifyMetadataSynced()
     fun notifyMetadataSyncFailed()
     fun notifyRegionCreated(name: String, priority: Int)

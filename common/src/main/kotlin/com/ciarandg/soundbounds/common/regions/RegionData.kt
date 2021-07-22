@@ -7,7 +7,12 @@ import net.minecraft.nbt.IntTag
 import net.minecraft.nbt.ListTag
 import net.minecraft.nbt.StringTag
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Box
+import net.minecraft.util.math.Vec3i
 import java.security.InvalidParameterException
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.sqrt
 
 data class RegionData(
     var priority: Int = 0,
@@ -23,6 +28,19 @@ data class RegionData(
         tag.put(Tag.VOLUMES.key, volumesToTag(volumes))
         return tag
     }
+
+    fun distanceFrom(pos: BlockPos): Double =
+        volumes.map { Box(it.first, it.second) }.minOf { box ->
+            fun clamp(pos: Double, min: Double, max: Double) = min(max(pos, min), max)
+            val closestPoint = Vec3i(
+                clamp(pos.x.toDouble(), box.minX, box.maxX),
+                clamp(pos.y.toDouble(), box.minY, box.maxY),
+                clamp(pos.z.toDouble(), box.minZ, box.maxZ),
+            )
+            val difference = pos.subtract(closestPoint)
+            val squared = difference.x * difference.x + difference.y * difference.y + difference.z * difference.z
+            sqrt(squared.toDouble())
+        }
 
     companion object {
         private enum class Tag(val key: String) {
