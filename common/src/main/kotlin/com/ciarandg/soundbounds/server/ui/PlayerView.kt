@@ -44,6 +44,7 @@ interface PlayerView {
         REGION_MUST_HAVE_VOLUME,
         NO_METADATA_PRESENT,
         NO_SUCH_SONG,
+        GHOST_SONG,
         SONG_POS_OOB
     }
 }

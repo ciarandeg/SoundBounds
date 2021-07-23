@@ -233,7 +233,6 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
             ) + quantityText(song.bodies.size) +
             if (song.tags.isEmpty()) bodyText("\nNo tags")
             else bodyText("\nTags: ") + songTagListText(song.tags)
-
     )
 
     override fun notifyFailed(reason: PlayerView.FailureReason) = sendError(
@@ -245,6 +244,7 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
             PlayerView.FailureReason.REGION_MUST_HAVE_VOLUME -> "Requested region only has one volume"
             PlayerView.FailureReason.NO_METADATA_PRESENT -> "No metadata has been provided to server (try /sb sync-meta)"
             PlayerView.FailureReason.NO_SUCH_SONG -> "Requested song ID does not exist"
+            PlayerView.FailureReason.GHOST_SONG -> "Although there are regions containing requested song ID, the song has no metadata. Please delete it or resync."
             PlayerView.FailureReason.SONG_POS_OOB -> "Requested song position is out of bounds"
         }
     )

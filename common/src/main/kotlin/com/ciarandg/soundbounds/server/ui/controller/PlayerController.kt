@@ -61,7 +61,16 @@ class PlayerController(
 
     fun listRegionsContainingSong(world: ServerWorld, songID: String) {
         val allRegions = WorldRegionState.get(world).getAllRegions()
-        view.showRegionList(allRegions.filter { it.value.playlist.contains(songID) }, paginator)
+        val regionsContaining = allRegions.filter { it.value.playlist.contains(songID) }
+        val songShouldExist = ServerMetaState.get().meta.songs.containsKey(songID)
+
+        if (!songShouldExist) view.notifyFailed(
+            if (regionsContaining.isEmpty()) {
+                FailureReason.NO_SUCH_REGION
+                return
+            } else FailureReason.GHOST_SONG
+        )
+        view.showRegionList(regionsContaining, paginator)
     }
 
     fun listSongsContainingTag(tag: String) {
