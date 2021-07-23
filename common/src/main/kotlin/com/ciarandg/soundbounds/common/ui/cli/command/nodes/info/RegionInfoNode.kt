@@ -16,10 +16,28 @@ object RegionInfoNode : CommandNode(
                 ctrl.showRegionInfo(ctx.source.world, Arguments.regionNameExistingArgument.retrieve(ctx))
             },
             listOf(
-                // CommandNode(
-                //     LiteralNodeData("playlist", "list songs in region's playlist") { ctx, ctrl -> },
-                //     listOf()
-                // ),
+                CommandNode(
+                    LiteralNodeData("playlist", "list songs in region's playlist") { ctx, ctrl ->
+                        val regionName = Arguments.regionNameExistingArgument.retrieve(ctx)
+                        ctrl.paginator.state = PaginatorState(
+                            "/sb info region $regionName playlist ${Paginator.PAGE_DELIM}", 1
+                        )
+                        ctrl.listRegionPlaylistSongs(ctx.source.world, regionName)
+                    },
+                    listOf(
+                        CommandNode(
+                            IntArgNodeData(Arguments.pageNumArgument) { ctx, ctrl ->
+                                val regionName = Arguments.regionNameExistingArgument.retrieve(ctx)
+                                ctrl.paginator.state = PaginatorState(
+                                    "/sb info region $regionName playlist ${Paginator.PAGE_DELIM}",
+                                    Arguments.pageNumArgument.retrieve(ctx)
+                                )
+                                ctrl.listRegionPlaylistSongs(ctx.source.world, regionName)
+                            },
+                            listOf()
+                        )
+                    )
+                ),
                 CommandNode(
                     LiteralNodeData(
                         "volumes",

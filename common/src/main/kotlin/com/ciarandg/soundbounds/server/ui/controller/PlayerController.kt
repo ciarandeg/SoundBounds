@@ -66,8 +66,15 @@ class PlayerController(
 
     fun listSongsContainingTag(tag: String) {
         val songMeta = ServerMetaState.get().meta.songs
-        val songsContainingTag = songMeta.entries.sortedBy { it.key }.filter { it.value.tags.contains(tag) }
+        val songsContainingTag = songMeta.entries.sortedBy { it.key }.filter { it.value.tags.contains(tag) }.map { it.toPair() }
         view.showSongList(songsContainingTag, paginator)
+    }
+
+    fun listRegionPlaylistSongs(world: ServerWorld, regionName: String) {
+        val region = WorldRegionState.get(world).getRegion(regionName)
+        val metaSongs = ServerMetaState.get().meta.songs
+        if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
+        else view.showSongList(region.playlist.map { Pair(it, metaSongs[it]) }, paginator)
     }
 
     fun syncMetadata(player: ServerPlayerEntity) {

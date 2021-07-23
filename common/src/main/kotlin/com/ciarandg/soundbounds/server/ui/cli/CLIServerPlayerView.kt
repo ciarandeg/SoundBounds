@@ -207,17 +207,17 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
 
     override fun showRegionContiguous(regionName: String) {} // TODO
 
-    override fun showSongList(songs: List<Map.Entry<String, JsonSongMeta>>, paginator: Paginator) = send(
+    override fun showSongList(songs: List<Pair<String, JsonSongMeta?>>, paginator: Paginator) = send(
         paginator.paginate(
             "Song List",
-            songs.mapIndexed { index, entry ->
+            songs.mapIndexed { index, song ->
                 val n = index + 1
-                val id = entry.key
-                val artist = entry.value.artist
-                val featuring = entry.value.featuring
-                val title = entry.value.title
+                val id = song.first
+                val songMeta = song.second
                 listPosText(n) + bodyText(". ") + songIDText(id) + bodyText(": ") +
-                    artistText(artist, featuring) + bodyText(" - ") + songTitleText(title)
+                    if (songMeta == null) LiteralText("Missing metadata!").formatted(Colors.ERROR)
+                    else artistText(songMeta.artist, songMeta.featuring) +
+                        bodyText(" - ") + songTitleText(songMeta.title)
             }
         )
     )

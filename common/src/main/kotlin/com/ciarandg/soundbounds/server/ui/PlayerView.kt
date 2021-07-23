@@ -32,7 +32,7 @@ interface PlayerView {
     fun notifyRegionPlaylistSongRemoved(regionName: String, song: String, pos: Int)
     fun notifyRegionPlaylistSongReplaced(regionName: String, oldSong: String, newSong: String, pos: Int)
     fun showRegionContiguous(regionName: String)
-    fun showSongList(songs: List<Map.Entry<String, JsonSongMeta>>, paginator: Paginator)
+    fun showSongList(songs: List<Pair<String, JsonSongMeta?>>, paginator: Paginator)
     fun showSongInfo(songID: String, song: JsonSongMeta)
     fun notifyFailed(reason: FailureReason)
 
