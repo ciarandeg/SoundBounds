@@ -8,6 +8,7 @@ import com.ciarandg.soundbounds.common.ui.cli.LiteralNodeData
 import com.ciarandg.soundbounds.common.ui.cli.StringArgNodeData
 import com.ciarandg.soundbounds.common.ui.cli.command.nodes.edit.RegionEditNode
 import com.ciarandg.soundbounds.common.ui.cli.command.nodes.info.InfoNode
+import com.ciarandg.soundbounds.common.ui.cli.command.nodes.list.ListNode
 import com.ciarandg.soundbounds.common.ui.cli.command.nodes.search.SearchNode
 import com.ciarandg.soundbounds.common.util.Paginator
 import com.ciarandg.soundbounds.common.util.PaginatorState
@@ -53,25 +54,7 @@ object RootNode : CommandNode(
             ) { ctx, ctrl -> ctrl.showCurrentRegion(ctx.source.player) },
             listOf()
         ),
-        CommandNode(
-            LiteralNodeData(
-                "list",
-                "list all regions in current world"
-            ) { ctx, ctrl ->
-                ctrl.paginator.state = PaginatorState("/sb list ${Paginator.PAGE_DELIM}", 1)
-                ctrl.listRegions(ctx.source.world)
-            },
-            listOf(
-                CommandNode(
-                    IntArgNodeData(Arguments.pageNumArgument) { ctx, ctrl ->
-                        ctrl.paginator.state =
-                            PaginatorState("/sb list ${Paginator.PAGE_DELIM}", Arguments.pageNumArgument.retrieve(ctx))
-                        ctrl.listRegions(ctx.source.world)
-                    },
-                    listOf()
-                ),
-            )
-        ),
+        ListNode,
         InfoNode,
         CommandNode(
             LiteralNodeData(

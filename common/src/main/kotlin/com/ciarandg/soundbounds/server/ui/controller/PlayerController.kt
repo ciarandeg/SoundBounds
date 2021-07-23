@@ -162,6 +162,9 @@ class PlayerController(
         else view.showRegionInfo(regionName, region)
     }
 
+    fun listSongs() =
+        view.showSongList(ServerMetaState.get().meta.songs.map { it.toPair() }.sortedBy { it.first }, paginator)
+
     fun showSongInfo(songID: String) {
         val song = ServerMetaState.get().meta.songs[songID]
         if (song == null) view.notifyFailed(FailureReason.NO_SUCH_SONG)
