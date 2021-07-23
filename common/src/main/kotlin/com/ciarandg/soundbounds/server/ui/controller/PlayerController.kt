@@ -38,6 +38,15 @@ class PlayerController(
     fun showNowPlaying(nowPlaying: String?) =
         if (nowPlaying == null) view.showNoSongPlaying()
         else view.showNowPlaying(nowPlaying)
+
+    fun showCurrentRegion(player: ServerPlayerEntity) =
+        NetworkManager.sendToPlayer(
+            player,
+            SoundBounds.CURRENT_REGION_CHANNEL_S2C,
+            PacketByteBuf(Unpooled.buffer())
+        )
+    fun showCurrentRegion(regionName: String?) = view.showCurrentRegion(regionName)
+
     fun setPosMarker(marker: PosMarker, pos: BlockPos) {
         when (marker) {
             PosMarker.FIRST -> model.marker1 = pos

@@ -1,6 +1,7 @@
 package com.ciarandg.soundbounds.common
 
 import com.ciarandg.soundbounds.SoundBounds
+import com.ciarandg.soundbounds.common.network.CurrentRegionMessage
 import com.ciarandg.soundbounds.common.network.MetaHashCheckMessage
 import com.ciarandg.soundbounds.common.network.MetadataSyncMessage
 import com.ciarandg.soundbounds.common.network.NowPlayingMessage
@@ -36,6 +37,13 @@ object CommonEvents {
             NetworkManager.Side.C2S,
             SoundBounds.NOW_PLAYING_CHANNEL_C2S,
             NowPlayingMessage()
+        )
+
+        // Current-region message registration
+        NetworkManager.registerReceiver(
+            NetworkManager.Side.C2S,
+            SoundBounds.CURRENT_REGION_CHANNEL_C2S,
+            CurrentRegionMessage()
         )
 
         // Metadata sync/update util registration

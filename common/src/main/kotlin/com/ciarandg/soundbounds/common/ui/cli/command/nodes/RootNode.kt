@@ -48,6 +48,13 @@ object RootNode : CommandNode(
         ),
         CommandNode(
             LiteralNodeData(
+                "current-region",
+                "show currently active region (switches after fade ends)"
+            ) { ctx, ctrl -> ctrl.showCurrentRegion(ctx.source.player) },
+            listOf()
+        ),
+        CommandNode(
+            LiteralNodeData(
                 "list",
                 "list all regions in current world"
             ) { ctx, ctrl ->

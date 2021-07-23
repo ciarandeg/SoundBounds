@@ -33,6 +33,8 @@ class SoundBounds {
         val META_HASH_CHECK_C2S = Identifier(MOD_ID, "meta_hash_check_c2s")
         val NOW_PLAYING_CHANNEL_C2S = Identifier(MOD_ID, "now_playing_c2s")
         val NOW_PLAYING_CHANNEL_S2C = Identifier(MOD_ID, "now_playing_s2c")
+        val CURRENT_REGION_CHANNEL_C2S = Identifier(MOD_ID, "current_region_c2s")
+        val CURRENT_REGION_CHANNEL_S2C = Identifier(MOD_ID, "current_region_s2c")
         val SYNC_METADATA_CHANNEL_C2S = Identifier(MOD_ID, "sync_metadata_c2s")
         val SYNC_METADATA_CHANNEL_S2C = Identifier(MOD_ID, "sync_metadata_s2c")
         val UPDATE_REGIONS_CHANNEL_S2C = Identifier(MOD_ID, "update_regions")

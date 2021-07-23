@@ -4,6 +4,7 @@ import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.audio.GameMusicVolume
 import com.ciarandg.soundbounds.client.metadata.ClientMeta
 import com.ciarandg.soundbounds.client.regions.RegionSwitcher
+import com.ciarandg.soundbounds.common.network.CurrentRegionMessage
 import com.ciarandg.soundbounds.common.network.MetaHashCheckMessage
 import com.ciarandg.soundbounds.common.network.MetadataSyncMessage
 import com.ciarandg.soundbounds.common.network.NowPlayingMessage
@@ -20,6 +21,7 @@ object ClientEvents {
         registerAudio()
         registerMetaHashCheck()
         registerNowPlaying()
+        registerCurrentRegion()
         registerMetadata()
         registerRegionUpdate()
     }
@@ -44,6 +46,14 @@ object ClientEvents {
             NetworkManager.Side.S2C,
             SoundBounds.NOW_PLAYING_CHANNEL_S2C,
             NowPlayingMessage()
+        )
+    }
+
+    private fun registerCurrentRegion() {
+        NetworkManager.registerReceiver(
+            NetworkManager.Side.S2C,
+            SoundBounds.CURRENT_REGION_CHANNEL_S2C,
+            CurrentRegionMessage()
         )
     }
 

@@ -78,6 +78,11 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
     override fun showNoSongPlaying() =
         sendWithBadge(bodyText("No song currently playing"))
 
+    override fun showCurrentRegion(regionName: String?) = sendWithBadge(
+        if (regionName == null) bodyText("No currently active region")
+        else bodyText("Current region: ") + regionNameText(regionName)
+    )
+
     override fun notifyPosMarkerSet(marker: PosMarker, pos: BlockPos) = sendWithBadge(
         bodyText("Set marker ") + posMarkerText(marker) + bodyText(" to ") + blockPosText(pos)
     )
