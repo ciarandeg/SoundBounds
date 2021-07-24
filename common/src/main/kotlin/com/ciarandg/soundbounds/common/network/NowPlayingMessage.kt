@@ -14,7 +14,7 @@ import java.lang.IllegalStateException
 class NowPlayingMessage : NetworkManager.NetworkReceiver {
     override fun receive(buf: PacketByteBuf, ctx: NetworkManager.PacketContext) {
         when (Platform.getEnvironment()) {
-            Env.CLIENT -> NetworkManager.sendToServer(SoundBounds.NOW_PLAYING_CHANNEL_C2S, buildBuffer())
+            Env.CLIENT -> NetworkManager.sendToServer(SoundBounds.NOW_PLAYING_CHANNEL_C2S, buildBufferC2S())
             Env.SERVER -> {
                 val playerController =
                     Controllers[ctx.player] ?: throw IllegalStateException("Every player should have a controller")
@@ -28,14 +28,15 @@ class NowPlayingMessage : NetworkManager.NetworkReceiver {
     companion object {
         private const val STR_LIMIT = 32767 // magic character limit to get around mapping issues
 
-        private fun buildBuffer(): PacketByteBuf {
+        fun buildBufferC2S(): PacketByteBuf = buildBufferC2S(RegionSwitcher.currentSongID())
+
+        fun buildBufferC2S(songID: String?): PacketByteBuf {
             assert(Platform.getEnvironment() == Env.CLIENT)
             val buf = PacketByteBuf(Unpooled.buffer())
 
-            val nowPlaying = RegionSwitcher.currentSongID()
-            if (nowPlaying != null) {
+            if (songID != null) {
                 buf.writeBoolean(true)
-                buf.writeString(nowPlaying)
+                buf.writeString(songID)
             } else buf.writeBoolean(false)
 
             return buf

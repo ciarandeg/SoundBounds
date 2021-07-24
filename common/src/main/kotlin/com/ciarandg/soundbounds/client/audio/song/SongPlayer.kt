@@ -1,9 +1,12 @@
 package com.ciarandg.soundbounds.client.audio.song
 
+import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.ClientTicker
 import com.ciarandg.soundbounds.client.audio.AudioSource
 import com.ciarandg.soundbounds.client.audio.song.types.LoadedSong
 import com.ciarandg.soundbounds.client.audio.song.types.OggSong
+import com.ciarandg.soundbounds.common.network.NowPlayingMessage
+import me.shedaniel.architectury.networking.NetworkManager
 import java.lang.IllegalStateException
 import java.util.Observable
 import java.util.Observer
@@ -24,6 +27,7 @@ class SongPlayer(val songID: String, song: OggSong) : Observer {
             else -> {
                 loadUntilCaughtUp()
                 source.play()
+                if (SoundBounds.AUTO_NOW_PLAYING) notifyNowPlaying()
             }
         }
     }
@@ -49,6 +53,10 @@ class SongPlayer(val songID: String, song: OggSong) : Observer {
         stepper.step()
         loadUntilCaughtUp()
     }
+
+    private fun notifyNowPlaying() = NetworkManager.sendToServer(
+        SoundBounds.NOW_PLAYING_CHANNEL_C2S, NowPlayingMessage.buildBufferC2S(songID)
+    )
 
     companion object {
         private const val BUFFER_DUR_MS: Long = 1000 // max duration of each buffer
