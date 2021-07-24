@@ -9,6 +9,7 @@ import com.ciarandg.soundbounds.common.util.PlaylistType
 import com.ciarandg.soundbounds.plus
 import com.ciarandg.soundbounds.server.metadata.ServerMetaState
 import com.ciarandg.soundbounds.server.ui.PlayerView
+import com.ciarandg.soundbounds.server.ui.cli.Colors.ERROR
 import com.ciarandg.soundbounds.server.ui.cli.Colors.ModBadge.formatModBadge
 import com.ciarandg.soundbounds.server.ui.cli.Colors.artistText
 import com.ciarandg.soundbounds.server.ui.cli.Colors.blockPosText
@@ -64,8 +65,10 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
         val meta = ServerMetaState.get().meta
         val songMeta = meta.songs[nowPlaying]
         if (songMeta != null) sendWithBadge(
-            bodyText("Now playing: ") +
-                artistText(songMeta.artist, songMeta.featuring) + bodyText(" - ") + songTitleText(songMeta.title)
+            bodyText("Now playing: ")
+                .append(artistText(songMeta.artist, songMeta.featuring))
+                .append(bodyText(" - "))
+                .append(songTitleText(songMeta.title))
         ) else sendError("Currently playing song does not have server-synced metadata")
     }
 
@@ -219,25 +222,30 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
                 val n = index + 1
                 val id = song.first
                 val songMeta = song.second
-                listPosText(n) + bodyText(". ") + songIDText(id) + bodyText(": ") +
-                    if (songMeta == null) LiteralText("Missing metadata!").formatted(Colors.ERROR)
-                    else artistText(songMeta.artist, songMeta.featuring) +
-                        bodyText(" - ") + songTitleText(songMeta.title)
+                val start = listPosText(n).append(bodyText(". ")).append(songIDText(id)).append(bodyText(": "))
+                if (songMeta == null) start.append(LiteralText("Missing metadata!").formatted(ERROR))
+                else start.append(artistText(songMeta.artist, songMeta.featuring))
+                    .append(bodyText(" - "))
+                    .append(songTitleText(songMeta.title))
             }
         )
     )
 
     override fun showSongInfo(songID: String, song: JsonSongMeta) = sendWithBadge(
-        bodyText("\n") +
-            artistText(song.artist, song.featuring) + bodyText(" - ") + songTitleText(song.title) +
-            bodyText("\nID: ") + songIDText(songID) +
-            bodyText(
-                "\nLooping? ${song.loop}" +
-                    "\nHas head? ${song.head != null}" +
-                    "\nBody count: "
-            ) + quantityText(song.bodies.size) +
-            if (song.tags.isEmpty()) bodyText("\nNo tags")
-            else bodyText("\nTags: ") + songTagListText(song.tags)
+        bodyText("\n")
+            .append(artistText(song.artist, song.featuring))
+            .append(bodyText(" - "))
+            .append(songTitleText(song.title))
+            .append(bodyText("\nID: "))
+            .append(songIDText(songID))
+            .append(
+                bodyText("\nLooping? ${song.loop}" + "\nHas head? ${song.head != null}" + "\nBody count: ")
+            )
+            .append(quantityText(song.bodies.size))
+            .append(
+                if (song.tags.isEmpty()) bodyText("\nNo tags")
+                else bodyText("\nTags: ") + songTagListText(song.tags)
+            )
     )
 
     override fun notifyFailed(reason: PlayerView.FailureReason) = sendError(

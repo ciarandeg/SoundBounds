@@ -2,8 +2,12 @@ package com.ciarandg.soundbounds.server.ui.cli
 
 import com.ciarandg.soundbounds.common.util.PlaylistType
 import com.ciarandg.soundbounds.plus
+import com.ciarandg.soundbounds.server.metadata.ServerMetaState
+import net.minecraft.text.ClickEvent
+import net.minecraft.text.HoverEvent
 import net.minecraft.text.LiteralText
 import net.minecraft.text.MutableText
+import net.minecraft.text.Style
 import net.minecraft.util.Formatting
 import net.minecraft.util.math.BlockPos
 
@@ -12,6 +16,7 @@ object Colors {
     private val BODY = Formatting.GOLD
     private val REGION_PROPERTY = Formatting.DARK_PURPLE
     private val SONG_PROPERTY = Formatting.DARK_PURPLE
+    private val URL = Formatting.BLUE
     private val POS_MARKER = Formatting.DARK_PURPLE
     private val BLOCK_POS = POS_MARKER
 
@@ -19,9 +24,9 @@ object Colors {
     fun regionNameText(text: String) = formatText(text, REGION_PROPERTY)
     fun playlistTypeText(type: PlaylistType) = formatText(type.toString(), REGION_PROPERTY)
     fun quantityText(quantity: Int) = formatText(quantity.toString(), BODY)
-    fun artistText(artist: String, featuring: List<String>? = null) =
+    fun artistText(artist: String, featuring: List<String>? = null): MutableText =
         if (featuring == null) singleArtistText(artist)
-        else singleArtistText(artist) + bodyText(" ") + featuredArtistsText(featuring)
+        else bodyText("").append(singleArtistText(artist)).append(bodyText(" ")).append(featuredArtistsText(featuring))
     fun songIDText(title: String) = formatText(title, SONG_PROPERTY)
     fun songTitleText(title: String) = formatText(title, SONG_PROPERTY)
     fun songTagText(tag: String) = formatText(tag, SONG_PROPERTY)
@@ -36,11 +41,27 @@ object Colors {
         else tagText + bodyText(", ")
     }.fold(bodyText("")) { textIn, textOut -> textIn + textOut }
 
-    private fun singleArtistText(artist: String) = formatText(artist, SONG_PROPERTY)
+    private fun singleArtistText(artist: String): MutableText {
+        val promo = ServerMetaState.get().meta.composers[artist]?.promo
+        return if (promo == null) formatText(artist, SONG_PROPERTY)
+        else formatText(artist, URL).fillStyle(
+            Style.EMPTY
+                .withFormatting(Formatting.UNDERLINE)
+                .withClickEvent(ClickEvent(ClickEvent.Action.OPEN_URL, promo.toExternalForm()))
+                .withHoverEvent(
+                    HoverEvent(
+                        HoverEvent.Action.SHOW_TEXT,
+                        LiteralText("Listen to more from ")
+                            .append(LiteralText(artist).formatted(Formatting.ITALIC))
+                            .append(LiteralText("!"))
+                    )
+                )
+        )
+    }
     private fun featuredArtistsText(featuring: List<String>): MutableText {
         val artists = featuring.map { singleArtistText(it) }
         val delimited = artists.mapIndexed { i, artist ->
-            if (i < artists.size - 1) artist + bodyText(", ")
+            if (i < artists.size - 1) bodyText("").append(artist).append(bodyText(", "))
             else artist
         }
         val out = bodyText("feat. ")
