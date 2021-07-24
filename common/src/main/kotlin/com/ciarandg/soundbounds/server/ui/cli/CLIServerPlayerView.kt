@@ -97,9 +97,12 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
                 val n = index + 1
                 val name = entry.key
                 val playlistType = entry.value.playlistType
+                val playlistSize = entry.value.playlist.size
                 val priority = entry.value.priority
                 listPosText(n) + bodyText(". ") + regionNameText(name) + bodyText(" - ") +
-                    playlistTypeText(playlistType) + bodyText(", priority ") + priorityText(priority)
+                    bodyText("priority ") + priorityText(priority) +
+                    bodyText(", ") + playlistTypeText(playlistType) +
+                    bodyText(", ") + quantityText(playlistSize) + bodyText(" songs")
             }
         )
     )
