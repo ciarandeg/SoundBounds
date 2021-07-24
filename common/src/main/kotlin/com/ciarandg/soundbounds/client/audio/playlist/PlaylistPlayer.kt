@@ -42,6 +42,6 @@ class PlaylistPlayer(playlist: List<String>, type: PlaylistType) {
     }
 
     companion object {
-        internal const val IDLE_DUR_MS: Long = 5000
+        internal const val IDLE_DUR_MS: Long = 45000
     }
 }
