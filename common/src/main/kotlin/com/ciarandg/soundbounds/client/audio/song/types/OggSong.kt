@@ -17,7 +17,7 @@ class OggSong(meta: JsonSongMeta) : Song<OggAudioStream> {
     override val loop = meta.loop
 
     companion object {
-        private const val RESOURCE_PATH = "sounds/music/"
+        private const val RESOURCE_PATH = "music/"
         private const val OGG_EXT = ".ogg"
 
         fun fromID(songID: String): OggSong {
