@@ -8,7 +8,22 @@ data class JsonMeta(
     val songs: Map<String, JsonSongMeta> = emptyMap()
 )
 
-data class JsonComposerMeta(val promo: URL?)
+data class JsonComposerMeta(val promo: URL?) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as JsonComposerMeta
+
+        if (promo?.toExternalForm() != other.promo?.toExternalForm()) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return promo?.hashCode() ?: 0
+    }
+}
 
 data class JsonSongMeta(
     val title: String,
