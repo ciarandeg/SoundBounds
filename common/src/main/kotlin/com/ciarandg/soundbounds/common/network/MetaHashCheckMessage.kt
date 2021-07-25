@@ -21,9 +21,7 @@ class MetaHashCheckMessage : NetworkManager.NetworkReceiver {
             )
             Env.SERVER -> {
                 val clientHash = buf.readInt()
-                // SoundBounds.LOGGER.info("PULLED $clientHash from CLIENT BUFFER")
                 val serverHash = ServerMetaState.get().meta.hashCode()
-                // SoundBounds.LOGGER.info("FOUND $serverHash on SERVER")
                 if (clientHash != serverHash) Controllers[ctx.player]?.notifyMetaMismatch()
                     ?: throw IllegalStateException("Every player should have a controller")
             }
@@ -36,7 +34,6 @@ class MetaHashCheckMessage : NetworkManager.NetworkReceiver {
             val buf = PacketByteBuf(Unpooled.buffer())
             val hash = ClientMeta.meta.hashCode()
             buf.writeInt(hash)
-            // SoundBounds.LOGGER.info("WROTE $hash to CLIENT BUFFER")
             return buf
         }
     }
