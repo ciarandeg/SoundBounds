@@ -15,9 +15,6 @@ import me.shedaniel.architectury.networking.NetworkManager
 
 object CommonEvents {
     fun register() {
-        // Item registration
-        SoundBounds.items.register()
-
         // Command registration
         RegionArgumentType.register()
         SongIDArgumentType.register()

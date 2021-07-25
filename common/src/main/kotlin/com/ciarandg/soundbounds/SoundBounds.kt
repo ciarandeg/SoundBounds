@@ -6,12 +6,9 @@ import com.ciarandg.soundbounds.common.CommonEvents
 import com.ciarandg.soundbounds.common.regions.RegionData
 import com.ciarandg.soundbounds.server.ServerEvents
 import me.shedaniel.architectury.platform.Platform
-import me.shedaniel.architectury.registry.DeferredRegister
 import net.fabricmc.api.EnvType
-import net.minecraft.item.Item
 import net.minecraft.text.MutableText
 import net.minecraft.util.Identifier
-import net.minecraft.util.registry.Registry
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -30,7 +27,6 @@ class SoundBounds {
 
         const val AUTO_NOW_PLAYING = false // automatically display now-playing message when a new song starts
 
-        val items: DeferredRegister<Item> = DeferredRegister.create(MOD_ID, Registry.ITEM_KEY)
         val META_HASH_CHECK_S2C = Identifier(MOD_ID, "meta_hash_check_s2c")
         val META_HASH_CHECK_C2S = Identifier(MOD_ID, "meta_hash_check_c2s")
         val NOW_PLAYING_CHANNEL_C2S = Identifier(MOD_ID, "now_playing_c2s")
