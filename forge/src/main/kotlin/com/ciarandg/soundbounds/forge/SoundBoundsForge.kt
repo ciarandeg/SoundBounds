@@ -4,6 +4,7 @@ import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.forge.client.ForgeClientEvents
 import com.ciarandg.soundbounds.forge.common.item.SoundBoundsForgeItems
 import com.ciarandg.soundbounds.forge.common.network.PosMarkerUpdateMessage
+import me.shedaniel.architectury.event.events.client.ClientLifecycleEvent
 import me.shedaniel.architectury.networking.NetworkManager
 import me.shedaniel.architectury.platform.Platform
 import me.shedaniel.architectury.platform.forge.EventBuses
@@ -29,7 +30,9 @@ class SoundBoundsForge {
         )
 
         if (Platform.getEnv() == Dist.CLIENT)
-            MinecraftForge.EVENT_BUS.register(ForgeClientEvents())
+            ClientLifecycleEvent.CLIENT_SETUP.register {
+                MinecraftForge.EVENT_BUS.register(ForgeClientEvents())
+            }
     }
 
     companion object {

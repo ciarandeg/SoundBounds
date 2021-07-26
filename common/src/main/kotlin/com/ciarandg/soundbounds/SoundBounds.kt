@@ -5,6 +5,8 @@ import com.ciarandg.soundbounds.client.regions.ClientRegion
 import com.ciarandg.soundbounds.common.CommonEvents
 import com.ciarandg.soundbounds.common.regions.RegionData
 import com.ciarandg.soundbounds.server.ServerEvents
+import me.shedaniel.architectury.event.events.LifecycleEvent
+import me.shedaniel.architectury.event.events.client.ClientLifecycleEvent
 import me.shedaniel.architectury.platform.Platform
 import net.fabricmc.api.EnvType
 import net.minecraft.text.MutableText
@@ -15,10 +17,9 @@ import org.apache.logging.log4j.Logger
 class SoundBounds {
     init {
         CommonEvents.register()
-        when (Platform.getEnv() ?: throw RuntimeException("Why would you ever have a null environment?")) {
-            EnvType.CLIENT -> ClientEvents.register()
-            EnvType.SERVER -> ServerEvents.register()
-        }
+        if (Platform.getEnv() == EnvType.CLIENT)
+            ClientLifecycleEvent.CLIENT_SETUP.register { ClientEvents.register() }
+        LifecycleEvent.SERVER_STARTED.register { ServerEvents.register() }
     }
 
     companion object {

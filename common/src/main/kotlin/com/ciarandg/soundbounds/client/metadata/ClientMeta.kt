@@ -3,8 +3,6 @@ package com.ciarandg.soundbounds.client.metadata
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.common.metadata.JsonMeta
 import com.google.gson.Gson
-import me.shedaniel.architectury.platform.Platform
-import net.fabricmc.api.EnvType
 import net.minecraft.client.MinecraftClient
 import net.minecraft.util.Identifier
 import java.io.InputStreamReader
@@ -17,9 +15,6 @@ object ClientMeta {
         private set
 
     fun update() {
-        if (Platform.getEnv() != EnvType.CLIENT)
-            throw RuntimeException("Can only fetch resource pack data from client side")
-
         val man = MinecraftClient.getInstance().resourceManager
         if (man.containsResource(META_ID)) {
             val stream = man.getResource(META_ID).inputStream

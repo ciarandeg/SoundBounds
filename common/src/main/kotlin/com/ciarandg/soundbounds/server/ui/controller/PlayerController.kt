@@ -244,7 +244,7 @@ class PlayerController(
             NetworkManager.sendToPlayers(
                 world.players,
                 SoundBounds.UPDATE_REGIONS_CHANNEL_S2C,
-                RegionUpdateMessageS2C.buildBuffer(false, listOf(region))
+                RegionUpdateMessageS2C.buildBufferS2C(false, listOf(region))
             )
         internal fun destroyRegionOnClients(world: ServerWorld, regionName: String) =
             NetworkManager.sendToPlayers(

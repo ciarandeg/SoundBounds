@@ -38,7 +38,7 @@ object ServerEvents {
         NetworkManager.sendToPlayer(
             player,
             SoundBounds.UPDATE_REGIONS_CHANNEL_S2C,
-            RegionUpdateMessageS2C.buildBuffer(true, regions)
+            RegionUpdateMessageS2C.buildBufferS2C(true, regions)
         )
     }
 }

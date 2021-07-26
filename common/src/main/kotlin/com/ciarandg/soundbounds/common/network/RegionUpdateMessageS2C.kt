@@ -8,8 +8,6 @@ import com.ciarandg.soundbounds.client.regions.ClientWorldRegions
 import com.ciarandg.soundbounds.common.regions.RegionData
 import io.netty.buffer.Unpooled
 import me.shedaniel.architectury.networking.NetworkManager
-import me.shedaniel.architectury.platform.Platform
-import me.shedaniel.architectury.utils.Env
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.PacketByteBuf
 import java.lang.RuntimeException
@@ -46,8 +44,7 @@ class RegionUpdateMessageS2C : NetworkManager.NetworkReceiver {
     }
 
     companion object {
-        fun buildBuffer(wipeExistingRegions: Boolean, regions: List<RegionEntry>): PacketByteBuf {
-            assert(Platform.getEnvironment() == Env.SERVER)
+        fun buildBufferS2C(wipeExistingRegions: Boolean, regions: List<RegionEntry>): PacketByteBuf {
             val buf = PacketByteBuf(Unpooled.buffer())
             buf.writeBoolean(wipeExistingRegions)
             val tag = CompoundTag()
