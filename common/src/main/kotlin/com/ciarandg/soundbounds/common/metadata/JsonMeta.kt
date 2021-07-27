@@ -20,9 +20,7 @@ data class JsonComposerMeta(val promo: URL?) {
         return true
     }
 
-    override fun hashCode(): Int {
-        return promo?.hashCode() ?: 0
-    }
+    override fun hashCode() = promo?.toExternalForm()?.hashCode() ?: 0
 }
 
 data class JsonSongMeta(
