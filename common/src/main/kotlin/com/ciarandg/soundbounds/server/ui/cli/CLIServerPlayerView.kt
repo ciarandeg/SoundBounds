@@ -126,12 +126,19 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
     )
 
     override fun notifyMetadataSynced() {
+        fun pluralize(size: Int, singular: String) =
+            if (size == 1) singular else singular + "s"
+
         val meta = ServerMetaState.get().meta
+        val composers = meta.composers.size
+        val groups = meta.groups.size
+        val songs = meta.songs.size
+
         sendWithBadge(
             bodyText("Successfully synced metadata: ") +
-                quantityText(meta.composers.size) + bodyText(" composers, ") +
-                quantityText(meta.groups.size) + bodyText(" groups, ") +
-                quantityText(meta.songs.size) + bodyText(" songs")
+                quantityText(composers) + bodyText(" ${pluralize(composers, "composer")}, ") +
+                quantityText(groups) + bodyText(" ${pluralize(groups, "group")}, ") +
+                quantityText(songs) + bodyText(" ${pluralize(songs, "song")}")
         )
     }
 
