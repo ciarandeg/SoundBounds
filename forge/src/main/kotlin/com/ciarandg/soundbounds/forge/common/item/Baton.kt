@@ -8,9 +8,11 @@ import me.shedaniel.architectury.networking.NetworkManager
 import me.shedaniel.architectury.platform.Platform
 import me.shedaniel.architectury.utils.Env.CLIENT
 import me.shedaniel.architectury.utils.Env.SERVER
+import me.shedaniel.architectury.utils.GameInstance
 import net.minecraft.block.BlockState
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.item.TooltipContext
+import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
@@ -39,7 +41,8 @@ class Baton(settings: Settings?) : NetherStarItem(settings) {
     }
 
     override fun onEntitySwing(stack: ItemStack?, entity: LivingEntity?): Boolean {
-        setCorner(Corner.FIRST)
+        if (entity is ClientPlayerEntity && entity == GameInstance.getClient().player)
+            setCorner(Corner.FIRST)
         return super.onEntitySwing(stack, entity)
     }
 
