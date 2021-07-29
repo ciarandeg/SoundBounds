@@ -14,6 +14,7 @@ interface PlayerView {
     fun notifyMetaMismatch()
     fun showNoSongPlaying()
     fun showCurrentRegion(regionName: String?)
+    fun showAuditReport(regionsWithEmptyPlaylists: Set<String>, regionsMissingMeta: Set<Pair<String, Set<String>>>)
     fun notifyPosMarkerSet(marker: PosMarker, pos: BlockPos)
     fun showRegionList(regions: List<Map.Entry<String, RegionData>>, paginator: Paginator)
     fun showRegionProximities(regions: List<Pair<Map.Entry<String, RegionData>, Double>>, paginator: Paginator)

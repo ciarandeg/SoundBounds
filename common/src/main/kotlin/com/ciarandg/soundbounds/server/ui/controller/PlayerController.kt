@@ -4,6 +4,7 @@ import com.ciarandg.soundbounds.RegionEntry
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.common.network.RegionDestroyMessageS2C
 import com.ciarandg.soundbounds.common.network.RegionUpdateMessageS2C
+import com.ciarandg.soundbounds.common.regions.RegionAuditor
 import com.ciarandg.soundbounds.common.regions.RegionData
 import com.ciarandg.soundbounds.common.regions.WorldRegionState
 import com.ciarandg.soundbounds.common.util.Paginator
@@ -56,6 +57,14 @@ class PlayerController(
     }
 
     fun notifyMetaMismatch() = view.notifyMetaMismatch()
+
+    fun auditRegions(world: ServerWorld) {
+        val regions = WorldRegionState.get(world).getAllRegions()
+        view.showAuditReport(
+            RegionAuditor.auditEmptyPlaylists(regions),
+            RegionAuditor.auditMissingMeta(regions)
+        )
+    }
 
     fun listRegions(world: ServerWorld) {
         view.showRegionList(WorldRegionState.get(world).getAllRegions().sortedBy { it.key }, paginator)

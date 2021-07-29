@@ -64,6 +64,13 @@ object RootNode : CommandNode(
             listOf()
         ),
         CommandNode(
+            LiteralNodeData(
+                "audit",
+                "check regions for missing metadata and empty playlists"
+            ) { ctx, ctrl -> ctrl.auditRegions(ctx.source.world) },
+            listOf()
+        ),
+        CommandNode(
             LiteralNodeData("pos1", "set your first position marker") { ctx, ctrl ->
                 ctrl.setPosMarker(PosMarker.FIRST, ctx.source.entity?.blockPos ?: BlockPos(0, 0, 0))
             },

@@ -86,6 +86,34 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
         else bodyText("Current region: ") + regionNameText(regionName)
     )
 
+    override fun showAuditReport(
+        regionsWithEmptyPlaylists: Set<String>,
+        regionsMissingMeta: Set<Pair<String, Set<String>>>
+    ) {
+        val head = bodyText("\nRegions with empty playlists: ")
+
+        if (regionsWithEmptyPlaylists.isNotEmpty()) regionsWithEmptyPlaylists.forEachIndexed { index, regionName ->
+            val name = regionNameText(regionName)
+            head.append(
+                if (index == regionsWithEmptyPlaylists.size - 1) name
+                else name.append(bodyText(", "))
+            )
+        } else head.append(bodyText("NONE"))
+
+        head.append(bodyText("\nRegions containing ghost songs: "))
+        if (regionsMissingMeta.isNotEmpty()) regionsMissingMeta.forEach { region ->
+            head.append(regionNameText("\n${region.first}")).append(bodyText(": "))
+            region.second.forEachIndexed { index, songID ->
+                val id = songIDText(songID)
+                head.append(
+                    if (index == region.second.size - 1) id
+                    else id.append(bodyText(", "))
+                )
+            }
+        } else head.append(bodyText("NONE"))
+        sendWithBadge(head)
+    }
+
     override fun notifyPosMarkerSet(marker: PosMarker, pos: BlockPos) = sendWithBadge(
         bodyText("Set marker ") + posMarkerText(marker) + bodyText(" to ") + blockPosText(pos)
     )
