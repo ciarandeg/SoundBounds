@@ -166,7 +166,8 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
             bodyText("Successfully synced metadata: ") +
                 quantityText(composers) + bodyText(" ${pluralize(composers, "composer")}, ") +
                 quantityText(groups) + bodyText(" ${pluralize(groups, "group")}, ") +
-                quantityText(songs) + bodyText(" ${pluralize(songs, "song")}")
+                quantityText(songs) + bodyText(" ${pluralize(songs, "song")}") +
+                bodyText(". Consider auditing your regions (/sb audit) to ensure that your new metadata is compatible.")
         )
     }
 
