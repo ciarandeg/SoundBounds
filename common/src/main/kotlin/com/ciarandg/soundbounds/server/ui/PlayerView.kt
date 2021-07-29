@@ -47,6 +47,7 @@ interface PlayerView {
         NO_METADATA_PRESENT,
         NO_SUCH_SONG,
         GHOST_SONG,
-        SONG_POS_OOB
+        SONG_POS_OOB,
+        PLAYER_NOT_SYNCER
     }
 }

@@ -297,6 +297,7 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
             PlayerView.FailureReason.NO_SUCH_SONG -> "Requested song ID does not exist"
             PlayerView.FailureReason.GHOST_SONG -> "Although there are regions containing requested song ID, the song has no metadata. Please delete it or resync."
             PlayerView.FailureReason.SONG_POS_OOB -> "Requested song position is out of bounds"
+            PlayerView.FailureReason.PLAYER_NOT_SYNCER -> "You are not whitelisted to sync metadata"
         }
     )
 

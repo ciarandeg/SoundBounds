@@ -22,6 +22,7 @@ import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
+import java.io.File
 
 class PlayerController(
     val owner: PlayerEntity,
@@ -105,11 +106,14 @@ class PlayerController(
     }
 
     fun syncMetadata(player: ServerPlayerEntity) {
-        NetworkManager.sendToPlayer(
+        val syncersFile = File(SYNCERS_PATH)
+        val syncers = if (syncersFile.exists()) syncersFile.readLines().map { it.toLowerCase() } else null
+        val playerName = player.name.asString().toLowerCase()
+        if (syncers == null || syncers.contains(playerName)) NetworkManager.sendToPlayer(
             player,
             SoundBounds.SYNC_METADATA_CHANNEL_S2C,
             PacketByteBuf(Unpooled.buffer())
-        )
+        ) else view.notifyFailed(FailureReason.PLAYER_NOT_SYNCER)
     }
 
     // this method breaks the MVC pattern a little, but is necessary since syncMetadata is networked
@@ -249,6 +253,7 @@ class PlayerController(
     }
 
     companion object {
+        const val SYNCERS_PATH = "./config/${SoundBounds.MOD_ID}/syncers.txt"
         internal fun pushRegionToClients(world: ServerWorld, region: RegionEntry) =
             NetworkManager.sendToPlayers(
                 world.players,
