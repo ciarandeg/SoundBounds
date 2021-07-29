@@ -41,8 +41,11 @@ class Baton(settings: Settings?) : NetherStarItem(settings) {
     }
 
     override fun onEntitySwing(stack: ItemStack?, entity: LivingEntity?): Boolean {
-        if (entity is ClientPlayerEntity && entity == GameInstance.getClient().player)
-            setCorner(Corner.FIRST)
+        if (entity != null &&
+            entity.world.isClient &&
+            entity is ClientPlayerEntity &&
+            entity == GameInstance.getClient().player
+        ) setCorner(Corner.FIRST)
         return super.onEntitySwing(stack, entity)
     }
 
