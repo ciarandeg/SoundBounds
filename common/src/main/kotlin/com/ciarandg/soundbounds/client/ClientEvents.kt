@@ -3,6 +3,8 @@ package com.ciarandg.soundbounds.client
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.audio.GameMusicVolume
 import com.ciarandg.soundbounds.client.metadata.ClientMeta
+import com.ciarandg.soundbounds.client.options.SBClientOptions
+import com.ciarandg.soundbounds.client.options.SBOptionsScreen
 import com.ciarandg.soundbounds.client.regions.RegionSwitcher
 import com.ciarandg.soundbounds.common.network.CurrentRegionMessage
 import com.ciarandg.soundbounds.common.network.MetaHashCheckMessage
@@ -13,12 +15,17 @@ import com.ciarandg.soundbounds.common.network.RegionUpdateMessageS2C
 import me.shedaniel.architectury.event.events.GuiEvent
 import me.shedaniel.architectury.event.events.TickEvent
 import me.shedaniel.architectury.event.events.client.ClientPlayerEvent
+import me.shedaniel.architectury.event.events.client.ClientRawInputEvent
 import me.shedaniel.architectury.networking.NetworkManager
+import net.minecraft.util.ActionResult
+import org.lwjgl.glfw.GLFW
 
 object ClientEvents {
     fun register() {
+        initializeOptions()
         registerTicker()
         registerAudio()
+        registerOptionsScreen()
         registerMetaHashCheck()
         registerNowPlaying()
         registerCurrentRegion()
@@ -26,11 +33,23 @@ object ClientEvents {
         registerRegionUpdate()
     }
 
+    private fun initializeOptions() {
+        SBClientOptions // better to have it read the json here rather than in game loop
+    }
+
     private fun registerTicker() = TickEvent.PLAYER_POST.register { ClientTicker.tick() }
 
     private fun registerAudio() {
         ClientPlayerEvent.CLIENT_PLAYER_JOIN.register { GameMusicVolume.update() }
         ClientPlayerEvent.CLIENT_PLAYER_QUIT.register { RegionSwitcher.purge() }
+    }
+
+    private fun registerOptionsScreen() {
+        ClientRawInputEvent.KEY_PRESSED.register { client, keyCode, scanCode, action, modifiers ->
+            if (keyCode == GLFW.GLFW_KEY_B && client.currentScreen == null)
+                client.openScreen(SBOptionsScreen())
+            ActionResult.PASS
+        }
     }
 
     private fun registerMetaHashCheck() {

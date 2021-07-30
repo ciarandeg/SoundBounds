@@ -26,8 +26,6 @@ class SoundBounds {
         const val MOD_ID = "soundbounds"
         val LOGGER: Logger = LogManager.getLogger(MOD_ID)
 
-        const val AUTO_NOW_PLAYING = false // automatically display now-playing message when a new song starts
-
         val META_HASH_CHECK_S2C = Identifier(MOD_ID, "meta_hash_check_s2c")
         val META_HASH_CHECK_C2S = Identifier(MOD_ID, "meta_hash_check_c2s")
         val NOW_PLAYING_CHANNEL_C2S = Identifier(MOD_ID, "now_playing_c2s")

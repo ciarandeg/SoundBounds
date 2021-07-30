@@ -5,6 +5,7 @@ import com.ciarandg.soundbounds.client.ClientTicker
 import com.ciarandg.soundbounds.client.audio.AudioSource
 import com.ciarandg.soundbounds.client.audio.song.types.LoadedSong
 import com.ciarandg.soundbounds.client.audio.song.types.OggSong
+import com.ciarandg.soundbounds.client.options.SBClientOptions
 import com.ciarandg.soundbounds.common.network.NowPlayingMessage
 import me.shedaniel.architectury.networking.NetworkManager
 import java.lang.IllegalStateException
@@ -27,7 +28,7 @@ class SongPlayer(val songID: String, song: OggSong) : Observer {
             else -> {
                 loadUntilCaughtUp()
                 source.play()
-                if (SoundBounds.AUTO_NOW_PLAYING) notifyNowPlaying()
+                if (SBClientOptions.data.autoNowPlaying) notifyNowPlaying()
             }
         }
     }

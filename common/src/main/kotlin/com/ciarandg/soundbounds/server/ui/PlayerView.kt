@@ -36,11 +36,13 @@ interface PlayerView {
     fun showRegionContiguous(regionName: String)
     fun showSongList(songs: List<Pair<String, JsonSongMeta?>>, paginator: Paginator)
     fun showSongInfo(songID: String, song: JsonSongMeta)
+    fun showGroupMembers(groupName: String, members: List<String>)
     fun notifyFailed(reason: FailureReason)
 
     enum class FailureReason {
         POS_MARKERS_MISSING,
         NO_SUCH_REGION,
+        NO_SUCH_GROUP,
         REGION_NAME_CONFLICT,
         VOLUME_INDEX_OOB,
         REGION_MUST_HAVE_VOLUME,

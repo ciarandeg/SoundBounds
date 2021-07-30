@@ -5,6 +5,7 @@ import com.ciarandg.soundbounds.common.network.CurrentRegionMessage
 import com.ciarandg.soundbounds.common.network.MetaHashCheckMessage
 import com.ciarandg.soundbounds.common.network.MetadataSyncMessage
 import com.ciarandg.soundbounds.common.network.NowPlayingMessage
+import com.ciarandg.soundbounds.common.ui.cli.argument.GroupNameArgumentType
 import com.ciarandg.soundbounds.common.ui.cli.argument.PTArgumentType
 import com.ciarandg.soundbounds.common.ui.cli.argument.RegionArgumentType
 import com.ciarandg.soundbounds.common.ui.cli.argument.SongIDArgumentType
@@ -18,6 +19,7 @@ object CommonEvents {
         // Command registration
         RegionArgumentType.register()
         SongIDArgumentType.register()
+        GroupNameArgumentType.register()
         SongTagArgumentType.register()
         PTArgumentType.register()
         CommandRegistrationEvent.EVENT.register { dispatcher, _ -> SoundBoundsCommand.register(dispatcher) }

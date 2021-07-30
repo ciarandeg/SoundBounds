@@ -252,6 +252,12 @@ class PlayerController(
         view.showRegionContiguous(regionName)
     }
 
+    fun showGroupInfo(groupName: String) {
+        val members = ServerMetaState.get().meta.groups[groupName]
+        if (members == null) view.notifyFailed(FailureReason.NO_SUCH_GROUP)
+        else view.showGroupMembers(groupName, members)
+    }
+
     companion object {
         const val SYNCERS_PATH = "./config/${SoundBounds.MOD_ID}/syncers.txt"
         internal fun pushRegionToClients(world: ServerWorld, region: RegionEntry) =

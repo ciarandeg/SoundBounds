@@ -60,6 +60,13 @@ class SongTagArgumentContainer(name: String) :
         StringArgumentType::getString
     )
 
+class GroupNameArgumentContainer(name: String) :
+    ArgumentContainer<String, String>(
+        name,
+        GroupNameArgumentType::type,
+        StringArgumentType::getString
+    )
+
 class PlaylistTypeArgumentContainer(name: String) :
     ArgumentContainer<PlaylistType, PlaylistType>(
         name,

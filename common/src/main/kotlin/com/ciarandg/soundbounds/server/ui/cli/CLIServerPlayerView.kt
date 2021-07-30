@@ -11,15 +11,16 @@ import com.ciarandg.soundbounds.server.metadata.ServerMetaState
 import com.ciarandg.soundbounds.server.ui.PlayerView
 import com.ciarandg.soundbounds.server.ui.cli.Colors.ERROR
 import com.ciarandg.soundbounds.server.ui.cli.Colors.ModBadge.formatModBadge
-import com.ciarandg.soundbounds.server.ui.cli.Colors.artistText
 import com.ciarandg.soundbounds.server.ui.cli.Colors.blockPosText
 import com.ciarandg.soundbounds.server.ui.cli.Colors.bodyText
 import com.ciarandg.soundbounds.server.ui.cli.Colors.listPosText
+import com.ciarandg.soundbounds.server.ui.cli.Colors.plainArtistText
 import com.ciarandg.soundbounds.server.ui.cli.Colors.playlistTypeText
 import com.ciarandg.soundbounds.server.ui.cli.Colors.posMarkerText
 import com.ciarandg.soundbounds.server.ui.cli.Colors.priorityText
 import com.ciarandg.soundbounds.server.ui.cli.Colors.quantityText
 import com.ciarandg.soundbounds.server.ui.cli.Colors.regionNameText
+import com.ciarandg.soundbounds.server.ui.cli.Colors.richArtistText
 import com.ciarandg.soundbounds.server.ui.cli.Colors.songIDText
 import com.ciarandg.soundbounds.server.ui.cli.Colors.songTagListText
 import com.ciarandg.soundbounds.server.ui.cli.Colors.songTitleText
@@ -66,7 +67,7 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
         val songMeta = meta.songs[nowPlaying]
         if (songMeta != null) sendWithBadge(
             bodyText("Now playing: ")
-                .append(artistText(songMeta.artist, songMeta.featuring))
+                .append(richArtistText(songMeta.artist, songMeta.featuring))
                 .append(bodyText(" - "))
                 .append(songTitleText(songMeta.title))
         ) else sendError("Currently playing song does not have server-synced metadata")
@@ -263,7 +264,7 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
                 val songMeta = song.second
                 val start = listPosText(n).append(bodyText(". ")).append(songIDText(id)).append(bodyText(": "))
                 if (songMeta == null) start.append(LiteralText("Missing metadata!").formatted(ERROR))
-                else start.append(artistText(songMeta.artist, songMeta.featuring))
+                else start.append(richArtistText(songMeta.artist, songMeta.featuring))
                     .append(bodyText(" - "))
                     .append(songTitleText(songMeta.title))
             }
@@ -272,7 +273,7 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
 
     override fun showSongInfo(songID: String, song: JsonSongMeta) = sendWithBadge(
         bodyText("\n")
-            .append(artistText(song.artist, song.featuring))
+            .append(richArtistText(song.artist, song.featuring))
             .append(bodyText(" - "))
             .append(songTitleText(song.title))
             .append(bodyText("\nID: "))
@@ -287,10 +288,20 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
             )
     )
 
+    override fun showGroupMembers(groupName: String, members: List<String>) {
+        val head = bodyText("Members of ") + plainArtistText(groupName) + bodyText(": ")
+        members.forEachIndexed { i, member ->
+            head.append(richArtistText(member))
+            if (i < members.size - 1) head.append(bodyText(", "))
+        }
+        sendWithBadge(head)
+    }
+
     override fun notifyFailed(reason: PlayerView.FailureReason) = sendError(
         when (reason) {
             PlayerView.FailureReason.POS_MARKERS_MISSING -> "Position markers not set"
             PlayerView.FailureReason.NO_SUCH_REGION -> "Requested region does not exist"
+            PlayerView.FailureReason.NO_SUCH_GROUP -> "Requested group does not exist"
             PlayerView.FailureReason.REGION_NAME_CONFLICT -> "Requested region name is taken"
             PlayerView.FailureReason.VOLUME_INDEX_OOB -> "Requested volume index is out of bounds"
             PlayerView.FailureReason.REGION_MUST_HAVE_VOLUME -> "Requested region only has one volume"
