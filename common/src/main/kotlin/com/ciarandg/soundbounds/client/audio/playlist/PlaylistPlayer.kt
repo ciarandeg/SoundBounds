@@ -24,6 +24,7 @@ class PlaylistPlayer(playlist: List<String>, type: PlaylistType) {
     fun stop() {
         state.cancel()
         state = PlaylistPlayerStoppedState(this)
+        dispenser.scrap()
     }
 
     fun currentSongID() = when (val currentState = state) {

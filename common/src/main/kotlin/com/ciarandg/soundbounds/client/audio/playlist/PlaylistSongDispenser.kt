@@ -17,6 +17,8 @@ class PlaylistSongDispenser(
         return upcoming.poll()
     }
 
+    fun scrap() = upcoming.clear()
+
     private fun generateCycle() = when (type) {
         PlaylistType.SEQUENTIAL -> playlist.forEach { upcoming.offer(it) }
         PlaylistType.SHUFFLED -> playlist.shuffled().forEach { upcoming.offer(it) }
