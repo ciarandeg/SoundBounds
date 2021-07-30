@@ -30,7 +30,12 @@ object RegionSwitcher {
             try { new?.second?.player?.start() } catch (e: Exception) { handleException(e) }
         }
     }
-    val fader = Fader { swapper.push() }
+    val fader = initFader()
+
+    private fun initFader(): Fader = Fader {
+        swapper.push()
+        fader.reset()
+    }
 
     fun update() {
         swapper.current?.second?.player?.tick()

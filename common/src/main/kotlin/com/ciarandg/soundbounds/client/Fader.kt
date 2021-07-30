@@ -20,11 +20,17 @@ class Fader(
 
     fun reset() {
         synchronized(state) {
+            if (state.isFading) stopFade()
+            state.gain = MAX_GAIN
+            notifyGainChange()
+        }
+    }
+
+    private fun stopFade() {
+        synchronized(state) {
             incrementFadeTask.cancel()
             incrementFadeTask = IncrementFadeTask(this)
             state.isFading = false
-            state.gain = MAX_GAIN
-            notifyGainChange()
         }
     }
 
@@ -44,7 +50,7 @@ class Fader(
             notifyGainChange()
             if (state.gain == MIN_GAIN) {
                 state.isFading = false
-                reset()
+                stopFade()
                 postFadeCallback()
             }
         }
