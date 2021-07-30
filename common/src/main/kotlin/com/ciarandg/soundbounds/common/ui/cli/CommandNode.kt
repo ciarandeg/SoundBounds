@@ -1,6 +1,7 @@
 package com.ciarandg.soundbounds.common.ui.cli
 
 import com.ciarandg.soundbounds.common.ui.cli.argument.ArgumentContainer
+import com.ciarandg.soundbounds.common.ui.cli.command.SoundBoundsCommand.OP_PERM_LEVEL
 import com.ciarandg.soundbounds.common.util.PlaylistType
 import com.ciarandg.soundbounds.server.ui.controller.PlayerController
 import com.mojang.brigadier.context.CommandContext
@@ -8,7 +9,7 @@ import net.minecraft.command.argument.PosArgument
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.util.math.BlockPos
 
-open class CommandNode(val data: NodeData, val children: List<CommandNode>)
+open class CommandNode(val data: NodeData, val children: List<CommandNode>, val permissionLevel: Int = OP_PERM_LEVEL)
 
 interface NodeData {
     val work: ((CommandContext<ServerCommandSource>, PlayerController) -> Unit)?

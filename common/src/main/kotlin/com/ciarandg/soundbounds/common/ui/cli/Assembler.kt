@@ -14,7 +14,7 @@ import net.minecraft.text.TranslatableText
 internal object Assembler {
     fun assembleLiteral(root: CommandNode): LiteralArgumentBuilder<ServerCommandSource> {
         if (root.data !is LiteralNodeData) throw IllegalArgumentException("Must be a literal node")
-        val c = CommandManager.literal(root.data.literal)
+        val c = CommandManager.literal(root.data.literal).requires { it.hasPermissionLevel(root.permissionLevel) }
         assemblyHelper(c, root)
         return c
     }

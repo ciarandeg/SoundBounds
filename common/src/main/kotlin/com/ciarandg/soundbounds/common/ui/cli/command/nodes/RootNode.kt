@@ -6,6 +6,8 @@ import com.ciarandg.soundbounds.common.ui.cli.CommandNode
 import com.ciarandg.soundbounds.common.ui.cli.IntArgNodeData
 import com.ciarandg.soundbounds.common.ui.cli.LiteralNodeData
 import com.ciarandg.soundbounds.common.ui.cli.StringArgNodeData
+import com.ciarandg.soundbounds.common.ui.cli.command.SoundBoundsCommand.DEOP_PERM_LEVEL
+import com.ciarandg.soundbounds.common.ui.cli.command.SoundBoundsCommand.OP_PERM_LEVEL
 import com.ciarandg.soundbounds.common.ui.cli.command.nodes.edit.RegionEditNode
 import com.ciarandg.soundbounds.common.ui.cli.command.nodes.info.InfoNode
 import com.ciarandg.soundbounds.common.ui.cli.command.nodes.list.ListNode
@@ -19,9 +21,11 @@ import net.minecraft.util.math.BlockPos
 object RootNode : CommandNode(
     LiteralNodeData(
         "sb", null
-    ) { _, ctrl ->
-        ctrl.paginator.state = PaginatorState("/sb help ${Paginator.PAGE_DELIM}", 1)
-        CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp(ctrl.paginator)
+    ) { ctx, ctrl ->
+        if (ctx.source.hasPermissionLevel(OP_PERM_LEVEL)) {
+            ctrl.paginator.state = PaginatorState("/sb help ${Paginator.PAGE_DELIM}", 1)
+            CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp(ctrl.paginator)
+        }
     },
     listOf(
         CommandNode(
@@ -45,7 +49,7 @@ object RootNode : CommandNode(
                 "now-playing",
                 "show currently playing song"
             ) { ctx, ctrl -> ctrl.showNowPlaying(ctx.source.player) },
-            listOf()
+            listOf(), DEOP_PERM_LEVEL
         ),
         CommandNode(
             LiteralNodeData(
@@ -130,5 +134,6 @@ object RootNode : CommandNode(
         RegionEditNode,
         InfoNode,
         SearchNode
-    )
+    ),
+    DEOP_PERM_LEVEL
 )
