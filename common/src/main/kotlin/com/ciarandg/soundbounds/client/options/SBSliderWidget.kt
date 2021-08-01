@@ -9,7 +9,8 @@ class SBSliderWidget(
     width: Int,
     height: Int,
     initial: Double,
-    private val label: String,
+    private val prefix: String,
+    private val suffix: (Double) -> String,
     private val formatForDisplay: (Double) -> Any,
     private val onChange: (Double) -> Unit,
     active: Boolean = true
@@ -21,7 +22,7 @@ class SBSliderWidget(
     }
 
     override fun updateMessage() {
-        message = LiteralText("$label: ${formatForDisplay(value)}")
+        message = LiteralText("$prefix: ${formatForDisplay(value)} ${suffix(value)}")
     }
 
     override fun applyValue() {

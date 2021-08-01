@@ -4,6 +4,10 @@ import com.google.gson.Gson
 import java.io.File
 
 object SBClientOptions {
+    const val MAX_IDLE_DUR: Long = 60 * 1000 * 5
+    const val MIN_IDLE_DUR: Long = 0
+    const val IDLE_DUR_STEP: Long = 100
+
     private val dataFile = File("./config/sb-options.json")
     private val gson = Gson()
     var data: SBClientOptionsData = read()
@@ -21,5 +25,6 @@ object SBClientOptions {
 }
 
 data class SBClientOptionsData(
+    var idleDuration: Long = 45000,
     var autoNowPlaying: Boolean = false
 )

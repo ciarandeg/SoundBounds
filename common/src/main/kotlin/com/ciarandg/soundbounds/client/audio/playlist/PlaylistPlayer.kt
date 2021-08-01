@@ -31,8 +31,4 @@ class PlaylistPlayer(playlist: List<String>, type: PlaylistType) {
         is PlaylistPlayerPlayingState -> currentState.currentSongID()
         else -> null
     }
-
-    companion object {
-        internal const val IDLE_DUR_MS: Long = 45000
-    }
 }

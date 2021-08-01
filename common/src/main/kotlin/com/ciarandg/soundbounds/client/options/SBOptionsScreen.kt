@@ -6,6 +6,7 @@ import net.minecraft.client.gui.widget.OptionButtonWidget
 import net.minecraft.client.options.BooleanOption
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.text.LiteralText
+import kotlin.math.pow
 
 class SBOptionsScreen : Screen(LiteralText("SoundBounds Options")) {
     override fun init() {
@@ -26,6 +27,7 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Options")) {
                 widgetWidth, widgetHeight,
                 0.0,
                 "Fade Duration",
+                { "ms" },
                 { value -> (value * 100).toInt() },
                 {}, false
             )
@@ -34,10 +36,11 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Options")) {
             SBSliderWidget(
                 xPos, nextY(),
                 widgetWidth, widgetHeight,
-                0.0,
-                "Silence Between Songs",
-                { value -> (value * 100).toInt() },
-                {}, false
+                fromIdleDur(),
+                "Post-Song Idle",
+                { value -> formatDuration(toIdleDur(value), { "ms" }, { "secs" }, { "mins" }) },
+                { value -> formatDuration(toIdleDur(value), { it.toString() }, { truncate(it) }, { truncate(it) }) },
+                { value -> SBClientOptions.data.idleDuration = toIdleDur(value) },
             )
         )
         addButton(
@@ -46,6 +49,7 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Options")) {
                 widgetWidth, widgetHeight,
                 0.0,
                 "Buffer Size",
+                { "ms" },
                 { value -> (value * 100).toInt() },
                 {}, false
             )
@@ -56,6 +60,7 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Options")) {
                 widgetWidth, widgetHeight,
                 0.0,
                 "Buffer Lookahead",
+                { "buffers" },
                 { value -> (value * 100).toInt() },
                 {}, false
             )
@@ -101,6 +106,35 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Options")) {
     }
 
     companion object {
+        private const val IDLE_SLIDER_SKEW: Double = 2.0
+
+        private fun formatDuration(
+            milliseconds: Long,
+            ms: (Long) -> String,
+            secs: (Double) -> String,
+            mins: (Double) -> String
+        ): String = when {
+            milliseconds < 1000 -> ms(milliseconds)
+            milliseconds < 60 * 1000 -> secs(milliseconds.toDouble() / 1000.0)
+            else -> mins(milliseconds.toDouble() / 1000.0 / 60.0)
+        }
+        private fun truncate(value: Double) = String.format("%.2f", value)
+
+        private fun toIdleDur(sliderValue: Double): Long {
+            val range: Long = SBClientOptions.MAX_IDLE_DUR - SBClientOptions.MIN_IDLE_DUR
+            val skewed: Double = range * sliderValue.pow(IDLE_SLIDER_SKEW)
+            val exact: Long = skewed.toLong() + SBClientOptions.MIN_IDLE_DUR
+            val out = exact - exact % SBClientOptions.IDLE_DUR_STEP
+            return out
+        }
+
+        private fun fromIdleDur(): Double {
+            val min: Long = SBClientOptions.MIN_IDLE_DUR
+            val range: Double = (SBClientOptions.MAX_IDLE_DUR - min).toDouble()
+            val pctLinear: Double = (SBClientOptions.data.idleDuration - min) / range
+            return pctLinear.pow(1.0 / IDLE_SLIDER_SKEW)
+        }
+
         val diskStreamOption = BooleanOption(
             "Stream From Disk",
             { false },

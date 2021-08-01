@@ -2,6 +2,7 @@ package com.ciarandg.soundbounds.client.audio.playlist
 
 import com.ciarandg.soundbounds.client.audio.song.SongPlayer
 import com.ciarandg.soundbounds.client.audio.song.types.OggSong
+import com.ciarandg.soundbounds.client.options.SBClientOptions
 import java.util.Timer
 import java.util.TimerTask
 import java.util.concurrent.ForkJoinPool
@@ -72,10 +73,10 @@ class PlaylistPlayerPlayingState(
 }
 
 class PlaylistPlayerIdlingState(override val owner: PlaylistPlayer) : PlaylistPlayerState {
-    private val idleUntil = currentTime() + PlaylistPlayer.IDLE_DUR_MS
+    private val startTime = currentTime()
 
     override fun tick(): PlaylistPlayerState =
-        if (currentTime() >= idleUntil) PlaylistPlayerLoadingState(owner)
+        if (currentTime() - startTime >= SBClientOptions.data.idleDuration) PlaylistPlayerLoadingState(owner)
         else this
 
     override fun cancel() {}
