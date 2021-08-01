@@ -15,13 +15,15 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Options")) {
         val ySpacer = widgetHeight / 4
         val top = height / 4 - widgetHeight / 2 + ySpacer * 3
 
+        val xPos = xCenter - widgetWidth / 2
+        var counter = 0
+        fun nextY() = top + (widgetHeight + ySpacer) * counter++
+
         super.init()
         addButton(
             SBSliderWidget(
-                xCenter - widgetWidth / 2,
-                top,
-                widgetWidth,
-                widgetHeight,
+                xPos, nextY(),
+                widgetWidth, widgetHeight,
                 0.0,
                 "Fade Duration",
                 { value -> (value * 100).toInt() },
@@ -30,10 +32,18 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Options")) {
         )
         addButton(
             SBSliderWidget(
-                xCenter - widgetWidth / 2,
-                top + widgetHeight + ySpacer,
-                widgetWidth,
-                widgetHeight,
+                xPos, nextY(),
+                widgetWidth, widgetHeight,
+                0.0,
+                "Silence Between Songs",
+                { value -> (value * 100).toInt() },
+                {}, false
+            )
+        )
+        addButton(
+            SBSliderWidget(
+                xPos, nextY(),
+                widgetWidth, widgetHeight,
                 0.0,
                 "Buffer Size",
                 { value -> (value * 100).toInt() },
@@ -42,10 +52,8 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Options")) {
         )
         addButton(
             SBSliderWidget(
-                xCenter - widgetWidth / 2,
-                top + (widgetHeight + ySpacer) * 2,
-                widgetWidth,
-                widgetHeight,
+                xPos, nextY(),
+                widgetWidth, widgetHeight,
                 0.0,
                 "Buffer Lookahead",
                 { value -> (value * 100).toInt() },
@@ -53,10 +61,8 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Options")) {
             )
         )
         val diskStreamButton = OptionButtonWidget(
-            xCenter - widgetWidth / 2,
-            top + (widgetHeight + ySpacer) * 3,
-            widgetWidth,
-            widgetHeight,
+            xPos, nextY(),
+            widgetWidth, widgetHeight,
             diskStreamOption,
             diskStreamOption.getDisplayString(null)
         ) { button: ButtonWidget ->
@@ -68,10 +74,8 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Options")) {
         addButton(diskStreamButton)
         addButton(
             OptionButtonWidget(
-                xCenter - widgetWidth / 2,
-                top + (widgetHeight + ySpacer) * 4,
-                widgetWidth,
-                widgetHeight,
+                xPos, nextY(),
+                widgetWidth, widgetHeight,
                 autoNowPlayingOption,
                 autoNowPlayingOption.getDisplayString(null)
             ) { button: ButtonWidget ->
