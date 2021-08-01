@@ -14,7 +14,7 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Options")) {
         val widgetWidth = 150
         val widgetHeight = 20
         val ySpacer = widgetHeight / 4
-        val top = height / 4 - widgetHeight / 2 + ySpacer * 3
+        val top = height / 4 - widgetHeight / 2 + ySpacer
 
         val xPos = xCenter - widgetWidth / 2
         var counter = 0
@@ -95,7 +95,7 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Options")) {
         renderBackground(matrices)
         drawCenteredText(
             matrices,
-            textRenderer, title, width / 2, 40, 0xffffff
+            textRenderer, title, width / 2, 30, 0xffffff
         )
         super.render(matrices, mouseX, mouseY, delta)
     }
