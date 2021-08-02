@@ -11,7 +11,7 @@ authors = "Ciaran De Groot"
 description = '''
 SoundBounds is a region-based soundtracking mod, developed for Crypts & Creepers.
 '''
-#logoFile = ""
+logoFile = "icon.png"
 
 [[dependencies.examplemod]]
 modId = "forge"
