@@ -46,9 +46,17 @@ object ClientEvents {
 
     private fun registerOptionsScreen() {
         ClientRawInputEvent.KEY_PRESSED.register { client, keyCode, scanCode, action, modifiers ->
-            if (keyCode == GLFW.GLFW_KEY_B && client.currentScreen == null)
-                client.openScreen(SBOptionsScreen())
-            ActionResult.PASS
+            if (action == GLFW.GLFW_PRESS && keyCode == GLFW.GLFW_KEY_B) {
+                when (client.currentScreen) {
+                    null -> {
+                        client.openScreen(SBOptionsScreen())
+                        ActionResult.PASS
+                    } is SBOptionsScreen -> {
+                        client.openScreen(null)
+                        ActionResult.PASS
+                    } else -> ActionResult.CONSUME
+                }
+            } else ActionResult.CONSUME
         }
     }
 
