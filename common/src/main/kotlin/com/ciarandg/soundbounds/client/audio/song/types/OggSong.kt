@@ -15,6 +15,7 @@ class OggSong(meta: JsonSongMeta) : Song<OggAudioStream> {
     override val head = meta.head?.let { OggAudioStream(idToResource(it).inputStream) }
     override val bodies = meta.bodies.map { OggAudioStream(idToResource(it).inputStream) }
     override val loop = meta.loop
+    val isSoundscape = meta.tags.map { it.toLowerCase() }.contains("soundscape")
 
     companion object {
         private const val RESOURCE_PATH = "music/"

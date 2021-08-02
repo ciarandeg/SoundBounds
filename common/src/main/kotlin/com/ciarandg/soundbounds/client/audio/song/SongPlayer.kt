@@ -16,6 +16,7 @@ class SongPlayer(val songID: String, song: OggSong) : Observer {
     private val source = AudioSource()
     private val loadedSong = LoadedSong(song, BUFFER_DUR_MS)
     private val stepper = SongStepper(loadedSong, song.loop)
+    private val isSoundscape = song.isSoundscape
     private var destroyed = false
     private var buffersQueued = 0
 
@@ -28,7 +29,7 @@ class SongPlayer(val songID: String, song: OggSong) : Observer {
             else -> {
                 loadUntilCaughtUp()
                 source.play()
-                if (SBClientOptions.data.autoNowPlaying) notifyNowPlaying()
+                if (SBClientOptions.data.autoNowPlaying && !isSoundscape) notifyNowPlaying()
             }
         }
     }
