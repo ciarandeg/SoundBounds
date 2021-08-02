@@ -22,7 +22,6 @@ object Arguments {
     val regionNameNewArgument = WordArgumentContainer("new-name")
     val regionVolumeIndexArgument = IntArgumentContainer("volume-index", 1)
     val songIDExistingArgument = SongIDArgumentContainer("song-id")
-    val songIDNewArgument = WordArgumentContainer("new-song-id")
     val songTagArgument = SongTagArgumentContainer("tag")
     val playlistTypeArgument = PlaylistTypeArgumentContainer("playlist-type")
     val groupNameArgument = GroupNameArgumentContainer("group-name")

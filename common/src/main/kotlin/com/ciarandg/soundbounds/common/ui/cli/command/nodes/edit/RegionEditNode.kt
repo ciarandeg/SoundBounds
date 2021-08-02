@@ -166,12 +166,12 @@ object RegionEditNode : CommandNode(
                                     IntArgNodeData(Arguments.songPositionArgument, null),
                                     listOf(
                                         CommandNode(
-                                            StringArgNodeData(Arguments.songIDNewArgument) { ctx, ctrl ->
+                                            StringArgNodeData(Arguments.songIDExistingArgument) { ctx, ctrl ->
                                                 ctrl.replaceRegionPlaylistSong(
                                                     ctx.source.world,
                                                     Arguments.regionNameExistingArgument.retrieve(ctx),
                                                     Arguments.songPositionArgument.retrieve(ctx),
-                                                    Arguments.songIDNewArgument.retrieve(ctx)
+                                                    Arguments.songIDExistingArgument.retrieve(ctx)
                                                 )
                                             },
                                             listOf()
