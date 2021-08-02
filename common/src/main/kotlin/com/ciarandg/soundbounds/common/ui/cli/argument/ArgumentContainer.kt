@@ -2,6 +2,7 @@ package com.ciarandg.soundbounds.common.ui.cli.argument
 
 import com.ciarandg.soundbounds.common.util.PlaylistType
 import com.mojang.brigadier.arguments.ArgumentType
+import com.mojang.brigadier.arguments.BoolArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
@@ -23,6 +24,13 @@ class IntArgumentContainer(name: String, min: Int = 1) :
         name,
         { IntegerArgumentType.integer(min) },
         IntegerArgumentType::getInteger
+    )
+
+class BooleanArgumentContainer(name: String) :
+    ArgumentContainer<Boolean, Boolean>(
+        name,
+        { BoolArgumentType.bool() },
+        BoolArgumentType::getBool
     )
 
 class WordArgumentContainer(name: String) :

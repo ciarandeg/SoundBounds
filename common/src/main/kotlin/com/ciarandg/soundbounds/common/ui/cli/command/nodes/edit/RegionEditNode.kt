@@ -1,6 +1,7 @@
 package com.ciarandg.soundbounds.common.ui.cli.command.nodes.edit
 
 import com.ciarandg.soundbounds.common.ui.cli.Arguments
+import com.ciarandg.soundbounds.common.ui.cli.BoolArgNodeData
 import com.ciarandg.soundbounds.common.ui.cli.CommandNode
 import com.ciarandg.soundbounds.common.ui.cli.IntArgNodeData
 import com.ciarandg.soundbounds.common.ui.cli.LiteralNodeData
@@ -102,6 +103,25 @@ object RegionEditNode : CommandNode(
                                             ctx.source.world,
                                             Arguments.regionNameExistingArgument.retrieve(ctx),
                                             Arguments.playlistTypeArgument.retrieve(ctx)
+                                        )
+                                    },
+                                    listOf()
+                                )
+                            )
+                        ),
+                        CommandNode(
+                            LiteralNodeData(
+                                "queue-persist",
+                                "playlist will proceed to next song on region re-entry if true",
+                                null
+                            ),
+                            listOf(
+                                CommandNode(
+                                    BoolArgNodeData(Arguments.queuePersistenceArgument) { ctx, ctrl ->
+                                        ctrl.setQueuePersistence(
+                                            ctx.source.world,
+                                            Arguments.regionNameExistingArgument.retrieve(ctx),
+                                            Arguments.queuePersistenceArgument.retrieve(ctx)
                                         )
                                     },
                                     listOf()

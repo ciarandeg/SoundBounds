@@ -37,6 +37,7 @@ interface PlayerView {
     fun showSongList(songs: List<Pair<String, JsonSongMeta?>>, paginator: Paginator)
     fun showSongInfo(songID: String, song: JsonSongMeta)
     fun showGroupMembers(groupName: String, members: List<String>)
+    fun notifyPlaylistPersistenceChanged(regionName: String, playlistPersist: Boolean)
     fun notifyFailed(reason: FailureReason)
 
     enum class FailureReason {

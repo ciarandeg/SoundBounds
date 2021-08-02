@@ -4,7 +4,7 @@ import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.exceptions.NoMetadataException
 import com.ciarandg.soundbounds.common.util.PlaylistType
 
-class PlaylistPlayer(playlist: List<String>, type: PlaylistType) {
+class PlaylistPlayer(playlist: List<String>, type: PlaylistType, private val queuePersist: Boolean) {
     internal val dispenser = PlaylistSongDispenser(playlist, type)
     private var state: PlaylistPlayerState = PlaylistPlayerStoppedState(this)
 
@@ -24,7 +24,7 @@ class PlaylistPlayer(playlist: List<String>, type: PlaylistType) {
     fun stop() {
         state.cancel()
         state = PlaylistPlayerStoppedState(this)
-        dispenser.scrap()
+        if (!queuePersist) dispenser.scrap()
     }
 
     fun currentSongID() = when (val currentState = state) {

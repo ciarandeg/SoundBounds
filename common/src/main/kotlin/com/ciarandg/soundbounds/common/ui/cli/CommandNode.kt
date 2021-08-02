@@ -25,6 +25,11 @@ interface ArgNodeData<S, T> : NodeData {
     val arg: ArgumentContainer<S, T>
 }
 
+class BoolArgNodeData(
+    override val arg: ArgumentContainer<Boolean, Boolean>,
+    override val work: ((CommandContext<ServerCommandSource>, PlayerController) -> Unit)?
+) : ArgNodeData<Boolean, Boolean>
+
 class IntArgNodeData(
     override val arg: ArgumentContainer<Int, Int>,
     override val work: ((CommandContext<ServerCommandSource>, PlayerController) -> Unit)?

@@ -18,7 +18,8 @@ data class RegionData(
     var priority: Int = 0,
     var playlistType: PlaylistType = SEQUENTIAL,
     val playlist: MutableList<String> = ArrayList(),
-    val volumes: MutableList<Pair<BlockPos, BlockPos>> = ArrayList()
+    val volumes: MutableList<Pair<BlockPos, BlockPos>> = ArrayList(),
+    var queuePersistence: Boolean = false
 ) {
     fun toTag(): CompoundTag {
         val tag = CompoundTag()
@@ -26,6 +27,7 @@ data class RegionData(
         tag.putString(Tag.PLAYLIST_TYPE.key, playlistType.toString())
         tag.put(Tag.PLAYLIST.key, playlistToTag(playlist))
         tag.put(Tag.VOLUMES.key, volumesToTag(volumes))
+        tag.putBoolean(Tag.PLAYLIST_PERSIST.key, queuePersistence)
         return tag
     }
 
@@ -48,6 +50,7 @@ data class RegionData(
             PLAYLIST_TYPE("playlist-type"),
             PLAYLIST("playlist"),
             VOLUMES("volumes"),
+            PLAYLIST_PERSIST("playlist-persist"),
             CORNER1("c1"),
             CORNER2("c2"),
             CORNER_X("x"),
@@ -60,7 +63,8 @@ data class RegionData(
                 tag.getInt(Tag.PRIORITY.key),
                 PlaylistType.valueOf(tag.getString(Tag.PLAYLIST_TYPE.key)),
                 tagToPlaylist(tag.getList(Tag.PLAYLIST.key, 8)),
-                tagToVolumeList(tag.getList(Tag.VOLUMES.key, 10))
+                tagToVolumeList(tag.getList(Tag.VOLUMES.key, 10)),
+                tag.getBoolean(Tag.PLAYLIST_PERSIST.key)
             )
         }
 

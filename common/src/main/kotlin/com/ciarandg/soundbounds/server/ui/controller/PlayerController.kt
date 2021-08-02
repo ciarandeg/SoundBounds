@@ -241,6 +241,17 @@ class PlayerController(
         }
     }
 
+    fun setQueuePersistence(world: ServerWorld, regionName: String, queuePersist: Boolean) {
+        val state = WorldRegionState.get(world)
+        val region = state.getRegion(regionName)
+        if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
+        else {
+            region.queuePersistence = queuePersist
+            pushRegionToClients(world, RegionEntry(regionName, region))
+            view.notifyPlaylistPersistenceChanged(regionName, queuePersist)
+        }
+    }
+
     fun listRegionVolumes(world: ServerWorld, regionName: String) {
         val region = WorldRegionState.get(world).getRegion(regionName)
         if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)

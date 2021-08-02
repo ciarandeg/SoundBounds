@@ -196,7 +196,8 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
             bodyText("\nRegion name: ") + regionNameText(regionName) +
                 bodyText("\nPlaylist type: ") + playlistTypeText(data.playlistType) +
                 bodyText("\nSong count: ") + quantityText(data.playlist.size) +
-                bodyText("\nVolume count: ") + quantityText(data.volumes.size)
+                bodyText("\nVolume count: ") + quantityText(data.volumes.size) +
+                bodyText("\nPlaylist queue persistence? ") + bodyText(data.queuePersistence.toString())
         )
     }
     override fun notifyRegionPrioritySet(name: String, oldPriority: Int, newPriority: Int) = sendWithBadge(
@@ -296,6 +297,10 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
         }
         sendWithBadge(head)
     }
+
+    override fun notifyPlaylistPersistenceChanged(regionName: String, playlistPersist: Boolean) = sendWithBadge(
+        bodyText("Region ") + regionNameText(regionName) + bodyText(" playlist persistence set to $playlistPersist")
+    )
 
     override fun notifyFailed(reason: PlayerView.FailureReason) = sendError(
         when (reason) {
