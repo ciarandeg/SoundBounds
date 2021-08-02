@@ -1,8 +1,10 @@
-# SoundBounds
+![SoundBounds](https://i.imgur.com/zlJBvJB.png)
 
+<p align="center">
 SoundBounds is a region-based soundtracking mod for Minecraft. It blocks
 all vanilla in-game music, and allows the user to define complex and
 nested regions, each with their own customizable playlist.
+</p>
 
 ## Features
 
