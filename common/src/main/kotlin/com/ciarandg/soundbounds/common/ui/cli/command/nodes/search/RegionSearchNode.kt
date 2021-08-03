@@ -21,7 +21,7 @@ object RegionSearchNode : CommandNode(
                 CommandNode(
                     IntArgNodeData(Arguments.radiusArgument) { ctx, ctrl ->
                         val radius = Arguments.radiusArgument.retrieve(ctx)
-                        ctrl.paginator.state = PaginatorState("/sb search region proximity $radius ${Paginator.PAGE_DELIM}", 1)
+                        ctrl.paginator.state = PaginatorState("/sb search region proximity $radius ${Paginator.PAGE_DELIM}")
                         ctrl.listRegionsWithinRadius(ctx.source.world, radius)
                     },
                     listOf(
@@ -50,7 +50,7 @@ object RegionSearchNode : CommandNode(
                 CommandNode(
                     StringArgNodeData(Arguments.songIDExistingArgument) { ctx, ctrl ->
                         val song = Arguments.songIDExistingArgument.retrieve(ctx)
-                        ctrl.paginator.state = PaginatorState("/sb search region song $song ${Paginator.PAGE_DELIM}", 1)
+                        ctrl.paginator.state = PaginatorState("/sb search region song $song ${Paginator.PAGE_DELIM}")
                         ctrl.listRegionsContainingSong(ctx.source.world, song)
                     },
                     listOf(

@@ -23,14 +23,14 @@ object RootNode : CommandNode(
         "sb", null
     ) { ctx, ctrl ->
         if (ctx.source.hasPermissionLevel(OP_PERM_LEVEL)) {
-            ctrl.paginator.state = PaginatorState("/sb help ${Paginator.PAGE_DELIM}", 1)
+            ctrl.paginator.state = PaginatorState("/sb help ${Paginator.PAGE_DELIM}")
             CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp(ctrl.paginator)
         }
     },
     listOf(
         CommandNode(
             LiteralNodeData("help", "display command info") { _, ctrl ->
-                ctrl.paginator.state = PaginatorState("/sb help ${Paginator.PAGE_DELIM}", 1)
+                ctrl.paginator.state = PaginatorState("/sb help ${Paginator.PAGE_DELIM}")
                 CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp(ctrl.paginator)
             },
             listOf(

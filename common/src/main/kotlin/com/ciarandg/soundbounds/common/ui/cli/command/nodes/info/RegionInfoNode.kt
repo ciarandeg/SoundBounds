@@ -20,7 +20,7 @@ object RegionInfoNode : CommandNode(
                     LiteralNodeData("playlist", "list songs in region's playlist") { ctx, ctrl ->
                         val regionName = Arguments.regionNameExistingArgument.retrieve(ctx)
                         ctrl.paginator.state = PaginatorState(
-                            "/sb info region $regionName playlist ${Paginator.PAGE_DELIM}", 1
+                            "/sb info region $regionName playlist ${Paginator.PAGE_DELIM}"
                         )
                         ctrl.listRegionPlaylistSongs(ctx.source.world, regionName)
                     },
@@ -45,7 +45,7 @@ object RegionInfoNode : CommandNode(
                     ) { ctx, ctrl ->
                         val regionName = Arguments.regionNameExistingArgument.retrieve(ctx)
                         ctrl.paginator.state = PaginatorState(
-                            "/sb info region $regionName volumes ${Paginator.PAGE_DELIM}", 1
+                            "/sb info region $regionName volumes ${Paginator.PAGE_DELIM}"
                         )
                         ctrl.listRegionVolumes(ctx.source.world, regionName)
                     },

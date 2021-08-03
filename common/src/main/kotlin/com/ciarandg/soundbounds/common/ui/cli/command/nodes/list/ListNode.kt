@@ -12,7 +12,7 @@ object ListNode : CommandNode(
     listOf(
         CommandNode(
             LiteralNodeData("regions", "list all regions in current world") { ctx, ctrl ->
-                ctrl.paginator.state = PaginatorState("/sb list regions ${Paginator.PAGE_DELIM}", 1)
+                ctrl.paginator.state = PaginatorState("/sb list regions ${Paginator.PAGE_DELIM}")
                 ctrl.listRegions(ctx.source.world)
             },
             listOf(
@@ -28,7 +28,7 @@ object ListNode : CommandNode(
         ),
         CommandNode(
             LiteralNodeData("songs", "list all songs") { ctx, ctrl ->
-                ctrl.paginator.state = PaginatorState("/sb list songs ${Paginator.PAGE_DELIM}", 1)
+                ctrl.paginator.state = PaginatorState("/sb list songs ${Paginator.PAGE_DELIM}")
                 ctrl.listSongs()
             },
             listOf(
