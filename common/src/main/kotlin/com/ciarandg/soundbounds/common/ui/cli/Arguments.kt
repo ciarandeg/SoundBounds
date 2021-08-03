@@ -26,5 +26,5 @@ object Arguments {
     val songTagArgument = SongTagArgumentContainer("tag")
     val playlistTypeArgument = PlaylistTypeArgumentContainer("playlist-type")
     val groupNameArgument = GroupNameArgumentContainer("group-name")
-    val queuePersistenceArgument = BooleanArgumentContainer("queue-persist")
+    val retainQueueArgument = BooleanArgumentContainer("retain-queue")
 }

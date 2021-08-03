@@ -111,17 +111,17 @@ object RegionEditNode : CommandNode(
                         ),
                         CommandNode(
                             LiteralNodeData(
-                                "queue-persist",
+                                "retain-queue",
                                 "playlist will proceed to next song on region re-entry if true",
                                 null
                             ),
                             listOf(
                                 CommandNode(
-                                    BoolArgNodeData(Arguments.queuePersistenceArgument) { ctx, ctrl ->
+                                    BoolArgNodeData(Arguments.retainQueueArgument) { ctx, ctrl ->
                                         ctrl.setQueuePersistence(
                                             ctx.source.world,
                                             Arguments.regionNameExistingArgument.retrieve(ctx),
-                                            Arguments.queuePersistenceArgument.retrieve(ctx)
+                                            Arguments.retainQueueArgument.retrieve(ctx)
                                         )
                                     },
                                     listOf()
