@@ -2,7 +2,7 @@ package com.ciarandg.soundbounds.client.audio.playlist
 
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.exceptions.NoMetadataException
-import com.ciarandg.soundbounds.common.util.PlaylistType
+import com.ciarandg.soundbounds.common.PlaylistType
 
 class PlaylistPlayer(playlist: List<String>, type: PlaylistType, private val queuePersist: Boolean) {
     internal val dispenser = PlaylistSongDispenser(playlist, type)

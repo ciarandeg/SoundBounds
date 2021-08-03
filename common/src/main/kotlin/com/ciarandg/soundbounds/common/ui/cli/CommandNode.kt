@@ -1,8 +1,8 @@
 package com.ciarandg.soundbounds.common.ui.cli
 
+import com.ciarandg.soundbounds.common.PlaylistType
 import com.ciarandg.soundbounds.common.ui.cli.argument.ArgumentContainer
 import com.ciarandg.soundbounds.common.ui.cli.command.SoundBoundsCommand.OP_PERM_LEVEL
-import com.ciarandg.soundbounds.common.util.PlaylistType
 import com.ciarandg.soundbounds.server.ui.controller.PlayerController
 import com.mojang.brigadier.context.CommandContext
 import net.minecraft.command.argument.PosArgument

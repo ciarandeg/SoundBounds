@@ -1,7 +1,7 @@
 package com.ciarandg.soundbounds.common.regions
 
-import com.ciarandg.soundbounds.common.util.PlaylistType
-import com.ciarandg.soundbounds.common.util.PlaylistType.SEQUENTIAL
+import com.ciarandg.soundbounds.common.PlaylistType
+import com.ciarandg.soundbounds.common.PlaylistType.SEQUENTIAL
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.IntTag
 import net.minecraft.nbt.ListTag

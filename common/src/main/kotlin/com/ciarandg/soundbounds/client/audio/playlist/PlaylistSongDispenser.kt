@@ -1,7 +1,7 @@
 package com.ciarandg.soundbounds.client.audio.playlist
 
 import com.ciarandg.soundbounds.client.exceptions.EmptyPlaylistException
-import com.ciarandg.soundbounds.common.util.PlaylistType
+import com.ciarandg.soundbounds.common.PlaylistType
 import java.util.LinkedList
 import java.util.Queue
 

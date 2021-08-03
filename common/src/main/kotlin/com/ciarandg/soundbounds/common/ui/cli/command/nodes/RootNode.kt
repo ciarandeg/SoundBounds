@@ -5,6 +5,8 @@ import com.ciarandg.soundbounds.common.ui.cli.BlockPosArgNodeData
 import com.ciarandg.soundbounds.common.ui.cli.CommandNode
 import com.ciarandg.soundbounds.common.ui.cli.IntArgNodeData
 import com.ciarandg.soundbounds.common.ui.cli.LiteralNodeData
+import com.ciarandg.soundbounds.common.ui.cli.Paginator
+import com.ciarandg.soundbounds.common.ui.cli.PaginatorState
 import com.ciarandg.soundbounds.common.ui.cli.StringArgNodeData
 import com.ciarandg.soundbounds.common.ui.cli.command.SoundBoundsCommand.DEOP_PERM_LEVEL
 import com.ciarandg.soundbounds.common.ui.cli.command.SoundBoundsCommand.OP_PERM_LEVEL
@@ -12,8 +14,6 @@ import com.ciarandg.soundbounds.common.ui.cli.command.nodes.edit.RegionEditNode
 import com.ciarandg.soundbounds.common.ui.cli.command.nodes.info.InfoNode
 import com.ciarandg.soundbounds.common.ui.cli.command.nodes.list.ListNode
 import com.ciarandg.soundbounds.common.ui.cli.command.nodes.search.SearchNode
-import com.ciarandg.soundbounds.common.util.Paginator
-import com.ciarandg.soundbounds.common.util.PaginatorState
 import com.ciarandg.soundbounds.server.ui.cli.CLIServerPlayerView
 import com.ciarandg.soundbounds.server.ui.cli.PosMarker
 import net.minecraft.util.math.BlockPos

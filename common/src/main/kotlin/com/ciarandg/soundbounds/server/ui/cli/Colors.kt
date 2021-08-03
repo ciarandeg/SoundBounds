@@ -1,6 +1,6 @@
 package com.ciarandg.soundbounds.server.ui.cli
 
-import com.ciarandg.soundbounds.common.util.PlaylistType
+import com.ciarandg.soundbounds.common.PlaylistType
 import com.ciarandg.soundbounds.plus
 import com.ciarandg.soundbounds.server.metadata.ServerMetaState
 import net.minecraft.text.ClickEvent

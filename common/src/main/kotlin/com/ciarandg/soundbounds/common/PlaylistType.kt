@@ -1,4 +1,4 @@
-package com.ciarandg.soundbounds.common.util
+package com.ciarandg.soundbounds.common
 
 enum class PlaylistType {
     SEQUENTIAL,

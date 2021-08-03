@@ -4,8 +4,8 @@ import com.ciarandg.soundbounds.common.ui.cli.Arguments
 import com.ciarandg.soundbounds.common.ui.cli.CommandNode
 import com.ciarandg.soundbounds.common.ui.cli.IntArgNodeData
 import com.ciarandg.soundbounds.common.ui.cli.LiteralNodeData
-import com.ciarandg.soundbounds.common.util.Paginator
-import com.ciarandg.soundbounds.common.util.PaginatorState
+import com.ciarandg.soundbounds.common.ui.cli.Paginator
+import com.ciarandg.soundbounds.common.ui.cli.PaginatorState
 
 object ListNode : CommandNode(
     LiteralNodeData("list", null, null),

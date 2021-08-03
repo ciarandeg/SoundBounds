@@ -2,8 +2,8 @@ package com.ciarandg.soundbounds.server.ui
 
 import com.ciarandg.soundbounds.common.metadata.JsonSongMeta
 import com.ciarandg.soundbounds.common.regions.RegionData
-import com.ciarandg.soundbounds.common.util.Paginator
-import com.ciarandg.soundbounds.common.util.PlaylistType
+import com.ciarandg.soundbounds.common.ui.cli.Paginator
+import com.ciarandg.soundbounds.common.PlaylistType
 import com.ciarandg.soundbounds.server.ui.cli.PosMarker
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.BlockPos

@@ -7,8 +7,8 @@ import com.ciarandg.soundbounds.common.network.RegionUpdateMessageS2C
 import com.ciarandg.soundbounds.common.regions.RegionAuditor
 import com.ciarandg.soundbounds.common.regions.RegionData
 import com.ciarandg.soundbounds.common.regions.WorldRegionState
-import com.ciarandg.soundbounds.common.util.Paginator
-import com.ciarandg.soundbounds.common.util.PlaylistType
+import com.ciarandg.soundbounds.common.ui.cli.Paginator
+import com.ciarandg.soundbounds.common.PlaylistType
 import com.ciarandg.soundbounds.server.metadata.ServerMetaState
 import com.ciarandg.soundbounds.server.ui.PlayerModel
 import com.ciarandg.soundbounds.server.ui.PlayerView

@@ -1,4 +1,4 @@
-package com.ciarandg.soundbounds.common.util
+package com.ciarandg.soundbounds.common.ui.cli
 
 import net.minecraft.text.ClickEvent
 import net.minecraft.text.HoverEvent
