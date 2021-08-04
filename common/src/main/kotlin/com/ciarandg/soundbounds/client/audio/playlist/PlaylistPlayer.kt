@@ -13,7 +13,7 @@ class PlaylistPlayer(playlist: List<String>, type: PlaylistType, private val que
         is PlaylistPlayerStoppedState -> try {
             state = currentState.start()
         } catch (e: NoMetadataException) {
-            SoundBounds.LOGGER.warn("Attempted to start playlist, but there is no client-side metadata available")
+            SoundBounds.LOGGER.warn("Attempted to start playlist, but there is no SoundBounds resource pack enabled on client")
         } catch (e: SongMetaMismatchException) {
             handleMetaMismatch(e)
         }
