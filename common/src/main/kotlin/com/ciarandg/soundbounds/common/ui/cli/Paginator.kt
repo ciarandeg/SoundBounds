@@ -13,7 +13,13 @@ import kotlin.math.ceil
 
 class Paginator {
     var state = PaginatorState()
-    var style = PaginatorStyle()
+        private set
+    private var style = PaginatorStyle()
+
+    // Sets state to a particular command with a trailing page number
+    fun setState(cmd: String, page: Int = 1) {
+        state = PaginatorState("/$cmd $PAGE_DELIM", page)
+    }
 
     fun paginate(title: String, content: List<MutableText>): Text {
         val pageCount: Int = ceil(content.size.toDouble() / style.elementsPerPage).toInt()
@@ -67,11 +73,6 @@ class Paginator {
             .append(LiteralText(" [$page/$pages] ").formatted(style.pagerColor))
             .append(nextPageButton)
             .append(" ")
-    }
-
-    // Sets state to a particular command with a trailing delimiter value
-    fun setState(cmd: String, page: Int = 1) {
-        state = PaginatorState("/$cmd $PAGE_DELIM", page)
     }
 
     companion object {
