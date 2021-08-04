@@ -69,6 +69,11 @@ class Paginator {
             .append(" ")
     }
 
+    // Sets state to a particular command with a trailing delimiter value
+    fun setState(cmd: String, page: Int = 1) {
+        state = PaginatorState("/$cmd $PAGE_DELIM", page)
+    }
+
     companion object {
         const val PAGE_DELIM: String = "%PAGE"
     }

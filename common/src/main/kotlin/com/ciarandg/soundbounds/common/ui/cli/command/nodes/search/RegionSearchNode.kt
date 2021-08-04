@@ -7,6 +7,7 @@ import com.ciarandg.soundbounds.common.ui.cli.LiteralNodeData
 import com.ciarandg.soundbounds.common.ui.cli.Paginator
 import com.ciarandg.soundbounds.common.ui.cli.PaginatorState
 import com.ciarandg.soundbounds.common.ui.cli.StringArgNodeData
+import com.sun.org.apache.xpath.internal.Arg
 
 object RegionSearchNode : CommandNode(
     LiteralNodeData("region", "search for regions", null),
@@ -21,17 +22,14 @@ object RegionSearchNode : CommandNode(
                 CommandNode(
                     IntArgNodeData(Arguments.radiusArgument) { ctx, ctrl ->
                         val radius = Arguments.radiusArgument.retrieve(ctx)
-                        ctrl.paginator.state = PaginatorState("/sb search region proximity $radius ${Paginator.PAGE_DELIM}")
+                        ctrl.paginator.setState("sb search region proximity $radius")
                         ctrl.listRegionsWithinRadius(ctx.source.world, radius)
                     },
                     listOf(
                         CommandNode(
                             IntArgNodeData(Arguments.pageNumArgument) { ctx, ctrl ->
                                 val radius = Arguments.radiusArgument.retrieve(ctx)
-                                ctrl.paginator.state = PaginatorState(
-                                    "/sb search region proximity $radius ${Paginator.PAGE_DELIM}",
-                                    Arguments.pageNumArgument.retrieve(ctx)
-                                )
+                                ctrl.paginator.setState("sb search region proximity $radius", Arguments.pageNumArgument.retrieve(ctx))
                                 ctrl.listRegionsWithinRadius(ctx.source.world, radius)
                             },
                             listOf()
@@ -50,17 +48,14 @@ object RegionSearchNode : CommandNode(
                 CommandNode(
                     StringArgNodeData(Arguments.songIDExistingArgument) { ctx, ctrl ->
                         val song = Arguments.songIDExistingArgument.retrieve(ctx)
-                        ctrl.paginator.state = PaginatorState("/sb search region song $song ${Paginator.PAGE_DELIM}")
+                        ctrl.paginator.setState("sb search region song $song")
                         ctrl.listRegionsContainingSong(ctx.source.world, song)
                     },
                     listOf(
                         CommandNode(
                             IntArgNodeData(Arguments.pageNumArgument) { ctx, ctrl ->
                                 val song = Arguments.songIDExistingArgument.retrieve(ctx)
-                                ctrl.paginator.state = PaginatorState(
-                                    "/sb search region song $song ${Paginator.PAGE_DELIM}",
-                                    Arguments.pageNumArgument.retrieve(ctx)
-                                )
+                                ctrl.paginator.setState("sb search region song $song", Arguments.pageNumArgument.retrieve(ctx))
                                 ctrl.listRegionsContainingSong(ctx.source.world, song)
                             },
                             listOf()

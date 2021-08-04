@@ -25,18 +25,14 @@ object SongSearchNode : CommandNode(
                 CommandNode(
                     StringArgNodeData(Arguments.songTagArgument) { ctx, ctrl ->
                         val tag = Arguments.songTagArgument.retrieve(ctx)
-                        ctrl.paginator.state =
-                            PaginatorState("/sb search song tag $tag ${Paginator.PAGE_DELIM}")
+                        ctrl.paginator.setState("sb search song tag $tag")
                         ctrl.listSongsContainingTag(tag)
                     },
                     listOf(
                         CommandNode(
                             IntArgNodeData(Arguments.pageNumArgument) { ctx, ctrl ->
                                 val tag = Arguments.songTagArgument.retrieve(ctx)
-                                ctrl.paginator.state = PaginatorState(
-                                    "/sb search song tag $tag ${Paginator.PAGE_DELIM}",
-                                    Arguments.pageNumArgument.retrieve(ctx)
-                                )
+                                ctrl.paginator.setState("sb search song tag $tag", Arguments.pageNumArgument.retrieve(ctx))
                                 ctrl.listSongsContainingTag(tag)
                             },
                             listOf()

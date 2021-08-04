@@ -16,6 +16,7 @@ import com.ciarandg.soundbounds.common.ui.cli.command.nodes.list.ListNode
 import com.ciarandg.soundbounds.common.ui.cli.command.nodes.search.SearchNode
 import com.ciarandg.soundbounds.server.ui.cli.CLIServerPlayerView
 import com.ciarandg.soundbounds.server.ui.cli.PosMarker
+import com.ciarandg.soundbounds.server.ui.controller.PlayerController
 import net.minecraft.util.math.BlockPos
 
 object RootNode : CommandNode(
@@ -23,21 +24,20 @@ object RootNode : CommandNode(
         "sb", null
     ) { ctx, ctrl ->
         if (ctx.source.hasPermissionLevel(OP_PERM_LEVEL)) {
-            ctrl.paginator.state = PaginatorState("/sb help ${Paginator.PAGE_DELIM}")
+            ctrl.paginator.setState("sb help")
             CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp(ctrl.paginator)
         }
     },
     listOf(
         CommandNode(
             LiteralNodeData("help", "display command info") { _, ctrl ->
-                ctrl.paginator.state = PaginatorState("/sb help ${Paginator.PAGE_DELIM}")
+                ctrl.paginator.setState("sb help")
                 CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp(ctrl.paginator)
             },
             listOf(
                 CommandNode(
                     IntArgNodeData(Arguments.pageNumArgument) { ctx, ctrl ->
-                        ctrl.paginator.state =
-                            PaginatorState("/sb help ${Paginator.PAGE_DELIM}", Arguments.pageNumArgument.retrieve(ctx))
+                        ctrl.paginator.setState("sb help", Arguments.pageNumArgument.retrieve(ctx))
                         CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp(ctrl.paginator)
                     },
                     listOf()
@@ -136,4 +136,5 @@ object RootNode : CommandNode(
         SearchNode
     ),
     DEOP_PERM_LEVEL
-)
+) {
+}

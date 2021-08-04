@@ -13,14 +13,13 @@ import com.ciarandg.soundbounds.server.ui.cli.CLIServerPlayerView
 
 object RegionEditNode : CommandNode(
     LiteralNodeData("edit", "display region edit command info") { _, ctrl ->
-        ctrl.paginator.state = PaginatorState("/sb edit ${Paginator.PAGE_DELIM}")
+        ctrl.paginator.setState("sb edit")
         CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp(ctrl.paginator, RegionEditNode)
     },
     listOf(
         CommandNode(
             IntArgNodeData(Arguments.pageNumArgument) { ctx, ctrl ->
-                ctrl.paginator.state =
-                    PaginatorState("/sb edit ${Paginator.PAGE_DELIM}", Arguments.pageNumArgument.retrieve(ctx))
+                ctrl.paginator.setState("sb edit", Arguments.pageNumArgument.retrieve(ctx))
                 CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp(ctrl.paginator, RegionEditNode)
             },
             listOf()
