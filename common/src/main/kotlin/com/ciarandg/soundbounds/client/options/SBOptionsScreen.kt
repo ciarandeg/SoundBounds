@@ -4,8 +4,10 @@ import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.client.gui.widget.OptionButtonWidget
 import net.minecraft.client.options.BooleanOption
+import net.minecraft.client.options.KeyBinding
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.text.LiteralText
+import org.lwjgl.glfw.GLFW
 import kotlin.math.pow
 
 class SBOptionsScreen : Screen(LiteralText("SoundBounds Options")) {
@@ -107,6 +109,7 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Options")) {
 
     companion object {
         private const val IDLE_SLIDER_SKEW: Double = 2.0
+        val binding = KeyBinding("Client Options Screen", GLFW.GLFW_KEY_B, "SoundBounds")
 
         private fun formatDuration(
             milliseconds: Long,

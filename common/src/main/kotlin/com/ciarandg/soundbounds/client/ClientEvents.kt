@@ -15,10 +15,9 @@ import com.ciarandg.soundbounds.common.network.RegionUpdateMessageS2C
 import me.shedaniel.architectury.event.events.GuiEvent
 import me.shedaniel.architectury.event.events.TickEvent
 import me.shedaniel.architectury.event.events.client.ClientPlayerEvent
-import me.shedaniel.architectury.event.events.client.ClientRawInputEvent
 import me.shedaniel.architectury.networking.NetworkManager
-import net.minecraft.util.ActionResult
-import org.lwjgl.glfw.GLFW
+import me.shedaniel.architectury.registry.KeyBindings
+import net.minecraft.client.MinecraftClient
 
 object ClientEvents {
     fun register() {
@@ -45,18 +44,12 @@ object ClientEvents {
     }
 
     private fun registerOptionsScreen() {
-        ClientRawInputEvent.KEY_PRESSED.register { client, keyCode, scanCode, action, modifiers ->
-            if (action == GLFW.GLFW_PRESS && keyCode == GLFW.GLFW_KEY_B) {
-                when (client.currentScreen) {
-                    null -> {
-                        client.openScreen(SBOptionsScreen())
-                        ActionResult.PASS
-                    } is SBOptionsScreen -> {
-                        client.openScreen(null)
-                        ActionResult.PASS
-                    } else -> ActionResult.CONSUME
-                }
-            } else ActionResult.CONSUME
+        KeyBindings.registerKeyBinding(SBOptionsScreen.binding)
+
+        TickEvent.PLAYER_POST.register {
+            val client = MinecraftClient.getInstance()
+            if (SBOptionsScreen.binding.isPressed && client.currentScreen == null)
+                client.openScreen(SBOptionsScreen())
         }
     }
 
