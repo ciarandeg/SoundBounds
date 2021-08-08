@@ -15,14 +15,24 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Options")) {
         val xCenter = width / 2
         val widgetWidth = 150
         val widgetHeight = 20
-        val ySpacer = widgetHeight / 4
-        val top = height / 4 - widgetHeight / 2 + ySpacer
+        val spacer = widgetHeight / 4
+        val top = height / 4 - widgetHeight / 2 + spacer
 
         val xPos = xCenter - widgetWidth / 2
         var counter = 0
-        fun nextY() = top + (widgetHeight + ySpacer) * counter++
+        fun nextY() = top + (widgetHeight + spacer) * counter++
 
         super.init()
+        addButton(
+            ButtonWidget(
+                xPos + widgetWidth + spacer, top,
+                widgetHeight, widgetHeight,
+                LiteralText("R")
+            ) {
+                SBClientOptions.setToDefault()
+                client?.openScreen(SBOptionsScreen())
+            }
+        )
         addButton(
             SBSliderWidget(
                 xPos, nextY(),

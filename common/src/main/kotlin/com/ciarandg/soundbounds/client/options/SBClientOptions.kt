@@ -22,6 +22,10 @@ object SBClientOptions {
     fun write() {
         dataFile.writeText(gson.toJson(data))
     }
+
+    fun setToDefault() {
+        data = SBClientOptionsData()
+    }
 }
 
 data class SBClientOptionsData(
