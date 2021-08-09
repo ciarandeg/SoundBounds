@@ -18,6 +18,6 @@ object SoundBoundsCommand {
         )
     }
 
-    const val OP_PERM_LEVEL = 4
+    const val OP_PERM_LEVEL = 2
     const val DEOP_PERM_LEVEL = 0
 }
