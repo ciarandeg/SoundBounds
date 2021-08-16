@@ -37,7 +37,7 @@ object RegionSwitcher {
         fader.reset()
     }
 
-    fun update() {
+    fun update() = synchronized(this) {
         swapper.current?.second?.player?.tick()
 
         val oldPos = playerData.blockPos
@@ -51,7 +51,7 @@ object RegionSwitcher {
         updateRegion()
     }
 
-    fun purge() {
+    fun purge() = synchronized(this) {
         swapper.submit(null)
         swapper.push()
         playerData.blockPos = null

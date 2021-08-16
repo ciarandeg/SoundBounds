@@ -9,24 +9,27 @@ class PlaylistPlayer(playlist: List<String>, type: PlaylistType, private val que
     internal val dispenser = PlaylistSongDispenser(playlist, type)
     private var state: PlaylistPlayerState = PlaylistPlayerStoppedState(this)
 
-    fun start() = when (val currentState = state) {
-        is PlaylistPlayerStoppedState -> try {
-            state = currentState.start()
-        } catch (e: NoMetadataException) {
-            SoundBounds.LOGGER.warn("Attempted to start playlist, but there is no SoundBounds resource pack enabled on client")
+    fun start() = synchronized(this) {
+        when (val currentState = state) {
+            is PlaylistPlayerStoppedState -> try {
+                state = currentState.start()
+            } catch (e: NoMetadataException) {
+                SoundBounds.LOGGER.warn("Attempted to start playlist, but there is no SoundBounds resource pack enabled on client")
+            } catch (e: SongMetaMismatchException) {
+                handleMetaMismatch(e)
+            }
+        }
+    }
+
+    fun tick() = synchronized(this) {
+        try {
+            state = state.tick()
         } catch (e: SongMetaMismatchException) {
             handleMetaMismatch(e)
         }
-        else -> SoundBounds.LOGGER.error("Attempted to start a playlist that already started")
     }
 
-    fun tick() = try {
-        state = state.tick()
-    } catch (e: SongMetaMismatchException) {
-        handleMetaMismatch(e)
-    }
-
-    fun stop() {
+    fun stop() = synchronized(this) {
         state.cancel()
         state = PlaylistPlayerStoppedState(this)
         if (!queuePersist) dispenser.scrap()
