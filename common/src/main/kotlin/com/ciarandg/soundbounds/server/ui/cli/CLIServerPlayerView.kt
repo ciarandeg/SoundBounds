@@ -194,6 +194,7 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
     override fun showRegionInfo(regionName: String, data: RegionData) {
         sendWithBadge(
             bodyText("\nRegion name: ") + regionNameText(regionName) +
+                bodyText("\nRegion priority: ") + priorityText(data.priority) +
                 bodyText("\nPlaylist type: ") + playlistTypeText(data.playlistType) +
                 bodyText("\nSong count: ") + quantityText(data.playlist.size) +
                 bodyText("\nVolume count: ") + quantityText(data.volumes.size) +
