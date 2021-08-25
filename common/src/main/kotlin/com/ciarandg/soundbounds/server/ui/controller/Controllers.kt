@@ -1,5 +1,7 @@
 package com.ciarandg.soundbounds.server.ui.controller
 
-import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.server.world.ServerWorld
 
-object Controllers : HashMap<PlayerEntity, PlayerController>()
+object PlayerControllers : LazyMap<ServerPlayerEntity, PlayerController>({ PlayerController(it) })
+object WorldControllers : LazyMap<ServerWorld, WorldController>({ WorldController(it) })

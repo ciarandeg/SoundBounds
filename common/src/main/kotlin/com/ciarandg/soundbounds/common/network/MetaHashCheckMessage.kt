@@ -3,11 +3,11 @@ package com.ciarandg.soundbounds.common.network
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.metadata.ClientMeta
 import com.ciarandg.soundbounds.server.metadata.ServerMetaState
-import com.ciarandg.soundbounds.server.ui.controller.Controllers
+import com.ciarandg.soundbounds.server.ui.controller.PlayerControllers
 import io.netty.buffer.Unpooled
 import me.shedaniel.architectury.networking.NetworkManager
 import net.minecraft.network.PacketByteBuf
-import java.lang.IllegalStateException
+import net.minecraft.server.network.ServerPlayerEntity
 
 // Two-way message for checking client metadata validity
 class MetaHashCheckMessage : NetworkManager.NetworkReceiver {
@@ -16,8 +16,7 @@ class MetaHashCheckMessage : NetworkManager.NetworkReceiver {
         else {
             val clientHash = buf.readInt()
             val serverHash = ServerMetaState.get().meta.hashCode()
-            if (clientHash != serverHash) Controllers[ctx.player]?.notifyMetaMismatch()
-                ?: throw IllegalStateException("Every player should have a controller")
+            if (clientHash != serverHash) PlayerControllers[ctx.player as ServerPlayerEntity].notifyMetaMismatch()
         }
     }
 

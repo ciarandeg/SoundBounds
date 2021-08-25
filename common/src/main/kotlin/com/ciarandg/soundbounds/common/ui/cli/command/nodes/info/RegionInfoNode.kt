@@ -10,25 +10,29 @@ object RegionInfoNode : CommandNode(
     LiteralNodeData("region", "display region info", null),
     listOf(
         CommandNode(
-            StringArgNodeData(Arguments.regionNameExistingArgument) { ctx, ctrl ->
-                ctrl.showRegionInfo(ctx.source.world, Arguments.regionNameExistingArgument.retrieve(ctx))
+            StringArgNodeData(Arguments.regionNameExistingArgument) { ctx, wctrl, pctrl ->
+                pctrl?.showRegionInfo(Arguments.regionNameExistingArgument.retrieve(ctx))
             },
             listOf(
                 CommandNode(
-                    LiteralNodeData("playlist", "list songs in region's playlist") { ctx, ctrl ->
-                        val regionName = Arguments.regionNameExistingArgument.retrieve(ctx)
-                        ctrl.paginator.setState("sb info region $regionName playlist")
-                        ctrl.listRegionPlaylistSongs(ctx.source.world, regionName)
+                    LiteralNodeData("playlist", "list songs in region's playlist") { ctx, wctrl, pctrl ->
+                        if (pctrl != null) {
+                            val regionName = Arguments.regionNameExistingArgument.retrieve(ctx)
+                            pctrl.paginator.setState("sb info region $regionName playlist")
+                            pctrl.listRegionPlaylistSongs(regionName)
+                        }
                     },
                     listOf(
                         CommandNode(
-                            IntArgNodeData(Arguments.pageNumArgument) { ctx, ctrl ->
-                                val regionName = Arguments.regionNameExistingArgument.retrieve(ctx)
-                                ctrl.paginator.setState(
-                                    "sb info region $regionName playlist",
-                                    Arguments.pageNumArgument.retrieve(ctx)
-                                )
-                                ctrl.listRegionPlaylistSongs(ctx.source.world, regionName)
+                            IntArgNodeData(Arguments.pageNumArgument) { ctx, wctrl, pctrl ->
+                                if (pctrl != null) {
+                                    val regionName = Arguments.regionNameExistingArgument.retrieve(ctx)
+                                    pctrl.paginator.setState(
+                                        "sb info region $regionName playlist",
+                                        Arguments.pageNumArgument.retrieve(ctx)
+                                    )
+                                    pctrl.listRegionPlaylistSongs(regionName)
+                                }
                             },
                             listOf()
                         )
@@ -38,17 +42,24 @@ object RegionInfoNode : CommandNode(
                     LiteralNodeData(
                         "volumes",
                         "list volumes in region"
-                    ) { ctx, ctrl ->
-                        val regionName = Arguments.regionNameExistingArgument.retrieve(ctx)
-                        ctrl.paginator.setState("sb info region $regionName volumes")
-                        ctrl.listRegionVolumes(ctx.source.world, regionName)
+                    ) { ctx, wctrl, pctrl ->
+                        if (pctrl != null) {
+                            val regionName = Arguments.regionNameExistingArgument.retrieve(ctx)
+                            pctrl.paginator.setState("sb info region $regionName volumes")
+                            pctrl.listRegionVolumes(regionName)
+                        }
                     },
                     listOf(
                         CommandNode(
-                            IntArgNodeData(Arguments.pageNumArgument) { ctx, ctrl ->
-                                val regionName = Arguments.regionNameExistingArgument.retrieve(ctx)
-                                ctrl.paginator.setState("sb info region $regionName volumes", Arguments.pageNumArgument.retrieve(ctx))
-                                ctrl.listRegionVolumes(ctx.source.world, regionName)
+                            IntArgNodeData(Arguments.pageNumArgument) { ctx, wctrl, pctrl ->
+                                if (pctrl != null) {
+                                    val regionName = Arguments.regionNameExistingArgument.retrieve(ctx)
+                                    pctrl.paginator.setState(
+                                        "sb info region $regionName volumes",
+                                        Arguments.pageNumArgument.retrieve(ctx)
+                                    )
+                                    pctrl.listRegionVolumes(regionName)
+                                }
                             },
                             listOf()
                         )

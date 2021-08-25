@@ -10,15 +10,19 @@ import com.ciarandg.soundbounds.common.ui.cli.StringArgNodeData
 import com.ciarandg.soundbounds.server.ui.cli.CLIServerPlayerView
 
 object RegionEditNode : CommandNode(
-    LiteralNodeData("edit", "display region edit command info") { _, ctrl ->
-        ctrl.paginator.setState("sb edit")
-        CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp(ctrl.paginator, RegionEditNode)
+    LiteralNodeData("edit", "display region edit command info") { _, wctrl, pctrl ->
+        if (pctrl != null) {
+            pctrl.paginator.setState("sb edit")
+            CLIServerPlayerView.getEntityView(pctrl.owner)?.showHelp(pctrl.paginator, RegionEditNode)
+        }
     },
     listOf(
         CommandNode(
-            IntArgNodeData(Arguments.pageNumArgument) { ctx, ctrl ->
-                ctrl.paginator.setState("sb edit", Arguments.pageNumArgument.retrieve(ctx))
-                CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp(ctrl.paginator, RegionEditNode)
+            IntArgNodeData(Arguments.pageNumArgument) { ctx, wctrl, pctrl ->
+                if (pctrl != null) {
+                    pctrl.paginator.setState("sb edit", Arguments.pageNumArgument.retrieve(ctx))
+                    CLIServerPlayerView.getEntityView(pctrl.owner)?.showHelp(pctrl.paginator, RegionEditNode)
+                }
             },
             listOf()
         ),
@@ -29,11 +33,11 @@ object RegionEditNode : CommandNode(
                     LiteralNodeData("rename", "rename region", null),
                     listOf(
                         CommandNode(
-                            StringArgNodeData(Arguments.regionNameNewArgument) { ctx, ctrl ->
-                                ctrl.renameRegion(
-                                    ctx.source.world,
+                            StringArgNodeData(Arguments.regionNameNewArgument) { ctx, wctrl, pctrl ->
+                                wctrl.renameRegion(
                                     Arguments.regionNameExistingArgument.retrieve(ctx),
-                                    Arguments.regionNameNewArgument.retrieve(ctx)
+                                    Arguments.regionNameNewArgument.retrieve(ctx),
+                                    pctrl?.view?.let { listOf(it) } ?: listOf()
                                 )
                             },
                             listOf()
@@ -48,11 +52,11 @@ object RegionEditNode : CommandNode(
                     ),
                     listOf(
                         CommandNode(
-                            IntArgNodeData(Arguments.regionPriorityArgument) { ctx, ctrl ->
-                                ctrl.setRegionPriority(
-                                    ctx.source.world,
+                            IntArgNodeData(Arguments.regionPriorityArgument) { ctx, wctrl, pctrl ->
+                                wctrl.setRegionPriority(
                                     Arguments.regionNameExistingArgument.retrieve(ctx),
-                                    Arguments.regionPriorityArgument.retrieve(ctx)
+                                    Arguments.regionPriorityArgument.retrieve(ctx),
+                                    pctrl?.view?.let { listOf(it) } ?: listOf()
                                 )
                             },
                             listOf()
@@ -66,8 +70,8 @@ object RegionEditNode : CommandNode(
                             LiteralNodeData(
                                 "add",
                                 "add selected volume to region"
-                            ) { ctx, ctrl ->
-                                ctrl.addRegionVolume(ctx.source.world, Arguments.regionNameExistingArgument.retrieve(ctx))
+                            ) { ctx, wctrl, pctrl ->
+                                pctrl?.addRegionVolume(Arguments.regionNameExistingArgument.retrieve(ctx))
                             },
                             listOf()
                         ),
@@ -75,11 +79,11 @@ object RegionEditNode : CommandNode(
                             LiteralNodeData("remove", "remove volume from region", null),
                             listOf(
                                 CommandNode(
-                                    IntArgNodeData(Arguments.regionVolumeIndexArgument) { ctx, ctrl ->
-                                        ctrl.removeRegionVolume(
-                                            ctx.source.world,
+                                    IntArgNodeData(Arguments.regionVolumeIndexArgument) { ctx, wctrl, pctrl ->
+                                        wctrl.removeRegionVolume(
                                             Arguments.regionNameExistingArgument.retrieve(ctx),
-                                            Arguments.regionVolumeIndexArgument.retrieve(ctx) - 1
+                                            Arguments.regionVolumeIndexArgument.retrieve(ctx) - 1,
+                                            pctrl?.view?.let { listOf(it) } ?: listOf()
                                         )
                                     },
                                     listOf()
@@ -95,11 +99,11 @@ object RegionEditNode : CommandNode(
                             LiteralNodeData("type", "set region's playlist type", null),
                             listOf(
                                 CommandNode(
-                                    PlaylistTypeArgData(Arguments.playlistTypeArgument) { ctx, ctrl ->
-                                        ctrl.setRegionPlaylistType(
-                                            ctx.source.world,
+                                    PlaylistTypeArgData(Arguments.playlistTypeArgument) { ctx, wctrl, pctrl ->
+                                        wctrl.setRegionPlaylistType(
                                             Arguments.regionNameExistingArgument.retrieve(ctx),
-                                            Arguments.playlistTypeArgument.retrieve(ctx)
+                                            Arguments.playlistTypeArgument.retrieve(ctx),
+                                            pctrl?.view?.let { listOf(it) } ?: listOf()
                                         )
                                     },
                                     listOf()
@@ -114,11 +118,11 @@ object RegionEditNode : CommandNode(
                             ),
                             listOf(
                                 CommandNode(
-                                    BoolArgNodeData(Arguments.retainQueueArgument) { ctx, ctrl ->
-                                        ctrl.setQueuePersistence(
-                                            ctx.source.world,
+                                    BoolArgNodeData(Arguments.retainQueueArgument) { ctx, wctrl, pctrl ->
+                                        wctrl.setRegionPlaylistQueuePersistence(
                                             Arguments.regionNameExistingArgument.retrieve(ctx),
-                                            Arguments.retainQueueArgument.retrieve(ctx)
+                                            Arguments.retainQueueArgument.retrieve(ctx),
+                                            pctrl?.view?.let { listOf(it) } ?: listOf()
                                         )
                                     },
                                     listOf()
@@ -129,11 +133,11 @@ object RegionEditNode : CommandNode(
                             LiteralNodeData("append", "append new song to region's playlist", null),
                             listOf(
                                 CommandNode(
-                                    StringArgNodeData(Arguments.songIDExistingArgument) { ctx, ctrl ->
-                                        ctrl.appendRegionPlaylistSong(
-                                            ctx.source.world,
+                                    StringArgNodeData(Arguments.songIDExistingArgument) { ctx, wctrl, pctrl ->
+                                        wctrl.appendRegionPlaylistSong(
                                             Arguments.regionNameExistingArgument.retrieve(ctx),
-                                            Arguments.songIDExistingArgument.retrieve(ctx)
+                                            Arguments.songIDExistingArgument.retrieve(ctx),
+                                            pctrl?.view?.let { listOf(it) } ?: listOf()
                                         )
                                     },
                                     listOf()
@@ -144,11 +148,11 @@ object RegionEditNode : CommandNode(
                             LiteralNodeData("remove", "remove song from region's playlist", null),
                             listOf(
                                 CommandNode(
-                                    IntArgNodeData(Arguments.songPositionArgument) { ctx, ctrl ->
-                                        ctrl.removeRegionPlaylistSong(
-                                            ctx.source.world,
+                                    IntArgNodeData(Arguments.songPositionArgument) { ctx, wctrl, pctrl ->
+                                        wctrl.removeRegionPlaylistSong(
                                             Arguments.regionNameExistingArgument.retrieve(ctx),
-                                            Arguments.songPositionArgument.retrieve(ctx)
+                                            Arguments.songPositionArgument.retrieve(ctx),
+                                            pctrl?.view?.let { listOf(it) } ?: listOf()
                                         )
                                     },
                                     listOf()
@@ -162,12 +166,12 @@ object RegionEditNode : CommandNode(
                                     StringArgNodeData(Arguments.songIDExistingArgument, null),
                                     listOf(
                                         CommandNode(
-                                            IntArgNodeData(Arguments.songPositionArgument) { ctx, ctrl ->
-                                                ctrl.insertRegionPlaylistSong(
-                                                    ctx.source.world,
+                                            IntArgNodeData(Arguments.songPositionArgument) { ctx, wctrl, pctrl ->
+                                                wctrl.insertRegionPlaylistSong(
                                                     Arguments.regionNameExistingArgument.retrieve(ctx),
                                                     Arguments.songIDExistingArgument.retrieve(ctx),
-                                                    Arguments.songPositionArgument.retrieve(ctx)
+                                                    Arguments.songPositionArgument.retrieve(ctx),
+                                                    pctrl?.view?.let { listOf(it) } ?: listOf()
                                                 )
                                             },
                                             listOf()
@@ -183,12 +187,12 @@ object RegionEditNode : CommandNode(
                                     IntArgNodeData(Arguments.songPositionArgument, null),
                                     listOf(
                                         CommandNode(
-                                            StringArgNodeData(Arguments.songIDExistingArgument) { ctx, ctrl ->
-                                                ctrl.replaceRegionPlaylistSong(
-                                                    ctx.source.world,
+                                            StringArgNodeData(Arguments.songIDExistingArgument) { ctx, wctrl, pctrl ->
+                                                wctrl.replaceRegionPlaylistSong(
                                                     Arguments.regionNameExistingArgument.retrieve(ctx),
                                                     Arguments.songPositionArgument.retrieve(ctx),
-                                                    Arguments.songIDExistingArgument.retrieve(ctx)
+                                                    Arguments.songIDExistingArgument.retrieve(ctx),
+                                                    pctrl?.view?.let { listOf(it) } ?: listOf()
                                                 )
                                             },
                                             listOf()

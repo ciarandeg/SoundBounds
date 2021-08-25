@@ -3,8 +3,6 @@ package com.ciarandg.soundbounds.server
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.common.network.RegionUpdateMessageS2C
 import com.ciarandg.soundbounds.common.regions.WorldRegionState
-import com.ciarandg.soundbounds.server.ui.controller.Controllers
-import com.ciarandg.soundbounds.server.ui.controller.PlayerController
 import io.netty.buffer.Unpooled
 import me.shedaniel.architectury.event.events.PlayerEvent
 import me.shedaniel.architectury.networking.NetworkManager
@@ -18,13 +16,8 @@ object ServerEvents {
     }
 
     private fun registerMVC() {
-        PlayerEvent.PLAYER_JOIN.register { player ->
-            Controllers.putIfAbsent(player, PlayerController(player))
-            sendWorldRegions(player)
-        }
-        PlayerEvent.CHANGE_DIMENSION.register { player, _, _ ->
-            sendWorldRegions(player)
-        }
+        PlayerEvent.PLAYER_JOIN.register { player -> sendWorldRegions(player) }
+        PlayerEvent.CHANGE_DIMENSION.register { player, _, _ -> sendWorldRegions(player) }
     }
 
     private fun registerMetaHashCheck() {

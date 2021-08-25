@@ -17,17 +17,21 @@ object RegionSearchNode : CommandNode(
             LiteralNodeData("proximity", "search for regions within proximity of player", null),
             listOf(
                 CommandNode(
-                    IntArgNodeData(Arguments.radiusArgument) { ctx, ctrl ->
+                    IntArgNodeData(Arguments.radiusArgument) { ctx, wctrl, pctrl ->
                         val radius = Arguments.radiusArgument.retrieve(ctx)
-                        ctrl.paginator.setState("sb search region proximity $radius")
-                        ctrl.listRegionsWithinRadius(ctx.source.world, radius)
+                        if (pctrl != null) {
+                            pctrl.paginator.setState("sb search region proximity $radius")
+                            pctrl.listRegionsWithinRadius(radius)
+                        }
                     },
                     listOf(
                         CommandNode(
-                            IntArgNodeData(Arguments.pageNumArgument) { ctx, ctrl ->
+                            IntArgNodeData(Arguments.pageNumArgument) { ctx, wctrl, pctrl ->
                                 val radius = Arguments.radiusArgument.retrieve(ctx)
-                                ctrl.paginator.setState("sb search region proximity $radius", Arguments.pageNumArgument.retrieve(ctx))
-                                ctrl.listRegionsWithinRadius(ctx.source.world, radius)
+                                if (pctrl != null) {
+                                    pctrl.paginator.setState("sb search region proximity $radius", Arguments.pageNumArgument.retrieve(ctx))
+                                    pctrl.listRegionsWithinRadius(radius)
+                                }
                             },
                             listOf()
                         ),
@@ -43,17 +47,21 @@ object RegionSearchNode : CommandNode(
             LiteralNodeData("song", "search for regions that contain a particular song", null),
             listOf(
                 CommandNode(
-                    StringArgNodeData(Arguments.songIDExistingArgument) { ctx, ctrl ->
+                    StringArgNodeData(Arguments.songIDExistingArgument) { ctx, wctrl, pctrl ->
                         val song = Arguments.songIDExistingArgument.retrieve(ctx)
-                        ctrl.paginator.setState("sb search region song $song")
-                        ctrl.listRegionsContainingSong(ctx.source.world, song)
+                        if (pctrl != null) {
+                            pctrl.paginator.setState("sb search region song $song")
+                            pctrl.listRegionsContainingSong(song)
+                        }
                     },
                     listOf(
                         CommandNode(
-                            IntArgNodeData(Arguments.pageNumArgument) { ctx, ctrl ->
+                            IntArgNodeData(Arguments.pageNumArgument) { ctx, wctrl, pctrl ->
                                 val song = Arguments.songIDExistingArgument.retrieve(ctx)
-                                ctrl.paginator.setState("sb search region song $song", Arguments.pageNumArgument.retrieve(ctx))
-                                ctrl.listRegionsContainingSong(ctx.source.world, song)
+                                if (pctrl != null) {
+                                    pctrl.paginator.setState("sb search region song $song", Arguments.pageNumArgument.retrieve(ctx))
+                                    pctrl.listRegionsContainingSong(song)
+                                }
                             },
                             listOf()
                         ),
