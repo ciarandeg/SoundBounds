@@ -7,14 +7,13 @@ import com.ciarandg.soundbounds.client.exceptions.EmptyPlaylistException
 import com.ciarandg.soundbounds.client.exceptions.MissingAudioException
 import me.shedaniel.architectury.utils.GameInstance
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
 import kotlin.math.floor
 
 object RegionSwitcher {
     // used to prevent unnecessary iteration
-    private val playerData = PlayerData(null, null)
+    private var currentRegion: ClientRegionEntry? = null
 
     // determines which region the player is hearing music from
     private val swapper = Swapper<ClientRegionEntry> { old, new ->
@@ -39,23 +38,13 @@ object RegionSwitcher {
 
     fun update() = synchronized(this) {
         swapper.current?.second?.player?.tick()
-
-        val oldPos = playerData.blockPos
-        try {
-            playerData.updatePos()
-        } catch (e: RuntimeException) {
-            SoundBounds.LOGGER.error("Attempted to update player position for nonexistent player")
-            return
-        }
-        if (playerData.blockPos == oldPos) return
         updateRegion()
     }
 
     fun purge() = synchronized(this) {
         swapper.submit(null)
         swapper.push()
-        playerData.blockPos = null
-        playerData.region = null
+        currentRegion = null
     }
 
     fun currentSongID() = swapper.current?.second?.player?.currentSongID()
@@ -63,8 +52,8 @@ object RegionSwitcher {
 
     private fun updateRegion() {
         val newRegion = searchPlayerRegion()
-        if (newRegion != playerData.region) {
-            playerData.region = newRegion
+        if (newRegion != currentRegion) {
+            currentRegion = newRegion
             swapper.submit(newRegion)
             if (newRegion != swapper.current) fader.requestFade()
             else fader.reset()
@@ -111,15 +100,6 @@ object RegionSwitcher {
             val old = current
             current = pending
             postPush(old, current)
-        }
-    }
-
-    data class PlayerData(
-        var blockPos: BlockPos?, // current block position of player
-        var region: ClientRegionEntry? // region the player is currently standing in
-    ) {
-        fun updatePos() {
-            blockPos = getPlayer().blockPos
         }
     }
 }
