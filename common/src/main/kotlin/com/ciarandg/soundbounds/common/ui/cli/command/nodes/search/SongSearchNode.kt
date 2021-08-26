@@ -21,17 +21,21 @@ object SongSearchNode : CommandNode(
             LiteralNodeData("tag", "search for songs with a particular tag", null),
             listOf(
                 CommandNode(
-                    StringArgNodeData(Arguments.songTagArgument) { ctx, ctrl ->
+                    StringArgNodeData(Arguments.songTagArgument) { ctx, wctrl, pctrl ->
                         val tag = Arguments.songTagArgument.retrieve(ctx)
-                        ctrl.paginator.setState("sb search song tag $tag")
-                        ctrl.listSongsContainingTag(tag)
+                        if (pctrl != null) {
+                            pctrl.paginator.setState("sb search song tag $tag")
+                            pctrl.listSongsContainingTag(tag)
+                        }
                     },
                     listOf(
                         CommandNode(
-                            IntArgNodeData(Arguments.pageNumArgument) { ctx, ctrl ->
+                            IntArgNodeData(Arguments.pageNumArgument) { ctx, wctrl, pctrl ->
                                 val tag = Arguments.songTagArgument.retrieve(ctx)
-                                ctrl.paginator.setState("sb search song tag $tag", Arguments.pageNumArgument.retrieve(ctx))
-                                ctrl.listSongsContainingTag(tag)
+                                if (pctrl != null) {
+                                    pctrl.paginator.setState("sb search song tag $tag", Arguments.pageNumArgument.retrieve(ctx))
+                                    pctrl.listSongsContainingTag(tag)
+                                }
                             },
                             listOf()
                         ),

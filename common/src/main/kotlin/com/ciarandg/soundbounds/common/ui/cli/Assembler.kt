@@ -1,14 +1,16 @@
 package com.ciarandg.soundbounds.common.ui.cli
 
-import com.ciarandg.soundbounds.server.ui.controller.Controllers
 import com.ciarandg.soundbounds.server.ui.controller.PlayerController
+import com.ciarandg.soundbounds.server.ui.controller.PlayerControllers
+import com.ciarandg.soundbounds.server.ui.controller.WorldController
+import com.ciarandg.soundbounds.server.ui.controller.WorldControllers
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
-import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.TranslatableText
 
 internal object Assembler {
@@ -40,20 +42,13 @@ internal object Assembler {
 
     private fun runCommand(
         ctx: CommandContext<ServerCommandSource>,
-        command: (CommandContext<ServerCommandSource>, PlayerController) -> Unit
+        command: (CommandContext<ServerCommandSource>, WorldController, PlayerController?) -> Unit
     ): Int {
         val source = ctx.source
-        val entity = source?.entity
-        if (entity is PlayerEntity) {
-            command(
-                ctx,
-                Controllers[entity] ?: throw RuntimeException(
-                    "Player's controller ought to exist, as it is constructed upon world join"
-                )
-            )
-        } else {
-            // TODO add formatting for error message
-            source.sendError(TranslatableText("Invalid command source. Please run in-game as a player"))
+        when (val entity = source?.entity) {
+            is ServerPlayerEntity -> command(ctx, WorldControllers[source.world], PlayerControllers[entity])
+            null -> command(ctx, WorldControllers[source.world], null)
+            else -> source.sendError(TranslatableText("Invalid command source. Please run in-game as a player"))
         }
         return 1
     }

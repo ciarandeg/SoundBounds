@@ -9,8 +9,8 @@ object SongInfoNode : CommandNode(
     LiteralNodeData("song", "display information about a song", null),
     listOf(
         CommandNode(
-            StringArgNodeData(Arguments.songIDExistingArgument) { ctx, ctrl ->
-                ctrl.showSongInfo(Arguments.songIDExistingArgument.retrieve(ctx))
+            StringArgNodeData(Arguments.songIDExistingArgument) { ctx, wctrl, pctrl ->
+                pctrl?.showSongInfo(Arguments.songIDExistingArgument.retrieve(ctx))
             },
             listOf()
         )

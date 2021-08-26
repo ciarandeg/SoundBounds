@@ -10,7 +10,7 @@ import net.minecraft.text.LiteralText
 import org.lwjgl.glfw.GLFW
 import kotlin.math.pow
 
-class SBOptionsScreen : Screen(LiteralText("SoundBounds Options")) {
+class SBOptionsScreen : Screen(LiteralText("SoundBounds Client Options")) {
     override fun init() {
         val xCenter = width / 2
         val widgetWidth = 150

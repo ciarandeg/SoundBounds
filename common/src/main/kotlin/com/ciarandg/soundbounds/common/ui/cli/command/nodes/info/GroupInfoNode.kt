@@ -9,8 +9,8 @@ object GroupInfoNode : CommandNode(
     LiteralNodeData("group", "display information about a group", null),
     listOf(
         CommandNode(
-            StringArgNodeData(Arguments.groupNameArgument) { ctx, ctrl ->
-                ctrl.showGroupInfo(Arguments.groupNameArgument.retrieve(ctx))
+            StringArgNodeData(Arguments.groupNameArgument) { ctx, wctrl, pctrl ->
+                pctrl?.showGroupInfo(Arguments.groupNameArgument.retrieve(ctx))
             },
             listOf()
         )

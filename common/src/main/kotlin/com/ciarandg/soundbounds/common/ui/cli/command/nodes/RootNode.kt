@@ -19,23 +19,27 @@ import net.minecraft.util.math.BlockPos
 object RootNode : CommandNode(
     LiteralNodeData(
         "sb", null
-    ) { ctx, ctrl ->
-        if (ctx.source.hasPermissionLevel(OP_PERM_LEVEL)) {
-            ctrl.paginator.setState("sb help")
-            CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp(ctrl.paginator)
+    ) { ctx, wctrl, pctrl ->
+        if (pctrl != null && ctx.source.hasPermissionLevel(OP_PERM_LEVEL)) {
+            pctrl.paginator.setState("sb help")
+            CLIServerPlayerView.getEntityView(pctrl.owner)?.showHelp(pctrl.paginator)
         }
     },
     listOf(
         CommandNode(
-            LiteralNodeData("help", "display command info") { _, ctrl ->
-                ctrl.paginator.setState("sb help")
-                CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp(ctrl.paginator)
+            LiteralNodeData("help", "display command info") { _, wctrl, pctrl ->
+                if (pctrl != null) {
+                    pctrl.paginator.setState("sb help")
+                    CLIServerPlayerView.getEntityView(pctrl.owner)?.showHelp(pctrl.paginator)
+                }
             },
             listOf(
                 CommandNode(
-                    IntArgNodeData(Arguments.pageNumArgument) { ctx, ctrl ->
-                        ctrl.paginator.setState("sb help", Arguments.pageNumArgument.retrieve(ctx))
-                        CLIServerPlayerView.getEntityView(ctrl.owner)?.showHelp(ctrl.paginator)
+                    IntArgNodeData(Arguments.pageNumArgument) { ctx, wctrl, pctrl ->
+                        if (pctrl != null) {
+                            pctrl.paginator.setState("sb help", Arguments.pageNumArgument.retrieve(ctx))
+                            CLIServerPlayerView.getEntityView(pctrl.owner)?.showHelp(pctrl.paginator)
+                        }
                     },
                     listOf()
                 )
@@ -45,14 +49,14 @@ object RootNode : CommandNode(
             LiteralNodeData(
                 "now-playing",
                 "show currently playing song"
-            ) { ctx, ctrl -> ctrl.showNowPlaying(ctx.source.player) },
+            ) { ctx, wctrl, pctrl -> pctrl?.showNowPlaying(ctx.source.player) },
             listOf(), DEOP_PERM_LEVEL
         ),
         CommandNode(
             LiteralNodeData(
                 "current-region",
                 "show currently active region (switches after fade ends)"
-            ) { ctx, ctrl -> ctrl.showCurrentRegion(ctx.source.player) },
+            ) { ctx, wctrl, pctrl -> pctrl?.showCurrentRegion(ctx.source.player) },
             listOf()
         ),
         ListNode,
@@ -61,37 +65,37 @@ object RootNode : CommandNode(
             LiteralNodeData(
                 "sync-meta",
                 "sync client-side metadata to server"
-            ) { ctx, ctrl -> ctrl.syncMetadata(ctx.source.player) },
+            ) { ctx, wctrl, pctrl -> pctrl?.syncMetadata(ctx.source.player) },
             listOf()
         ),
         CommandNode(
             LiteralNodeData(
                 "audit",
                 "check regions for missing metadata and empty playlists"
-            ) { ctx, ctrl -> ctrl.auditRegions(ctx.source.world) },
+            ) { _, wctrl, pctrl -> if (pctrl != null) wctrl.auditRegions(listOf(pctrl.view)) },
             listOf()
         ),
         CommandNode(
-            LiteralNodeData("pos1", "set your first position marker") { ctx, ctrl ->
-                ctrl.setPosMarker(PosMarker.FIRST, ctx.source.entity?.blockPos ?: BlockPos(0, 0, 0))
+            LiteralNodeData("pos1", "set your first position marker") { ctx, wctrl, pctrl ->
+                pctrl?.setPosMarker(PosMarker.FIRST, ctx.source.entity?.blockPos ?: BlockPos(0, 0, 0))
             },
             listOf(
                 CommandNode(
-                    BlockPosArgNodeData(Arguments.positionArgument) { ctx, ctrl ->
-                        ctrl.setPosMarker(PosMarker.FIRST, Arguments.positionArgument.retrieve(ctx))
+                    BlockPosArgNodeData(Arguments.positionArgument) { ctx, wctrl, pctrl ->
+                        pctrl?.setPosMarker(PosMarker.FIRST, Arguments.positionArgument.retrieve(ctx))
                     },
                     listOf()
                 )
             )
         ),
         CommandNode(
-            LiteralNodeData("pos2", "set your second position marker") { ctx, ctrl ->
-                ctrl.setPosMarker(PosMarker.SECOND, ctx.source.entity?.blockPos ?: BlockPos(0, 0, 0))
+            LiteralNodeData("pos2", "set your second position marker") { ctx, wctrl, pctrl ->
+                pctrl?.setPosMarker(PosMarker.SECOND, ctx.source.entity?.blockPos ?: BlockPos(0, 0, 0))
             },
             listOf(
                 CommandNode(
-                    BlockPosArgNodeData(Arguments.positionArgument) { ctx, ctrl ->
-                        ctrl.setPosMarker(PosMarker.SECOND, Arguments.positionArgument.retrieve(ctx))
+                    BlockPosArgNodeData(Arguments.positionArgument) { ctx, wctrl, pctrl ->
+                        pctrl?.setPosMarker(PosMarker.SECOND, Arguments.positionArgument.retrieve(ctx))
                     },
                     listOf()
                 )
@@ -104,9 +108,8 @@ object RootNode : CommandNode(
                     StringArgNodeData(Arguments.nameArgument, null),
                     listOf(
                         CommandNode(
-                            IntArgNodeData(Arguments.regionPriorityArgument) { ctx, ctrl ->
-                                ctrl.createRegion(
-                                    ctx.source.world,
+                            IntArgNodeData(Arguments.regionPriorityArgument) { ctx, wctrl, pctrl ->
+                                pctrl?.createRegion(
                                     Arguments.nameArgument.retrieve(ctx),
                                     Arguments.regionPriorityArgument.retrieve(ctx)
                                 )
@@ -121,8 +124,11 @@ object RootNode : CommandNode(
             LiteralNodeData("destroy", "destroy a region", null),
             listOf(
                 CommandNode(
-                    StringArgNodeData(Arguments.regionNameExistingArgument) { ctx, ctrl ->
-                        ctrl.destroyRegion(ctx.source.world, Arguments.regionNameExistingArgument.retrieve(ctx))
+                    StringArgNodeData(Arguments.regionNameExistingArgument) { ctx, wctrl, pctrl ->
+                        wctrl.destroyRegion(
+                            Arguments.regionNameExistingArgument.retrieve(ctx),
+                            pctrl?.view?.let { listOf(it) } ?: listOf()
+                        )
                     },
                     listOf()
                 )

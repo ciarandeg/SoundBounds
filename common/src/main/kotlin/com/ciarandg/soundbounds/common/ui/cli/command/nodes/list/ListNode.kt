@@ -9,30 +9,38 @@ object ListNode : CommandNode(
     LiteralNodeData("list", null, null),
     listOf(
         CommandNode(
-            LiteralNodeData("regions", "list all regions in current world") { ctx, ctrl ->
-                ctrl.paginator.setState("sb list regions")
-                ctrl.listRegions(ctx.source.world)
+            LiteralNodeData("regions", "list all regions in current world") { ctx, wctrl, pctrl ->
+                if (pctrl != null) {
+                    pctrl.paginator.setState("sb list regions")
+                    pctrl.listRegions()
+                }
             },
             listOf(
                 CommandNode(
-                    IntArgNodeData(Arguments.pageNumArgument) { ctx, ctrl ->
-                        ctrl.paginator.setState("sb list regions", Arguments.pageNumArgument.retrieve(ctx))
-                        ctrl.listRegions(ctx.source.world)
+                    IntArgNodeData(Arguments.pageNumArgument) { ctx, wctrl, pctrl ->
+                        if (pctrl != null) {
+                            pctrl.paginator.setState("sb list regions", Arguments.pageNumArgument.retrieve(ctx))
+                            pctrl.listRegions()
+                        }
                     },
                     listOf()
                 )
             )
         ),
         CommandNode(
-            LiteralNodeData("songs", "list all songs") { ctx, ctrl ->
-                ctrl.paginator.setState("sb list songs")
-                ctrl.listSongs()
+            LiteralNodeData("songs", "list all songs") { ctx, wctrl, pctrl ->
+                if (pctrl != null) {
+                    pctrl.paginator.setState("sb list songs")
+                    pctrl.listSongs()
+                }
             },
             listOf(
                 CommandNode(
-                    IntArgNodeData(Arguments.pageNumArgument) { ctx, ctrl ->
-                        ctrl.paginator.setState("sb list songs", Arguments.pageNumArgument.retrieve(ctx))
-                        ctrl.listSongs()
+                    IntArgNodeData(Arguments.pageNumArgument) { ctx, wctrl, pctrl ->
+                        if (pctrl != null) {
+                            pctrl.paginator.setState("sb list songs", Arguments.pageNumArgument.retrieve(ctx))
+                            pctrl.listSongs()
+                        }
                     },
                     listOf()
                 )
