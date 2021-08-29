@@ -14,7 +14,7 @@ import java.util.Observer
 
 class SongPlayer(val songID: String, song: OggSong) : Observer {
     private val source = AudioSource()
-    private val loadedSong = LoadedSong(song, BUFFER_DUR_MS)
+    private val loadedSong = LoadedSong(song, SBClientOptions.data.bufferDuration)
     private val stepper = SongStepper(loadedSong, song.loop)
     private val isSoundscape = song.isSoundscape
     private var destroyed = false
@@ -49,7 +49,7 @@ class SongPlayer(val songID: String, song: OggSong) : Observer {
 
     private fun loadUntilCaughtUp() {
         val nextToLoad = stepper.currentChunk() ?: return
-        if (buffersQueued - source.buffersProcessed() > LOOKAHEAD) return
+        if (buffersQueued - source.buffersProcessed() > SBClientOptions.data.lookahead) return
         source.queueBuffers(nextToLoad)
         buffersQueued += nextToLoad.size
         stepper.step()
@@ -59,9 +59,4 @@ class SongPlayer(val songID: String, song: OggSong) : Observer {
     private fun notifyNowPlaying() = NetworkManager.sendToServer(
         SoundBounds.NOW_PLAYING_CHANNEL_C2S, NowPlayingMessage.buildBufferC2S(songID)
     )
-
-    companion object {
-        private const val BUFFER_DUR_MS: Long = 1000 // max duration of each buffer
-        private const val LOOKAHEAD = 4 // number of buffers in advance to queue the next part of song
-    }
 }

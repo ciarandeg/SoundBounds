@@ -37,11 +37,11 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Client Options")) {
             SBSliderWidget(
                 xPos, nextY(),
                 widgetWidth, widgetHeight,
-                0.0,
+                fromFadeDur(),
                 "Fade Duration",
-                { "ms" },
-                { value -> (value * 100).toInt() },
-                {}, false
+                { value -> formatDuration(toFadeDur(value), { "ms" }, { "secs" }, { "mins" }) },
+                { value -> formatDuration(toFadeDur(value), { it.toString() }, { truncate(it) }, { truncate(it) }) },
+                { value -> SBClientOptions.data.fadeDuration = toFadeDur(value) }
             )
         )
         addButton(
@@ -59,22 +59,22 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Client Options")) {
             SBSliderWidget(
                 xPos, nextY(),
                 widgetWidth, widgetHeight,
-                0.0,
+                fromBufDur(),
                 "Buffer Size",
                 { "ms" },
-                { value -> (value * 100).toInt() },
-                {}, false
+                { value -> toBufDur(value) },
+                { value -> SBClientOptions.data.bufferDuration = toBufDur(value) }
             )
         )
         addButton(
             SBSliderWidget(
                 xPos, nextY(),
                 widgetWidth, widgetHeight,
-                0.0,
-                "Buffer Lookahead",
+                fromLookahead(),
+                "Lookahead",
                 { "buffers" },
-                { value -> (value * 100).toInt() },
-                {}, false
+                { value -> toLookahead(value) },
+                { value -> SBClientOptions.data.lookahead = toLookahead(value) }
             )
         )
         val diskStreamButton = OptionButtonWidget(
@@ -118,6 +118,7 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Client Options")) {
     }
 
     companion object {
+        private const val FADE_SLIDER_SKEW: Double = 2.0
         private const val IDLE_SLIDER_SKEW: Double = 2.0
         val binding = KeyBinding("Client Options Screen", GLFW.GLFW_KEY_B, "SoundBounds")
 
@@ -133,19 +134,69 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Client Options")) {
         }
         private fun truncate(value: Double) = String.format("%.2f", value)
 
-        private fun toIdleDur(sliderValue: Double): Long {
-            val range: Long = SBClientOptions.MAX_IDLE_DUR - SBClientOptions.MIN_IDLE_DUR
-            val skewed: Double = range * sliderValue.pow(IDLE_SLIDER_SKEW)
-            val exact: Long = skewed.toLong() + SBClientOptions.MIN_IDLE_DUR
-            val out = exact - exact % SBClientOptions.IDLE_DUR_STEP
-            return out
+        private fun toSkewedSteppedLong(value: Double, max: Long, min: Long, skewFactor: Double, step: Long): Long {
+            val range: Long = max - min
+            val skewed: Double = range * value.pow(skewFactor)
+            val exact: Long = skewed.toLong() + min
+            return exact - exact % step
         }
 
-        private fun fromIdleDur(): Double {
-            val min: Long = SBClientOptions.MIN_IDLE_DUR
-            val range: Double = (SBClientOptions.MAX_IDLE_DUR - min).toDouble()
-            val pctLinear: Double = (SBClientOptions.data.idleDuration - min) / range
-            return pctLinear.pow(1.0 / IDLE_SLIDER_SKEW)
+        private fun fromSkewedLong(value: Long, min: Long, max: Long, skewFactor: Double): Double {
+            val range = (max - min).toDouble()
+            val pctLinear: Double = (value - min) / range
+            return pctLinear.pow(1.0 / skewFactor)
+        }
+
+        private fun toFadeDur(sliderValue: Double) = toSkewedSteppedLong(
+            sliderValue,
+            SBClientOptions.MAX_FADE_DUR,
+            SBClientOptions.MIN_FADE_DUR,
+            FADE_SLIDER_SKEW,
+            SBClientOptions.FADE_DUR_STEP
+        )
+
+        private fun fromFadeDur() = fromSkewedLong(
+            SBClientOptions.data.fadeDuration,
+            SBClientOptions.MIN_FADE_DUR,
+            SBClientOptions.MAX_FADE_DUR,
+            FADE_SLIDER_SKEW
+        )
+
+        private fun toIdleDur(sliderValue: Double) = toSkewedSteppedLong(
+            sliderValue,
+            SBClientOptions.MAX_IDLE_DUR,
+            SBClientOptions.MIN_IDLE_DUR,
+            IDLE_SLIDER_SKEW,
+            SBClientOptions.IDLE_DUR_STEP
+        )
+
+        private fun fromIdleDur() = fromSkewedLong(
+            SBClientOptions.data.idleDuration,
+            SBClientOptions.MIN_IDLE_DUR,
+            SBClientOptions.MAX_IDLE_DUR,
+            IDLE_SLIDER_SKEW
+        )
+
+        private fun toBufDur(sliderValue: Double): Long {
+            val range: Long = SBClientOptions.MAX_BUF_DUR - SBClientOptions.MIN_BUF_DUR
+            return (sliderValue * range).toLong() + SBClientOptions.MIN_BUF_DUR
+        }
+
+        private fun fromBufDur(): Double {
+            val min: Long = SBClientOptions.MIN_BUF_DUR
+            val range: Double = (SBClientOptions.MAX_BUF_DUR - min).toDouble()
+            return (SBClientOptions.data.bufferDuration - min) / range
+        }
+
+        private fun toLookahead(sliderValue: Double): Int {
+            val range: Int = SBClientOptions.MAX_LOOKAHEAD - SBClientOptions.MIN_LOOKAHEAD
+            return (sliderValue * range).toInt() + SBClientOptions.MIN_LOOKAHEAD
+        }
+
+        private fun fromLookahead(): Double {
+            val min: Int = SBClientOptions.MIN_LOOKAHEAD
+            val range: Double = (SBClientOptions.MAX_LOOKAHEAD - min).toDouble()
+            return (SBClientOptions.data.lookahead - min) / range
         }
 
         val diskStreamOption = BooleanOption(
