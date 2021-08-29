@@ -134,34 +134,48 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Client Options")) {
         }
         private fun truncate(value: Double) = String.format("%.2f", value)
 
-        private fun toFadeDur(sliderValue: Double): Long {
-            val range: Long = SBClientOptions.MAX_FADE_DUR - SBClientOptions.MIN_FADE_DUR
-            val skewed: Double = range * sliderValue.pow(FADE_SLIDER_SKEW)
-            val exact: Long = skewed.toLong() + SBClientOptions.MIN_FADE_DUR
-            return exact - exact % SBClientOptions.FADE_DUR_STEP
+        private fun toSkewedSteppedLong(value: Double, max: Long, min: Long, skewFactor: Double, step: Long): Long {
+            val range: Long = max - min
+            val skewed: Double = range * value.pow(skewFactor)
+            val exact: Long = skewed.toLong() + min
+            return exact - exact % step
         }
 
-        private fun fromFadeDur(): Double {
-            val min: Long = SBClientOptions.MIN_FADE_DUR
-            val range: Double = (SBClientOptions.MAX_FADE_DUR - min).toDouble()
-            val pctLinear: Double = (SBClientOptions.data.fadeDuration - min) / range
-            return pctLinear.pow(1.0 / FADE_SLIDER_SKEW)
+        private fun fromSkewedLong(value: Long, min: Long, max: Long, skewFactor: Double): Double {
+            val range = (max - min).toDouble()
+            val pctLinear: Double = (value - min) / range
+            return pctLinear.pow(1.0 / skewFactor)
         }
 
-        private fun toIdleDur(sliderValue: Double): Long {
-            val range: Long = SBClientOptions.MAX_IDLE_DUR - SBClientOptions.MIN_IDLE_DUR
-            val skewed: Double = range * sliderValue.pow(IDLE_SLIDER_SKEW)
-            val exact: Long = skewed.toLong() + SBClientOptions.MIN_IDLE_DUR
-            val out = exact - exact % SBClientOptions.IDLE_DUR_STEP
-            return out
-        }
+        private fun toFadeDur(sliderValue: Double) = toSkewedSteppedLong(
+            sliderValue,
+            SBClientOptions.MAX_FADE_DUR,
+            SBClientOptions.MIN_FADE_DUR,
+            FADE_SLIDER_SKEW,
+            SBClientOptions.FADE_DUR_STEP
+        )
 
-        private fun fromIdleDur(): Double {
-            val min: Long = SBClientOptions.MIN_IDLE_DUR
-            val range: Double = (SBClientOptions.MAX_IDLE_DUR - min).toDouble()
-            val pctLinear: Double = (SBClientOptions.data.idleDuration - min) / range
-            return pctLinear.pow(1.0 / IDLE_SLIDER_SKEW)
-        }
+        private fun fromFadeDur() = fromSkewedLong(
+            SBClientOptions.data.fadeDuration,
+            SBClientOptions.MIN_FADE_DUR,
+            SBClientOptions.MAX_FADE_DUR,
+            FADE_SLIDER_SKEW
+        )
+
+        private fun toIdleDur(sliderValue: Double) = toSkewedSteppedLong(
+            sliderValue,
+            SBClientOptions.MAX_IDLE_DUR,
+            SBClientOptions.MIN_IDLE_DUR,
+            IDLE_SLIDER_SKEW,
+            SBClientOptions.IDLE_DUR_STEP
+        )
+
+        private fun fromIdleDur() = fromSkewedLong(
+            SBClientOptions.data.idleDuration,
+            SBClientOptions.MIN_IDLE_DUR,
+            SBClientOptions.MAX_IDLE_DUR,
+            IDLE_SLIDER_SKEW
+        )
 
         private fun toBufDur(sliderValue: Double): Long {
             val range: Long = SBClientOptions.MAX_BUF_DUR - SBClientOptions.MIN_BUF_DUR
