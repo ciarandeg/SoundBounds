@@ -37,11 +37,11 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Client Options")) {
             SBSliderWidget(
                 xPos, nextY(),
                 widgetWidth, widgetHeight,
-                0.0,
+                fromFadeDur(),
                 "Fade Duration",
-                { "ms" },
-                { value -> (value * 100).toInt() },
-                {}, false
+                { value -> formatDuration(toFadeDur(value), { "ms" }, { "secs" }, { "mins" }) },
+                { value -> formatDuration(toFadeDur(value), { it.toString() }, { truncate(it) }, { truncate(it) }) },
+                { value -> SBClientOptions.data.fadeDuration = toFadeDur(value) }
             )
         )
         addButton(
@@ -118,6 +118,7 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Client Options")) {
     }
 
     companion object {
+        private const val FADE_SLIDER_SKEW: Double = 2.0
         private const val IDLE_SLIDER_SKEW: Double = 2.0
         val binding = KeyBinding("Client Options Screen", GLFW.GLFW_KEY_B, "SoundBounds")
 
@@ -132,6 +133,20 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Client Options")) {
             else -> mins(milliseconds.toDouble() / 1000.0 / 60.0)
         }
         private fun truncate(value: Double) = String.format("%.2f", value)
+
+        private fun toFadeDur(sliderValue: Double): Long {
+            val range: Long = SBClientOptions.MAX_FADE_DUR - SBClientOptions.MIN_FADE_DUR
+            val skewed: Double = range * sliderValue.pow(FADE_SLIDER_SKEW)
+            val exact: Long = skewed.toLong() + SBClientOptions.MIN_FADE_DUR
+            return exact - exact % SBClientOptions.FADE_DUR_STEP
+        }
+
+        private fun fromFadeDur(): Double {
+            val min: Long = SBClientOptions.MIN_FADE_DUR
+            val range: Double = (SBClientOptions.MAX_FADE_DUR - min).toDouble()
+            val pctLinear: Double = (SBClientOptions.data.fadeDuration - min) / range
+            return pctLinear.pow(1.0 / FADE_SLIDER_SKEW)
+        }
 
         private fun toIdleDur(sliderValue: Double): Long {
             val range: Long = SBClientOptions.MAX_IDLE_DUR - SBClientOptions.MIN_IDLE_DUR

@@ -1,6 +1,7 @@
 package com.ciarandg.soundbounds.client
 
 import com.ciarandg.soundbounds.SoundBounds
+import com.ciarandg.soundbounds.client.options.SBClientOptions
 import java.util.Observable
 import java.util.Timer
 import java.util.TimerTask
@@ -13,6 +14,7 @@ class Fader(
     private val state = State(MAX_GAIN, false)
     private val timer = Timer()
     private var incrementFadeTask = IncrementFadeTask(this)
+    private var gainPerTick = fetchGainPerTick()
 
     fun requestFade() {
         if (!state.isFading) startFade()
@@ -38,6 +40,7 @@ class Fader(
 
     private fun startFade() {
         synchronized(state) {
+            gainPerTick = fetchGainPerTick()
             state.isFading = true
             if (state.gain == MIN_GAIN) SoundBounds.LOGGER.warn("Attempting to fade from silence")
             timer.scheduleAtFixedRate(incrementFadeTask, 0, TICK_LENGTH_MS)
@@ -61,13 +64,13 @@ class Fader(
         notifyObservers(state.gain)
     }
 
+    private fun fetchGainPerTick() =
+        TICK_LENGTH_MS.toFloat() / SBClientOptions.data.fadeDuration.toFloat() * abs(MAX_GAIN - MIN_GAIN)
+
     companion object {
         private const val MAX_GAIN: Float = 1.0f
         private const val MIN_GAIN: Float = 0.0f
-        private const val FADE_LENGTH_MS: Long = 2000
         private const val TICK_LENGTH_MS: Long = 20
-        private val gainPerTick: Float =
-            TICK_LENGTH_MS.toFloat() / FADE_LENGTH_MS.toFloat() * abs(MAX_GAIN - MIN_GAIN)
     }
 
     private data class State(var gain: Float, var isFading: Boolean)

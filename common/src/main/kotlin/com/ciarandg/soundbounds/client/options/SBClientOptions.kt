@@ -4,6 +4,9 @@ import com.google.gson.Gson
 import java.io.File
 
 object SBClientOptions {
+    const val MAX_FADE_DUR: Long = 8000
+    const val MIN_FADE_DUR: Long = 100
+    const val FADE_DUR_STEP: Long = 50
     const val MAX_IDLE_DUR: Long = 60 * 1000 * 5
     const val MIN_IDLE_DUR: Long = 0
     const val IDLE_DUR_STEP: Long = 100
@@ -33,6 +36,7 @@ object SBClientOptions {
 }
 
 data class SBClientOptionsData(
+    var fadeDuration: Long = 2000,
     var idleDuration: Long = 45000,
     var autoNowPlaying: Boolean = false,
     var bufferDuration: Long = 1000, // max duration of each buffer
