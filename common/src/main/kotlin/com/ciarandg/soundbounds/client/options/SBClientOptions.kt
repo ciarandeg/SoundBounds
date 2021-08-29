@@ -7,6 +7,10 @@ object SBClientOptions {
     const val MAX_IDLE_DUR: Long = 60 * 1000 * 5
     const val MIN_IDLE_DUR: Long = 0
     const val IDLE_DUR_STEP: Long = 100
+    const val MAX_BUF_DUR: Long = 2500
+    const val MIN_BUF_DUR: Long = 100
+    const val MAX_LOOKAHEAD: Int = 10
+    const val MIN_LOOKAHEAD: Int = 2
 
     private val dataFile = File("./config/sb-options.json")
     private val gson = Gson()
@@ -30,5 +34,7 @@ object SBClientOptions {
 
 data class SBClientOptionsData(
     var idleDuration: Long = 45000,
-    var autoNowPlaying: Boolean = false
+    var autoNowPlaying: Boolean = false,
+    var bufferDuration: Long = 1000, // max duration of each buffer
+    var lookahead: Int = 4 // how many buffers in advance should we be queueing new buffers?
 )

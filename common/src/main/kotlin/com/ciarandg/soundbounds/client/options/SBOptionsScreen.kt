@@ -59,22 +59,22 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Client Options")) {
             SBSliderWidget(
                 xPos, nextY(),
                 widgetWidth, widgetHeight,
-                0.0,
+                fromBufDur(),
                 "Buffer Size",
                 { "ms" },
-                { value -> (value * 100).toInt() },
-                {}, false
+                { value -> toBufDur(value) },
+                { value -> SBClientOptions.data.bufferDuration = toBufDur(value) }
             )
         )
         addButton(
             SBSliderWidget(
                 xPos, nextY(),
                 widgetWidth, widgetHeight,
-                0.0,
-                "Buffer Lookahead",
+                fromLookahead(),
+                "Lookahead",
                 { "buffers" },
-                { value -> (value * 100).toInt() },
-                {}, false
+                { value -> toLookahead(value) },
+                { value -> SBClientOptions.data.lookahead = toLookahead(value) }
             )
         )
         val diskStreamButton = OptionButtonWidget(
@@ -146,6 +146,28 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Client Options")) {
             val range: Double = (SBClientOptions.MAX_IDLE_DUR - min).toDouble()
             val pctLinear: Double = (SBClientOptions.data.idleDuration - min) / range
             return pctLinear.pow(1.0 / IDLE_SLIDER_SKEW)
+        }
+
+        private fun toBufDur(sliderValue: Double): Long {
+            val range: Long = SBClientOptions.MAX_BUF_DUR - SBClientOptions.MIN_BUF_DUR
+            return (sliderValue * range).toLong() + SBClientOptions.MIN_BUF_DUR
+        }
+
+        private fun fromBufDur(): Double {
+            val min: Long = SBClientOptions.MIN_BUF_DUR
+            val range: Double = (SBClientOptions.MAX_BUF_DUR - min).toDouble()
+            return (SBClientOptions.data.bufferDuration - min) / range
+        }
+
+        private fun toLookahead(sliderValue: Double): Int {
+            val range: Int = SBClientOptions.MAX_LOOKAHEAD - SBClientOptions.MIN_LOOKAHEAD
+            return (sliderValue * range).toInt() + SBClientOptions.MIN_LOOKAHEAD
+        }
+
+        private fun fromLookahead(): Double {
+            val min: Int = SBClientOptions.MIN_LOOKAHEAD
+            val range: Double = (SBClientOptions.MAX_LOOKAHEAD - min).toDouble()
+            return (SBClientOptions.data.lookahead - min) / range
         }
 
         val diskStreamOption = BooleanOption(
