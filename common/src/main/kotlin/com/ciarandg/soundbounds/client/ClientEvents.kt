@@ -36,7 +36,7 @@ object ClientEvents {
         SBClientOptions // better to have it read the json here rather than in game loop
     }
 
-    private fun registerTicker() = TickEvent.PLAYER_POST.register { ClientTicker.tick() }
+    private fun registerTicker() = TickEvent.PLAYER_POST.register { if (it.world.isClient) ClientTicker.tick() }
 
     private fun registerAudio() {
         ClientPlayerEvent.CLIENT_PLAYER_JOIN.register { GameMusicVolume.update() }
@@ -87,7 +87,7 @@ object ClientEvents {
     }
 
     private fun registerRegionUpdate() {
-        TickEvent.PLAYER_POST.register { RegionSwitcher.update() }
+        TickEvent.PLAYER_POST.register { if (it.world.isClient) RegionSwitcher.update() }
         NetworkManager.registerReceiver(
             NetworkManager.Side.S2C,
             SoundBounds.UPDATE_REGIONS_CHANNEL_S2C,
