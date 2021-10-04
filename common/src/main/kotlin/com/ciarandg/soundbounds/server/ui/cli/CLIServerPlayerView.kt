@@ -119,6 +119,10 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
         bodyText("Set marker ") + posMarkerText(marker) + bodyText(" to ") + blockPosText(pos)
     )
 
+    override fun notifyVisualizationRegionChanged(regionName: String) = sendWithBadge(
+        bodyText("Now visualizing ") + regionNameText(regionName)
+    )
+
     override fun showRegionList(regions: List<Map.Entry<String, RegionData>>, paginator: Paginator) = send(
         paginator.paginate(
             "Region List",

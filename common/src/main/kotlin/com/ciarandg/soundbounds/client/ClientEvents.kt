@@ -13,6 +13,7 @@ import com.ciarandg.soundbounds.common.network.NowPlayingMessage
 import com.ciarandg.soundbounds.common.network.PosMarkerUpdateMessage
 import com.ciarandg.soundbounds.common.network.RegionDestroyMessageS2C
 import com.ciarandg.soundbounds.common.network.RegionUpdateMessageS2C
+import com.ciarandg.soundbounds.common.network.VisualizeRegionMessageS2C
 import me.shedaniel.architectury.event.events.GuiEvent
 import me.shedaniel.architectury.event.events.TickEvent
 import me.shedaniel.architectury.event.events.client.ClientPlayerEvent
@@ -27,6 +28,7 @@ object ClientEvents {
         registerAudio()
         registerOptionsScreen()
         registerPosMarkerUpdate()
+        registerVisualizationRegionUpdate()
         registerMetaHashCheck()
         registerNowPlaying()
         registerCurrentRegion()
@@ -60,6 +62,14 @@ object ClientEvents {
             NetworkManager.Side.S2C,
             SoundBounds.POS_MARKER_UPDATE_CHANNEL_S2C,
             PosMarkerUpdateMessage()
+        )
+    }
+
+    private fun registerVisualizationRegionUpdate() {
+        NetworkManager.registerReceiver(
+            NetworkManager.Side.S2C,
+            SoundBounds.VISUALIZE_REGION_CHANNEL_S2C,
+            VisualizeRegionMessageS2C()
         )
     }
 
