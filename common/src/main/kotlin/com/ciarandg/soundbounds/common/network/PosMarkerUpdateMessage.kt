@@ -15,7 +15,7 @@ import net.minecraft.util.math.BlockPos
 // If sent from server, updates client
 class PosMarkerUpdateMessage : NetworkManager.NetworkReceiver {
     override fun receive(buf: PacketByteBuf, ctx: NetworkManager.PacketContext) {
-        val marker = buf.readEnumConstant(PosMarker.FIRST.javaClass)
+        val marker: PosMarker = buf.readEnumConstant(PosMarker.FIRST.javaClass)
         val pos = buf.readBlockPos()
 
         if (ctx.player.world.isClient) {
