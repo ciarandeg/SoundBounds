@@ -2,7 +2,7 @@ package com.ciarandg.soundbounds.forge.common.item
 
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.forge.SoundBoundsForge
-import com.ciarandg.soundbounds.forge.common.network.PosMarkerUpdateMessage
+import com.ciarandg.soundbounds.common.network.PosMarkerUpdateMessage
 import com.ciarandg.soundbounds.server.ui.cli.PosMarker
 import me.shedaniel.architectury.networking.NetworkManager
 import me.shedaniel.architectury.platform.Platform
@@ -50,7 +50,8 @@ class Baton(settings: Settings?) : NetherStarItem(settings) {
     }
 
     override fun useOnBlock(context: ItemUsageContext?): ActionResult {
-        setCorner(Corner.SECOND)
+        if (context?.player?.itemsHand?.first()?.item is Baton) // only use when in right hand
+            setCorner(Corner.SECOND)
         return super.useOnBlock(context)
     }
 
@@ -73,11 +74,11 @@ class Baton(settings: Settings?) : NetherStarItem(settings) {
                 corner.timestamp = currentTime
 
                 NetworkManager.sendToServer(
-                    SoundBoundsForge.SOUNDBOUNDS_POS_MARKER_UPDATE_CHANNEL,
+                    SoundBounds.POS_MARKER_UPDATE_CHANNEL_C2S,
                     PosMarkerUpdateMessage.buildBuffer(when (corner) {
                         Corner.FIRST -> PosMarker.FIRST
                         Corner.SECOND -> PosMarker.SECOND
-                    }, corner.pos))
+                    }, corner.pos, false))
             }
         }
     }

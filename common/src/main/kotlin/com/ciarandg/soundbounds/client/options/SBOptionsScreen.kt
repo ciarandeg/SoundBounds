@@ -16,7 +16,7 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Client Options")) {
         val widgetWidth = 150
         val widgetHeight = 20
         val spacer = widgetHeight / 4
-        val top = height / 4 - widgetHeight / 2 + spacer
+        val top = height / 4 - widgetHeight / 2
 
         val xPos = xCenter - widgetWidth / 2
         var counter = 0
@@ -25,9 +25,9 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Client Options")) {
         super.init()
         addButton(
             ButtonWidget(
-                xPos + widgetWidth + spacer, top,
-                widgetHeight, widgetHeight,
-                LiteralText("R")
+                xPos, nextY(),
+                widgetWidth, widgetHeight,
+                LiteralText("Reset All")
             ) {
                 SBClientOptions.setToDefault()
                 client?.openScreen(SBOptionsScreen())
