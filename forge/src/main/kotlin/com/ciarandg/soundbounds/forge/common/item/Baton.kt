@@ -50,7 +50,8 @@ class Baton(settings: Settings?) : NetherStarItem(settings) {
     }
 
     override fun useOnBlock(context: ItemUsageContext?): ActionResult {
-        setCorner(Corner.SECOND)
+        if (context?.player?.itemsHand?.first()?.item is Baton) // only use when in right hand
+            setCorner(Corner.SECOND)
         return super.useOnBlock(context)
     }
 
