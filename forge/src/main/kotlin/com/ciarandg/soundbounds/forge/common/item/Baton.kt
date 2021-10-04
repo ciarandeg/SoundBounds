@@ -77,7 +77,7 @@ class Baton(settings: Settings?) : NetherStarItem(settings) {
                     PosMarkerUpdateMessage.buildBuffer(when (corner) {
                         Corner.FIRST -> PosMarker.FIRST
                         Corner.SECOND -> PosMarker.SECOND
-                    }, corner.pos))
+                    }, corner.pos, false))
             }
         }
     }
