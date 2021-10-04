@@ -2,6 +2,7 @@ package com.ciarandg.soundbounds.forge.client
 
 import com.ciarandg.soundbounds.client.audio.GameMusicVolume
 import com.ciarandg.soundbounds.client.render.Renderer
+import com.ciarandg.soundbounds.forge.common.item.Baton
 import me.shedaniel.architectury.utils.GameInstance
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.options.SoundOptionsScreen
@@ -27,6 +28,9 @@ class ForgeClientEvents {
 
     @SubscribeEvent
     fun render(event: RenderWorldLastEvent) {
+        val player = MinecraftClient.getInstance().player ?: return
+        if (!player.itemsHand.any { it.item is Baton }) return
+
         // Offset by camera position, since it is reset by RenderWorldLastEvent
         val matrixStack = event.matrixStack
         val cameraPos = MinecraftClient.getInstance().gameRenderer.camera.pos
