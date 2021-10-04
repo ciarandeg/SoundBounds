@@ -15,8 +15,8 @@ object MarkerSelectionRenderer {
     // PRECONDITION: matrixStack is aligned to World's [0, 0, 0]
     fun renderPlayerMarkerSelection(matrixStack: MatrixStack) {
         val source = MinecraftClient.getInstance().bufferBuilders.entityVertexConsumers
-        val marker1 = ClientPlayerModel.marker1?.toBox()
-        val marker2 = ClientPlayerModel.marker2?.toBox()
+        val marker1 = ClientPlayerModel.marker1?.toBox()?.expand(Z_INCREMENT)
+        val marker2 = ClientPlayerModel.marker2?.toBox()?.expand(Z_INCREMENT)
         renderSelectionBorder(matrixStack, source, RenderLayer.LINES, marker1, marker2)
     }
 
