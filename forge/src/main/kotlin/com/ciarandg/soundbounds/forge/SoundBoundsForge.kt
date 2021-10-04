@@ -3,7 +3,7 @@ package com.ciarandg.soundbounds.forge
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.forge.client.ForgeClientEvents
 import com.ciarandg.soundbounds.forge.common.item.SoundBoundsForgeItems
-import com.ciarandg.soundbounds.forge.common.network.PosMarkerUpdateMessage
+import com.ciarandg.soundbounds.common.network.PosMarkerUpdateMessage
 import me.shedaniel.architectury.event.events.client.ClientLifecycleEvent
 import me.shedaniel.architectury.networking.NetworkManager
 import me.shedaniel.architectury.platform.Platform
@@ -23,19 +23,9 @@ class SoundBoundsForge {
 
         SoundBoundsForgeItems.registry.register(bus)
 
-        NetworkManager.registerReceiver(
-            NetworkManager.Side.C2S,
-            SOUNDBOUNDS_POS_MARKER_UPDATE_CHANNEL,
-            PosMarkerUpdateMessage()
-        )
-
         if (Platform.getEnv() == Dist.CLIENT)
             ClientLifecycleEvent.CLIENT_SETUP.register {
                 MinecraftForge.EVENT_BUS.register(ForgeClientEvents())
             }
-    }
-
-    companion object {
-        val SOUNDBOUNDS_POS_MARKER_UPDATE_CHANNEL = Identifier(SoundBounds.MOD_ID, "marker_update")
     }
 }
