@@ -1,7 +1,10 @@
 package com.ciarandg.soundbounds.forge.client
 
 import com.ciarandg.soundbounds.client.audio.GameMusicVolume
-import com.ciarandg.soundbounds.client.render.Renderer
+import com.ciarandg.soundbounds.client.regions.ClientWorldRegions
+import com.ciarandg.soundbounds.client.render.MarkerSelectionRenderer
+import com.ciarandg.soundbounds.client.render.RegionVisualizationRenderer
+import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
 import com.ciarandg.soundbounds.forge.common.item.Baton
 import me.shedaniel.architectury.utils.GameInstance
 import net.minecraft.client.MinecraftClient
@@ -37,6 +40,11 @@ class ForgeClientEvents {
         matrixStack.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z)
 
         // Render player's bounds selection
-        Renderer.renderPlayerMarkerSelection(matrixStack)
+        MarkerSelectionRenderer.renderPlayerMarkerSelection(matrixStack)
+
+        // Render region visualization
+        val visualizationRegion = ClientWorldRegions[ClientPlayerModel.visualizationRegion]
+        if (visualizationRegion != null)
+            RegionVisualizationRenderer.renderRegionVisualization(matrixStack, visualizationRegion)
     }
 }

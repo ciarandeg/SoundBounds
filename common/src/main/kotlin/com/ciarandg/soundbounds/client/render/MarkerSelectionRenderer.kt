@@ -11,7 +11,7 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 
 @Suppress("INACCESSIBLE_TYPE")
-object Renderer {
+object MarkerSelectionRenderer {
     private const val INCREMENT = 0.001 // used to minimize z-fighting
 
     // PRECONDITION: matrixStack is aligned to World's [0, 0, 0]
