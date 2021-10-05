@@ -1,6 +1,5 @@
 package com.ciarandg.soundbounds.common.network
 
-import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
 import com.ciarandg.soundbounds.server.ui.cli.PosMarker
 import com.ciarandg.soundbounds.server.ui.controller.PlayerControllers
@@ -11,8 +10,6 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.math.BlockPos
 
 // Two-way message to sync player pos markers
-// If sent from client, updates server and sends back to client
-// If sent from server, updates client
 class PosMarkerUpdateMessage : NetworkManager.NetworkReceiver {
     override fun receive(buf: PacketByteBuf, ctx: NetworkManager.PacketContext) {
         val marker: PosMarker = buf.readEnumConstant(PosMarker.FIRST.javaClass)
@@ -27,16 +24,15 @@ class PosMarkerUpdateMessage : NetworkManager.NetworkReceiver {
         } else {
             val player = ctx.player as ServerPlayerEntity
             PlayerControllers[player].setPosMarker(marker, pos, showNotification)
-            NetworkManager.sendToPlayer(player, SoundBounds.POS_MARKER_UPDATE_CHANNEL_S2C, buildBuffer(marker, pos))
         }
     }
 
     companion object {
-        fun buildBuffer(posMarker: PosMarker, pos: BlockPos, showNotification: Boolean = true): PacketByteBuf {
+        fun buildBuffer(posMarker: PosMarker, pos: BlockPos, showNotificationC2S: Boolean = true): PacketByteBuf {
             val buf = PacketByteBuf(Unpooled.buffer())
             buf.writeEnumConstant(posMarker)
             buf.writeBlockPos(pos)
-            buf.writeBoolean(showNotification)
+            buf.writeBoolean(showNotificationC2S)
             return buf
         }
     }
