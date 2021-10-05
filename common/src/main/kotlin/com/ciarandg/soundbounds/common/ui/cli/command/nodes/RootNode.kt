@@ -102,6 +102,18 @@ object RootNode : CommandNode(
             )
         ),
         CommandNode(
+            LiteralNodeData("visualize", "graphically visualize a region", null),
+            listOf(
+                CommandNode(
+                    StringArgNodeData(Arguments.regionNameExistingArgument) { ctx, wctrl, pctrl ->
+                        val regionName = Arguments.regionNameExistingArgument.retrieve(ctx)
+                        pctrl?.setVisualizingRegion(regionName)
+                    },
+                    listOf()
+                )
+            )
+        ),
+        CommandNode(
             LiteralNodeData("create", "create a region", null),
             listOf(
                 CommandNode(
