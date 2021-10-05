@@ -8,7 +8,7 @@ import java.lang.IllegalStateException
 @Suppress("UnstableApiUsage")
 class GraphRegion(private val blocks: Set<BlockPos>) {
     fun getWireframe(): Set<Pair<Vec3i, Vec3i>> {
-        val blocksWithEdges = blocks.associateWith { getBlockPhysicalEdges(it) }
+        val blocksWithEdges = blocks.associateWith { getBlockEdgesMemoized(it) }
 
         // Edges on the perimeter are unique to their corresponding block within the region,
         // so I count the instances of each edge and ditch anything with more than one instance
@@ -23,7 +23,10 @@ class GraphRegion(private val blocks: Set<BlockPos>) {
         return filtered.toSet()
     }
 
-    private fun getBlockPhysicalEdges(block: BlockPos): Set<Line3i> {
+    private fun getBlockEdgesMemoized(block: BlockPos) =
+        Memoizer.blockEdgesCache.getOrPut(block) { getBlockEdges(block) }
+
+    private fun getBlockEdges(block: BlockPos): Set<Line3i> {
         // map a block to its 12 corresponding physical edges
         val corners = getBlockCornerPositions(block)
         val edges = corners.flatMapIndexed { index, c ->
@@ -65,5 +68,9 @@ class GraphRegion(private val blocks: Set<BlockPos>) {
             return pair1 == otherPair || pair2 == otherPair
         }
         override fun hashCode() = 31 * (pair1.hashCode() + pair2.hashCode())
+    }
+
+    private object Memoizer {
+        val blockEdgesCache: MutableMap<BlockPos, Set<Line3i>> = HashMap()
     }
 }
