@@ -67,11 +67,6 @@ object MarkerSelectionRenderer {
         val matrixPos = matrixStack.peek().model
         val matrixNormal = matrixStack.peek().normal
 
-        val bottomLeftUV = Vec2f(0.0f, 1.0f)
-        val bottomRightUV = Vec2f(1.0f, 1.0f)
-        val topLeftUV = Vec2f(0.0f, 0.0f)
-        val topRightUV = Vec2f(1.0f, 0.0f)
-
         val markerBox =
             if (marker1 != null && marker2 != null) marker1.toBox().union(marker2.toBox())
             else marker1?.toBox() ?: marker2?.toBox() ?: return
