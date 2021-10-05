@@ -13,6 +13,7 @@ import net.minecraft.client.render.WorldRenderer
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.client.util.math.Vector3f
 import net.minecraft.util.Identifier
+import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Matrix3f
 import net.minecraft.util.math.Matrix4f
@@ -25,24 +26,26 @@ object MarkerSelectionRenderer {
     // PRECONDITION: matrixStack is aligned to World's [0, 0, 0]
     fun renderPlayerMarkerSelection(matrixStack: MatrixStack) {
         val source = MinecraftClient.getInstance().bufferBuilders.entityVertexConsumers
-        val marker1 = ClientPlayerModel.marker1?.toBox()?.expand(Z_INCREMENT)
-        val marker2 = ClientPlayerModel.marker2?.toBox()?.expand(Z_INCREMENT)
+        val marker1 = ClientPlayerModel.marker1
+        val marker2 = ClientPlayerModel.marker2
         renderSelectionBorder(matrixStack, source, RenderLayer.LINES, marker1, marker2)
-        drawCubeQuads(matrixStack, source, RenderLayer.getEntitySolid(selectionTexture), RenderColor.WHITE)
+        renderSelectionHighlight(matrixStack, source, RenderLayer.getEntitySolid(selectionTexture), RenderColor.WHITE, marker1, marker2)
     }
 
     private fun renderSelectionBorder(
         matrixStack: MatrixStack,
         source: VertexConsumerProvider.Immediate,
         layer: RenderLayer,
-        marker1: Box?,
-        marker2: Box?
+        marker1: BlockPos?,
+        marker2: BlockPos?
     ) {
         val buffer = source.getBuffer(layer)
-        if (marker1 != null && marker2 != null) { drawBox(matrixStack, buffer, marker1.union(marker2), RenderColor.MAGENTA) }
-        if (marker1 != marker2) {
-            if (marker1 != null) { drawBox(matrixStack, source.getBuffer(layer), marker1.expand(Z_INCREMENT), RenderColor.BLUE) }
-            if (marker2 != null) { drawBox(matrixStack, source.getBuffer(layer), marker2.expand(Z_INCREMENT), RenderColor.RED) }
+        val m1Box = marker1?.toBox()?.expand(Z_INCREMENT)
+        val m2Box = marker2?.toBox()?.expand(Z_INCREMENT)
+        if (m1Box != null && m2Box != null) { drawBox(matrixStack, buffer, m1Box.union(m2Box), RenderColor.MAGENTA) }
+        if (m1Box != m2Box) {
+            if (m1Box != null) { drawBox(matrixStack, source.getBuffer(layer), m1Box.expand(Z_INCREMENT), RenderColor.BLUE) }
+            if (m2Box != null) { drawBox(matrixStack, source.getBuffer(layer), m2Box.expand(Z_INCREMENT), RenderColor.RED) }
         }
         source.draw(layer)
     }
@@ -51,7 +54,14 @@ object MarkerSelectionRenderer {
         WorldRenderer.drawBox(matrixStack, renderBuffer, box, color.red, color.green, color.blue, color.alpha)
     }
 
-    private fun drawCubeQuads(matrixStack: MatrixStack, source: VertexConsumerProvider.Immediate, layer: RenderLayer, color: RenderColor) {
+    private fun renderSelectionHighlight(
+        matrixStack: MatrixStack,
+        source: VertexConsumerProvider.Immediate,
+        layer: RenderLayer,
+        color: RenderColor,
+        marker1: BlockPos?,
+        marker2: BlockPos?
+    ) {
         val bufferBlockQuads = source.getBuffer(layer)
         val matrixPos = matrixStack.peek().model
         val matrixNormal = matrixStack.peek().normal
@@ -61,10 +71,18 @@ object MarkerSelectionRenderer {
         val topLeftUV = Vec2f(0.0f, 0.0f)
         val topRightUV = Vec2f(1.0f, 0.0f)
 
-        drawQuadVertex(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(0.0f, 0.0f, 0.0f), color, bottomLeftUV)
-        drawQuadVertex(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(1.0f, 0.0f, 0.0f), color, bottomRightUV)
-        drawQuadVertex(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(1.0f, 1.0f, 0.0f), color, topRightUV)
-        drawQuadVertex(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(0.0f, 1.0f, 0.0f), color, topLeftUV)
+        val markerBox = marker1?.toBox() ?: marker2?.toBox() ?: return
+        val minX = markerBox.minX.toFloat()
+        val maxX = markerBox.maxX.toFloat()
+        val minY = markerBox.minY.toFloat()
+        val maxY = markerBox.maxY.toFloat()
+        val minZ = markerBox.minZ.toFloat()
+        val maxZ = markerBox.maxZ.toFloat()
+
+        drawQuadVertex(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(minX, minY, minZ), color, bottomLeftUV)
+        drawQuadVertex(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(maxX, minY, minZ), color, bottomRightUV)
+        drawQuadVertex(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(maxX, maxY, minZ), color, topRightUV)
+        drawQuadVertex(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(minX, maxY, minZ), color, topLeftUV)
 
         source.draw(layer)
     }
@@ -78,7 +96,7 @@ object MarkerSelectionRenderer {
         texUV: Vec2f
     ) {
         bufferBlockQuads.vertex(matrixPos, pos.x, pos.y, pos.z)
-            .color(color.red, color.blue, color.green, color.alpha)
+            .color(color.red, color.green, color.blue, color.alpha)
             .texture(texUV.x, texUV.y)
             .overlay(OverlayTexture.DEFAULT_UV)
             .light(LightmapTextureManager.pack(15, 15))
