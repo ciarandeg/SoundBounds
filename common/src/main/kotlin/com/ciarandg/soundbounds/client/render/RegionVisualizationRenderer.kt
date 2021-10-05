@@ -7,6 +7,7 @@ import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.VertexConsumer
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Vec3i
 import kotlin.math.max
 import kotlin.math.min
 
@@ -14,10 +15,7 @@ object RegionVisualizationRenderer {
     fun renderRegionVisualization(matrixStack: MatrixStack, region: ClientRegion) {
         val source = MinecraftClient.getInstance().bufferBuilders.entityVertexConsumers
         val layer = RenderLayer.LINES
-        val buffer = source.getBuffer(layer)
-
         renderWireframe(matrixStack, source.getBuffer(layer), region)
-
         source.draw()
     }
 
@@ -28,14 +26,12 @@ object RegionVisualizationRenderer {
         val graph = GraphRegion(blocks)
         val wireframe = graph.getWireframe()
         for (edge in wireframe) {
-            val x1 = edge.first.x.toFloat()
-            val y1 = edge.first.y.toFloat()
-            val z1 = edge.first.z.toFloat()
-            val x2 = edge.second.x.toFloat()
-            val y2 = edge.second.y.toFloat()
-            val z2 = edge.second.z.toFloat()
-            vertexConsumer.vertex(model, x1, y1, z1).color(color.red, color.green, color.blue, color.alpha).next()
-            vertexConsumer.vertex(model, x2, y2, z2).color(color.red, color.green, color.blue, color.alpha).next()
+            fun drawVertex(v: Vec3i) {
+                val xyz = listOf(v.x, v.y, v.z).map { it.toFloat() }
+                vertexConsumer.vertex(model, xyz[0], xyz[1], xyz[2]).color(color.red, color.green, color.blue, color.alpha).next()
+            }
+            drawVertex(edge.first)
+            drawVertex(edge.second)
         }
     }
 
