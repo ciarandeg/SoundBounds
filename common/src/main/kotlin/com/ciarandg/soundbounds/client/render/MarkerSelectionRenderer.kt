@@ -4,6 +4,7 @@ import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.render.RenderUtils.Companion.Z_INCREMENT
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.render.LightmapTextureManager
 import net.minecraft.client.render.OverlayTexture
 import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.VertexConsumer
@@ -80,7 +81,7 @@ object MarkerSelectionRenderer {
             .color(color.red, color.blue, color.green, color.alpha)
             .texture(texUV.x, texUV.y)
             .overlay(OverlayTexture.DEFAULT_UV)
-            .light(255)
+            .light(LightmapTextureManager.pack(15, 15))
             .normal(matrixNormal, 0.0f, 0.0f, 0.0f)
             .next()
     }
