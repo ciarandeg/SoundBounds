@@ -1,6 +1,7 @@
 package com.ciarandg.soundbounds.server.ui.controller
 
 import com.ciarandg.soundbounds.SoundBounds
+import com.ciarandg.soundbounds.common.network.PosMarkerUpdateMessage
 import com.ciarandg.soundbounds.common.regions.WorldRegionState
 import com.ciarandg.soundbounds.common.ui.cli.Paginator
 import com.ciarandg.soundbounds.server.metadata.ServerMetaState
@@ -49,6 +50,7 @@ class PlayerController(
             PosMarker.FIRST -> model.marker1 = pos
             PosMarker.SECOND -> model.marker2 = pos
         }
+        NetworkManager.sendToPlayer(owner, SoundBounds.POS_MARKER_UPDATE_CHANNEL_S2C, PosMarkerUpdateMessage.buildBuffer(marker, pos))
         if (showNotification) view.notifyPosMarkerSet(marker, pos)
     }
 
