@@ -15,6 +15,7 @@ import net.minecraft.client.util.math.Vector3f
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
+import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Matrix3f
 import net.minecraft.util.math.Matrix4f
 import net.minecraft.util.math.Vec2f
@@ -71,20 +72,89 @@ object MarkerSelectionRenderer {
         val topLeftUV = Vec2f(0.0f, 0.0f)
         val topRightUV = Vec2f(1.0f, 0.0f)
 
-        val markerBox = marker1?.toBox() ?: marker2?.toBox() ?: return
-        val minX = markerBox.minX.toFloat()
-        val maxX = markerBox.maxX.toFloat()
-        val minY = markerBox.minY.toFloat()
-        val maxY = markerBox.maxY.toFloat()
-        val minZ = markerBox.minZ.toFloat()
-        val maxZ = markerBox.maxZ.toFloat()
+        val markerBox =
+            if (marker1 != null && marker2 != null) marker1.toBox().union(marker2.toBox())
+            else marker1?.toBox() ?: marker2?.toBox() ?: return
 
-        drawQuadVertex(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(minX, minY, minZ), color, bottomLeftUV)
-        drawQuadVertex(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(maxX, minY, minZ), color, bottomRightUV)
-        drawQuadVertex(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(maxX, maxY, minZ), color, topRightUV)
-        drawQuadVertex(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(minX, maxY, minZ), color, topLeftUV)
+        drawQuadBox(bufferBlockQuads, matrixPos, matrixNormal, markerBox, color)
 
         source.draw(layer)
+    }
+
+    private fun drawQuadBox(
+        bufferBlockQuads: VertexConsumer,
+        matrixPos: Matrix4f,
+        matrixNormal: Matrix3f,
+        box: Box,
+        color: RenderColor
+    ) {
+        val minX = box.minX.toFloat()
+        val maxX = box.maxX.toFloat()
+        val minY = box.minY.toFloat()
+        val maxY = box.maxY.toFloat()
+        val minZ = box.minZ.toFloat()
+        val maxZ = box.maxZ.toFloat()
+
+        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(maxX, minY, minZ), Direction.NORTH, color)
+        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(maxX, minY, maxZ), Direction.EAST, color)
+        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(minX, minY, maxZ), Direction.SOUTH, color)
+        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(minX, minY, minZ), Direction.WEST, color)
+        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(minX, maxY, maxZ), Direction.UP, color)
+        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(minX, minY, minZ), Direction.DOWN, color)
+    }
+
+    private fun drawQuad(
+        bufferBlockQuads: VertexConsumer,
+        matrixPos: Matrix4f,
+        matrixNormal: Matrix3f,
+        bottomLeft: Vector3f,
+        facing: Direction,
+        color: RenderColor
+    ) {
+        val bottomLeftUV = Vec2f(0.0f, 1.0f)
+        val bottomRightUV = Vec2f(1.0f, 1.0f)
+        val topLeftUV = Vec2f(0.0f, 0.0f)
+        val topRightUV = Vec2f(1.0f, 0.0f)
+
+        val corners = listOf(bottomLeft).plus(
+            when (facing) {
+                Direction.NORTH -> listOf(
+                    Vector3f(bottomLeft.x - 1.0f, bottomLeft.y, bottomLeft.z), // bottom right
+                    Vector3f(bottomLeft.x - 1.0f, bottomLeft.y + 1.0f, bottomLeft.z), // top right
+                    Vector3f(bottomLeft.x, bottomLeft.y + 1.0f, bottomLeft.z) // top left
+                )
+                Direction.EAST -> listOf(
+                    Vector3f(bottomLeft.x, bottomLeft.y, bottomLeft.z - 1.0f),
+                    Vector3f(bottomLeft.x, bottomLeft.y + 1.0f, bottomLeft.z - 1.0f),
+                    Vector3f(bottomLeft.x, bottomLeft.y + 1.0f, bottomLeft.z)
+                )
+                Direction.SOUTH -> listOf(
+                    Vector3f(bottomLeft.x + 1.0f, bottomLeft.y, bottomLeft.z),
+                    Vector3f(bottomLeft.x + 1.0f, bottomLeft.y + 1.0f, bottomLeft.z),
+                    Vector3f(bottomLeft.x, bottomLeft.y + 1.0f, bottomLeft.z)
+                )
+                Direction.WEST -> listOf(
+                    Vector3f(bottomLeft.x, bottomLeft.y, bottomLeft.z + 1.0f),
+                    Vector3f(bottomLeft.x, bottomLeft.y + 1.0f, bottomLeft.z + 1.0f),
+                    Vector3f(bottomLeft.x, bottomLeft.y + 1.0f, bottomLeft.z)
+                )
+                Direction.UP -> listOf(
+                    Vector3f(bottomLeft.x + 1.0f, bottomLeft.y, bottomLeft.z),
+                    Vector3f(bottomLeft.x + 1.0f, bottomLeft.y, bottomLeft.z - 1.0f),
+                    Vector3f(bottomLeft.x, bottomLeft.y, bottomLeft.z - 1.0f)
+                )
+                Direction.DOWN -> listOf(
+                    Vector3f(bottomLeft.x + 1.0f, bottomLeft.y, bottomLeft.z),
+                    Vector3f(bottomLeft.x + 1.0f, bottomLeft.y, bottomLeft.z + 1.0f),
+                    Vector3f(bottomLeft.x, bottomLeft.y, bottomLeft.z + 1.0f)
+                )
+            }
+        )
+
+        drawQuadVertex(bufferBlockQuads, matrixPos, matrixNormal, corners[0], color, bottomLeftUV)
+        drawQuadVertex(bufferBlockQuads, matrixPos, matrixNormal, corners[1], color, bottomRightUV)
+        drawQuadVertex(bufferBlockQuads, matrixPos, matrixNormal, corners[2], color, topRightUV)
+        drawQuadVertex(bufferBlockQuads, matrixPos, matrixNormal, corners[3], color, topLeftUV)
     }
 
     private fun drawQuadVertex(
