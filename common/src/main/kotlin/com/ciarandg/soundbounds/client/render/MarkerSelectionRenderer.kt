@@ -22,7 +22,7 @@ import net.minecraft.util.math.Vec2f
 
 @Suppress("INACCESSIBLE_TYPE")
 object MarkerSelectionRenderer {
-    val selectionTexture = Identifier(SoundBounds.MOD_ID, "textures/entity/selection.png")
+    private val selectionTexture = Identifier(SoundBounds.MOD_ID, "textures/entity/selection.png")
 
     // PRECONDITION: matrixStack is aligned to World's [0, 0, 0]
     fun renderPlayerMarkerSelection(matrixStack: MatrixStack) {
