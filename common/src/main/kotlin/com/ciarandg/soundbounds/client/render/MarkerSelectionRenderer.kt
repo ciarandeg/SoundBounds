@@ -20,7 +20,6 @@ import net.minecraft.util.math.Matrix3f
 import net.minecraft.util.math.Matrix4f
 import net.minecraft.util.math.Vec2f
 
-@Suppress("INACCESSIBLE_TYPE")
 object MarkerSelectionRenderer {
     private val selectionTexture = Identifier(SoundBounds.MOD_ID, "textures/entity/selection.png")
 
@@ -29,8 +28,8 @@ object MarkerSelectionRenderer {
         val source = MinecraftClient.getInstance().bufferBuilders.entityVertexConsumers
         val marker1 = ClientPlayerModel.marker1
         val marker2 = ClientPlayerModel.marker2
-        renderSelectionBorder(matrixStack, source, RenderLayer.LINES, marker1, marker2)
-        renderSelectionHighlight(matrixStack, source, RenderLayer.getEntitySolid(selectionTexture), RenderColor.WHITE, marker1, marker2)
+        renderSelectionBorder(matrixStack, source, SBRenderLayer.getLines(), marker1, marker2)
+        renderSelectionHighlight(matrixStack, source, SBRenderLayer.getSelectionHighlight(selectionTexture), RenderColor.WHITE, marker1, marker2)
     }
 
     private fun renderSelectionBorder(
