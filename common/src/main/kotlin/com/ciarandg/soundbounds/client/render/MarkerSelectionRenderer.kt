@@ -28,26 +28,28 @@ object MarkerSelectionRenderer {
         val source = MinecraftClient.getInstance().bufferBuilders.entityVertexConsumers
         val marker1 = ClientPlayerModel.marker1
         val marker2 = ClientPlayerModel.marker2
-        renderSelectionBorder(matrixStack, source, SBRenderLayer.getLines(), marker1, marker2)
+        renderSelectionBorder(matrixStack, source, SBRenderLayer.getThickLines(), SBRenderLayer.getThinLines(), marker1, marker2)
         renderSelectionHighlight(matrixStack, source, SBRenderLayer.getSelectionHighlight(selectionTexture), RenderColor.WHITE, marker1, marker2)
     }
 
     private fun renderSelectionBorder(
         matrixStack: MatrixStack,
         source: VertexConsumerProvider.Immediate,
-        layer: RenderLayer,
+        markerLayer: RenderLayer,
+        unionLayer: RenderLayer,
         marker1: BlockPos?,
         marker2: BlockPos?
     ) {
-        val buffer = source.getBuffer(layer)
+        val buffer = source.getBuffer(unionLayer)
         val m1Box = marker1?.toBox()?.expand(Z_INCREMENT)
         val m2Box = marker2?.toBox()?.expand(Z_INCREMENT)
         if (m1Box != null && m2Box != null) { drawBox(matrixStack, buffer, m1Box.union(m2Box), RenderColor.MAGENTA) }
         if (m1Box != m2Box) {
-            if (m1Box != null) { drawBox(matrixStack, source.getBuffer(layer), m1Box.expand(Z_INCREMENT), RenderColor.BLUE) }
-            if (m2Box != null) { drawBox(matrixStack, source.getBuffer(layer), m2Box.expand(Z_INCREMENT), RenderColor.RED) }
+            if (m1Box != null) { drawBox(matrixStack, source.getBuffer(markerLayer), m1Box.expand(Z_INCREMENT), RenderColor.BLUE) }
+            if (m2Box != null) { drawBox(matrixStack, source.getBuffer(markerLayer), m2Box.expand(Z_INCREMENT), RenderColor.RED) }
         }
-        source.draw(layer)
+        source.draw(unionLayer)
+        source.draw(markerLayer)
     }
 
     private fun drawBox(matrixStack: MatrixStack, renderBuffer: VertexConsumer, box: Box, color: RenderColor) {

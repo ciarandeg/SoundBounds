@@ -5,6 +5,8 @@ import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.VertexFormat
 import net.minecraft.client.render.VertexFormats
 import net.minecraft.util.Identifier
+import org.lwjgl.opengl.GL11.GL_LINES
+import org.lwjgl.opengl.GL11.GL_QUADS
 import java.util.OptionalDouble
 
 @Suppress("INACCESSIBLE_TYPE")
@@ -19,11 +21,13 @@ class SBRenderLayer(
     endAction: () -> Unit
 ) : RenderLayer(name, vertexFormat, drawMode, expectedBufferSize, hasCrumbling, translucent, startAction, endAction) {
     companion object {
-        fun getLines(): RenderLayer {
+        fun getThinLines() = getLines(3.0)
+        fun getThickLines() = getLines(5.0)
+        fun getLines(lineWidth: Double): RenderLayer {
             return of(
-                "${SoundBounds.MOD_ID}_lines", VertexFormats.POSITION_COLOR, 1, 256,
+                "${SoundBounds.MOD_ID}_lines", VertexFormats.POSITION_COLOR, GL_LINES, 256,
                 MultiPhaseParameters.builder()
-                    .lineWidth(LineWidth(OptionalDouble.empty()))
+                    .lineWidth(LineWidth(OptionalDouble.of(lineWidth)))
                     .layering(VIEW_OFFSET_Z_LAYERING)
                     .transparency(TRANSLUCENT_TRANSPARENCY)
                     .target(ITEM_TARGET)
@@ -36,14 +40,13 @@ class SBRenderLayer(
             val multiPhaseParameters: MultiPhaseParameters =
                 MultiPhaseParameters.builder()
                     .texture(Texture(texture, false, false))
-                    .transparency(NO_TRANSPARENCY)
+                    .transparency(ADDITIVE_TRANSPARENCY)
                     .diffuseLighting(ENABLE_DIFFUSE_LIGHTING)
-                    .lightmap(ENABLE_LIGHTMAP)
-                    .overlay(ENABLE_OVERLAY_COLOR)
+                    .cull(DISABLE_CULLING)
                     .build(true)
             return of(
                 "${SoundBounds.MOD_ID}_selection_highlight", VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL,
-                7, 256, true, false, multiPhaseParameters
+                GL_QUADS, 256, true, false, multiPhaseParameters
             )
         }
     }

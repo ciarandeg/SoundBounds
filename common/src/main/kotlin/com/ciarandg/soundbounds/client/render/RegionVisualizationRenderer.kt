@@ -10,7 +10,7 @@ import net.minecraft.util.math.Vec3i
 object RegionVisualizationRenderer {
     fun renderRegionVisualization(matrixStack: MatrixStack, region: ClientRegion) {
         val source = MinecraftClient.getInstance().bufferBuilders.entityVertexConsumers
-        val layer = SBRenderLayer.getLines()
+        val layer = SBRenderLayer.getThinLines()
         renderWireframe(matrixStack, source.getBuffer(layer), region)
         source.draw()
     }
