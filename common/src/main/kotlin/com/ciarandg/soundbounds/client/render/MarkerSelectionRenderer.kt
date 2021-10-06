@@ -70,7 +70,7 @@ object MarkerSelectionRenderer {
             if (marker1 != null && marker2 != null) marker1.toBox().union(marker2.toBox())
             else marker1?.toBox() ?: marker2?.toBox() ?: return
 
-        drawQuadBox(bufferBlockQuads, matrixPos, matrixNormal, markerBox, color)
+        drawQuadBox(bufferBlockQuads, matrixPos, matrixNormal, markerBox.expand(Z_INCREMENT), color)
 
         source.draw(layer)
     }
