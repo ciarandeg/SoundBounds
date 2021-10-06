@@ -1,5 +1,6 @@
 package com.ciarandg.soundbounds.client.render
 
+import com.ciarandg.soundbounds.SoundBounds
 import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.VertexFormat
 import net.minecraft.client.render.VertexFormats
@@ -20,7 +21,7 @@ class SBRenderLayer(
     companion object {
         fun getLines(): RenderLayer {
             return of(
-                "lines", VertexFormats.POSITION_COLOR, 1, 256,
+                "${SoundBounds.MOD_ID}_lines", VertexFormats.POSITION_COLOR, 1, 256,
                 MultiPhaseParameters.builder()
                     .lineWidth(LineWidth(OptionalDouble.empty()))
                     .layering(VIEW_OFFSET_Z_LAYERING)
@@ -41,7 +42,7 @@ class SBRenderLayer(
                     .overlay(ENABLE_OVERLAY_COLOR)
                     .build(true)
             return of(
-                "sb_selection_highlight", VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL,
+                "${SoundBounds.MOD_ID}_selection_highlight", VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL,
                 7, 256, true, false, multiPhaseParameters
             )
         }
