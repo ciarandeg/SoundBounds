@@ -90,12 +90,12 @@ object MarkerSelectionRenderer {
         val minZ = box.minZ.toFloat()
         val maxZ = box.maxZ.toFloat()
 
-        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(maxX, minY, minZ), Direction.NORTH, color)
-        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(maxX, minY, maxZ), Direction.EAST, color)
-        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(minX, minY, maxZ), Direction.SOUTH, color)
-        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(minX, minY, minZ), Direction.WEST, color)
-        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(minX, maxY, maxZ), Direction.UP, color)
-        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(minX, minY, minZ), Direction.DOWN, color)
+        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(maxX, minY, minZ), Vector3f(minX, maxY, minZ), Direction.NORTH, color)
+        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(maxX, minY, maxZ), Vector3f(maxX, maxY, minZ), Direction.EAST, color)
+        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(minX, minY, maxZ), Vector3f(maxX, maxY, maxZ), Direction.SOUTH, color)
+        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(minX, minY, minZ), Vector3f(minX, maxY, maxZ), Direction.WEST, color)
+        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(minX, maxY, maxZ), Vector3f(maxX, maxY, minZ), Direction.UP, color)
+        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(minX, minY, minZ), Vector3f(maxX, minY, maxZ), Direction.DOWN, color)
     }
 
     private fun drawQuad(
@@ -103,6 +103,7 @@ object MarkerSelectionRenderer {
         matrixPos: Matrix4f,
         matrixNormal: Matrix3f,
         bottomLeft: Vector3f,
+        topRight: Vector3f,
         facing: Direction,
         color: RenderColor
     ) {
@@ -111,40 +112,32 @@ object MarkerSelectionRenderer {
         val topLeftUV = Vec2f(0.0f, 0.0f)
         val topRightUV = Vec2f(1.0f, 0.0f)
 
-        val corners = listOf(bottomLeft).plus(
-            when (facing) {
-                Direction.NORTH -> listOf(
-                    Vector3f(bottomLeft.x - 1.0f, bottomLeft.y, bottomLeft.z), // bottom right
-                    Vector3f(bottomLeft.x - 1.0f, bottomLeft.y + 1.0f, bottomLeft.z), // top right
-                    Vector3f(bottomLeft.x, bottomLeft.y + 1.0f, bottomLeft.z) // top left
-                )
-                Direction.EAST -> listOf(
-                    Vector3f(bottomLeft.x, bottomLeft.y, bottomLeft.z - 1.0f),
-                    Vector3f(bottomLeft.x, bottomLeft.y + 1.0f, bottomLeft.z - 1.0f),
-                    Vector3f(bottomLeft.x, bottomLeft.y + 1.0f, bottomLeft.z)
-                )
-                Direction.SOUTH -> listOf(
-                    Vector3f(bottomLeft.x + 1.0f, bottomLeft.y, bottomLeft.z),
-                    Vector3f(bottomLeft.x + 1.0f, bottomLeft.y + 1.0f, bottomLeft.z),
-                    Vector3f(bottomLeft.x, bottomLeft.y + 1.0f, bottomLeft.z)
-                )
-                Direction.WEST -> listOf(
-                    Vector3f(bottomLeft.x, bottomLeft.y, bottomLeft.z + 1.0f),
-                    Vector3f(bottomLeft.x, bottomLeft.y + 1.0f, bottomLeft.z + 1.0f),
-                    Vector3f(bottomLeft.x, bottomLeft.y + 1.0f, bottomLeft.z)
-                )
-                Direction.UP -> listOf(
-                    Vector3f(bottomLeft.x + 1.0f, bottomLeft.y, bottomLeft.z),
-                    Vector3f(bottomLeft.x + 1.0f, bottomLeft.y, bottomLeft.z - 1.0f),
-                    Vector3f(bottomLeft.x, bottomLeft.y, bottomLeft.z - 1.0f)
-                )
-                Direction.DOWN -> listOf(
-                    Vector3f(bottomLeft.x + 1.0f, bottomLeft.y, bottomLeft.z),
-                    Vector3f(bottomLeft.x + 1.0f, bottomLeft.y, bottomLeft.z + 1.0f),
-                    Vector3f(bottomLeft.x, bottomLeft.y, bottomLeft.z + 1.0f)
-                )
-            }
-        )
+        val corners = when (facing) {
+            Direction.NORTH -> listOf(
+                bottomLeft, Vector3f(topRight.x, bottomLeft.y, bottomLeft.z), // bottom right
+                topRight, Vector3f(bottomLeft.x, topRight.y, bottomLeft.z) // top left
+            )
+            Direction.EAST -> listOf(
+                bottomLeft, Vector3f(bottomLeft.x, bottomLeft.y, topRight.z),
+                topRight, Vector3f(bottomLeft.x, topRight.y, bottomLeft.z)
+            )
+            Direction.SOUTH -> listOf(
+                bottomLeft, Vector3f(topRight.x, bottomLeft.y, bottomLeft.z),
+                topRight, Vector3f(bottomLeft.x, topRight.y, bottomLeft.z)
+            )
+            Direction.WEST -> listOf(
+                bottomLeft, Vector3f(bottomLeft.x, bottomLeft.y, topRight.z),
+                topRight, Vector3f(bottomLeft.x, topRight.y, bottomLeft.z)
+            )
+            Direction.UP -> listOf(
+                bottomLeft, Vector3f(topRight.x, bottomLeft.y, bottomLeft.z),
+                topRight, Vector3f(bottomLeft.x, bottomLeft.y, topRight.z)
+            )
+            Direction.DOWN -> listOf(
+                bottomLeft, Vector3f(topRight.x, bottomLeft.y, bottomLeft.z),
+                topRight, Vector3f(bottomLeft.x, bottomLeft.y, topRight.z)
+            )
+        }
 
         drawQuadVertex(bufferBlockQuads, matrixPos, matrixNormal, corners[0], color, bottomLeftUV)
         drawQuadVertex(bufferBlockQuads, matrixPos, matrixNormal, corners[1], color, bottomRightUV)
