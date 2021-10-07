@@ -2,29 +2,62 @@ package com.ciarandg.soundbounds.client.regions
 
 import com.ciarandg.soundbounds.client.render.toBox
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3i
 import java.lang.IllegalStateException
 
 @Suppress("UnstableApiUsage")
 class GraphRegion(private val blocks: Set<BlockPos>) {
     fun getWireframe(): Set<Pair<Vec3i, Vec3i>> {
-        val blocksWithEdges = blocks.associateWith { getBlockEdgesMemoized(it) }
-
         // Edges on the perimeter are unique to their corresponding block within the region,
         // so I count the instances of each edge and ditch anything with more than one instance
-        val lines = HashMap<Line3i, Int>()
-        for (entry in blocksWithEdges.entries) {
-            entry.value.forEach { newLine ->
-                val currentCount = lines.getOrDefault(newLine, 0)
-                lines[newLine] = currentCount + 1
+        val lineCounts = HashMap<Line3i, Int>()
+        blocks.map { getBlockEdgesMemoized(it) }.forEach { edgeSet ->
+            edgeSet.forEach { newLine ->
+                val currentCount = lineCounts.getOrDefault(newLine, 0)
+                lineCounts[newLine] = currentCount + 1
             }
         }
-        val filtered = lines.entries.mapNotNull { if (it.value == 1) Pair(it.key.vertex1, it.key.vertex2) else null }
+        val filtered = lineCounts.entries.mapNotNull { if (it.value == 1) Pair(it.key.vertex1, it.key.vertex2) else null }
+        return filtered.toSet()
+    }
+
+    fun getFaceOutline(): Set<Pair<List<Vec3i>, Direction>> {
+        // Faces on the perimeter are unique to their corresponding block within the region,
+        // so I count the instances of each face and ditch anything with more than one instance
+        val faceCounts = HashMap<Face3i, Int>()
+        blocks.map { getBlockFaces(it) }.forEach { faceSet ->
+            faceSet.forEach { newFace ->
+                val currentCount = faceCounts.getOrDefault(newFace, 0)
+                faceCounts[newFace] = currentCount + 1
+            }
+        }
+        val filtered = faceCounts.entries.mapNotNull {
+            if (it.value == 1)
+                Pair(listOf(it.key.corner1, it.key.corner2, it.key.corner3, it.key.corner4), it.key.facing)
+            else null
+        }
         return filtered.toSet()
     }
 
     private fun getBlockEdgesMemoized(block: BlockPos) =
         Memoizer.blockEdgesCache.getOrPut(block) { getBlockEdges(block) }
+
+    private fun getBlockFaces(block: BlockPos): Set<Face3i> {
+        // map a block to its 6 corresponding faces
+        val faces = with(block.toBox()) {
+            setOf(
+                Face3i(Vec3i(minX, minY, minZ), Vec3i(maxX, minY, minZ), Vec3i(maxX, maxY, minZ), Vec3i(minX, maxY, minZ), Direction.NORTH),
+                Face3i(Vec3i(minX, minY, minZ), Vec3i(minX, minY, maxZ), Vec3i(minX, maxY, maxZ), Vec3i(minX, maxY, minZ), Direction.WEST),
+                Face3i(Vec3i(minX, minY, minZ), Vec3i(maxX, minY, minZ), Vec3i(maxX, minY, maxZ), Vec3i(minX, minY, maxZ), Direction.UP),
+                Face3i(Vec3i(maxX, maxY, maxZ), Vec3i(minX, maxY, maxZ), Vec3i(minX, minY, maxZ), Vec3i(maxX, minY, maxZ), Direction.SOUTH),
+                Face3i(Vec3i(maxX, maxY, maxZ), Vec3i(maxX, maxY, minZ), Vec3i(maxX, minY, minZ), Vec3i(maxX, minY, maxZ), Direction.EAST),
+                Face3i(Vec3i(maxX, maxY, maxZ), Vec3i(minX, maxY, maxZ), Vec3i(minX, maxY, minZ), Vec3i(maxX, maxY, minZ), Direction.DOWN)
+            )
+        }
+        if (faces.size != 6) throw IllegalStateException("A cube has 6 faces, not ${faces.size}")
+        return faces
+    }
 
     private fun getBlockEdges(block: BlockPos): Set<Line3i> {
         // map a block to its 12 corresponding physical edges
@@ -68,6 +101,27 @@ class GraphRegion(private val blocks: Set<BlockPos>) {
             return pair1 == otherPair || pair2 == otherPair
         }
         override fun hashCode() = 31 * (pair1.hashCode() + pair2.hashCode())
+    }
+
+    private data class Face3i(
+        val corner1: Vec3i,
+        val corner2: Vec3i,
+        val corner3: Vec3i,
+        val corner4: Vec3i,
+        val facing: Direction
+    ) {
+        init {
+            with(cornerSet()) { if (size != 4) throw IllegalStateException("Face must have 4 unique corners, not $size") }
+        }
+
+        fun cornerSet() = setOf(corner1, corner2, corner3, corner4)
+
+        // equals and hashcode ignore the face's direction for my personal convenience :^)
+        override fun equals(other: Any?): Boolean {
+            if (other !is Face3i) return false
+            return cornerSet() == other.cornerSet()
+        }
+        override fun hashCode() = cornerSet().hashCode()
     }
 
     private object Memoizer {

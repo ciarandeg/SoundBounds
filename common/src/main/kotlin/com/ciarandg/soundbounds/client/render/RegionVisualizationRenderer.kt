@@ -5,12 +5,14 @@ import com.ciarandg.soundbounds.client.regions.GraphRegion
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.render.VertexConsumer
 import net.minecraft.client.util.math.MatrixStack
+import net.minecraft.client.util.math.Vector3f
 import net.minecraft.util.math.Vec3i
 
 object RegionVisualizationRenderer {
     fun renderRegionVisualization(matrixStack: MatrixStack, region: ClientRegion) {
         val source = MinecraftClient.getInstance().bufferBuilders.entityVertexConsumers
         val layer = SBRenderLayer.getThinLines()
+        renderFaceOutline(matrixStack, source.getBuffer(SBRenderLayer.getSelectionHighlight(MarkerSelectionRenderer.selectionTexture)), region)
         renderWireframe(matrixStack, source.getBuffer(layer), region)
         source.draw()
     }
@@ -26,6 +28,18 @@ object RegionVisualizationRenderer {
             }
             drawVertex(edge.first)
             drawVertex(edge.second)
+        }
+    }
+
+    private fun renderFaceOutline(matrixStack: MatrixStack, vertexConsumer: VertexConsumer, region: ClientRegion) {
+        val outline = GraphRegion(region.blockSet).getFaceOutline()
+        for (face in outline) {
+            MarkerSelectionRenderer.drawQuad(
+                vertexConsumer, matrixStack.peek().model, matrixStack.peek().normal,
+                with(face.first[0]) { Vector3f(x.toFloat(), y.toFloat(), z.toFloat()) },
+                with(face.first[2]) { Vector3f(x.toFloat(), y.toFloat(), z.toFloat()) },
+                face.second, RenderColor.WHITE
+            )
         }
     }
 }
