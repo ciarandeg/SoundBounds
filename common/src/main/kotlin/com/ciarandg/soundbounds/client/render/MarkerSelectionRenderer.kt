@@ -19,6 +19,7 @@ import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Matrix3f
 import net.minecraft.util.math.Matrix4f
 import net.minecraft.util.math.Vec2f
+import kotlin.math.abs
 
 object MarkerSelectionRenderer {
     private val selectionTexture = Identifier(SoundBounds.MOD_ID, "textures/entity/selection.png")
@@ -108,10 +109,23 @@ object MarkerSelectionRenderer {
         facing: Direction,
         color: RenderColor
     ) {
-        val bottomLeftUV = Vec2f(0.0f, 1.0f)
-        val bottomRightUV = Vec2f(1.0f, 1.0f)
+        val dimensions = Vector3f(
+            abs(topRight.x - bottomLeft.x), abs(topRight.y - bottomLeft.y), abs(topRight.z - bottomLeft.z)
+        )
+
+        val dimensions2D = when (facing) {
+            Direction.EAST -> Vec2f(dimensions.z, dimensions.y)
+            Direction.NORTH -> Vec2f(dimensions.x, dimensions.y)
+            Direction.SOUTH -> Vec2f(dimensions.x, dimensions.y)
+            Direction.WEST -> Vec2f(dimensions.z, dimensions.y)
+            Direction.UP -> Vec2f(dimensions.x, dimensions.z)
+            Direction.DOWN -> Vec2f(dimensions.x, dimensions.z)
+        }
+
+        val bottomLeftUV = Vec2f(0.0f, dimensions2D.y)
+        val bottomRightUV = Vec2f(dimensions2D.x, dimensions2D.y)
         val topLeftUV = Vec2f(0.0f, 0.0f)
-        val topRightUV = Vec2f(1.0f, 0.0f)
+        val topRightUV = Vec2f(dimensions2D.x, 0.0f)
 
         val corners = when (facing) {
             Direction.NORTH -> listOf(
