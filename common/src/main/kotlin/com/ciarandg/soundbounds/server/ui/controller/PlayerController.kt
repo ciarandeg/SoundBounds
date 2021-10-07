@@ -2,6 +2,7 @@ package com.ciarandg.soundbounds.server.ui.controller
 
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.common.network.PosMarkerUpdateMessage
+import com.ciarandg.soundbounds.common.network.VisualizeRegionMessageS2C
 import com.ciarandg.soundbounds.common.regions.WorldRegionState
 import com.ciarandg.soundbounds.common.ui.cli.Paginator
 import com.ciarandg.soundbounds.server.metadata.ServerMetaState
@@ -52,6 +53,14 @@ class PlayerController(
         }
         NetworkManager.sendToPlayer(owner, SoundBounds.POS_MARKER_UPDATE_CHANNEL_S2C, PosMarkerUpdateMessage.buildBuffer(marker, pos))
         if (showNotification) view.notifyPosMarkerSet(marker, pos)
+    }
+
+    fun setVisualizingRegion(regionName: String) {
+        val region = WorldRegionState.get(world).getRegion(regionName)
+        if (region != null) {
+            NetworkManager.sendToPlayer(owner, SoundBounds.VISUALIZE_REGION_CHANNEL_S2C, VisualizeRegionMessageS2C.buildBuffer(regionName))
+            view.notifyVisualizationRegionChanged(regionName)
+        } else view.notifyFailed(FailureReason.NO_SUCH_REGION)
     }
 
     fun notifyMetaMismatch() = view.notifyMetaMismatch()
