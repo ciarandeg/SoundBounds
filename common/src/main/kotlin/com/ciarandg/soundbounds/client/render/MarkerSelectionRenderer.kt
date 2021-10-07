@@ -109,17 +109,21 @@ object MarkerSelectionRenderer {
         facing: Direction,
         color: RenderColor
     ) {
-        val dimensions = Vector3f(
-            abs(topRight.x - bottomLeft.x), abs(topRight.y - bottomLeft.y), abs(topRight.z - bottomLeft.z)
-        )
-
-        val dimensions2D = when (facing) {
-            Direction.EAST -> Vec2f(dimensions.z, dimensions.y)
-            Direction.NORTH -> Vec2f(dimensions.x, dimensions.y)
-            Direction.SOUTH -> Vec2f(dimensions.x, dimensions.y)
-            Direction.WEST -> Vec2f(dimensions.z, dimensions.y)
-            Direction.UP -> Vec2f(dimensions.x, dimensions.z)
-            Direction.DOWN -> Vec2f(dimensions.x, dimensions.z)
+        val dimensions2D: Vec2f = with(
+            Vector3f(
+                abs(topRight.x - bottomLeft.x),
+                abs(topRight.y - bottomLeft.y),
+                abs(topRight.z - bottomLeft.z)
+            )
+        ) {
+            when (facing) {
+                Direction.EAST -> Vec2f(z, y)
+                Direction.NORTH -> Vec2f(x, y)
+                Direction.SOUTH -> Vec2f(x, y)
+                Direction.WEST -> Vec2f(z, y)
+                Direction.UP -> Vec2f(x, z)
+                Direction.DOWN -> Vec2f(x, z)
+            }
         }
 
         val bottomLeftUV = Vec2f(0.0f, dimensions2D.y)
