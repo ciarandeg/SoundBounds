@@ -56,7 +56,6 @@ class GraphRegion(private val blocks: Set<BlockPos>) {
         )
         out.forEach { it.add(nudgeVec) }
         return out
-        // val nudgeVec = with(face.facing.vector) { Vector3f(x.toFloat() * nudgeInc, y.toFloat() * nudgeInc, z.toFloat() * nudgeInc) }
     }
 
     private fun getBlockEdgesMemoized(block: BlockPos) =
