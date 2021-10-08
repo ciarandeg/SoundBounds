@@ -14,7 +14,7 @@ class GraphRegion(private val blocks: Set<BlockPos>) {
     // any face/edge that ought to be shown as part of an outline will be unique to the block that
     // contains it.
     fun getWireframe(): Set<Pair<Vec3i, Vec3i>> {
-        val unique = keepUnique(blocks.map { getBlockEdgesMemoized(it) })
+        val unique = keepUnique(blocks.map { getBlockEdges(it) })
         val pairs = unique.map { Pair(it.vertex1, it.vertex2) }
         return pairs.toSet()
     }
@@ -53,23 +53,23 @@ class GraphRegion(private val blocks: Set<BlockPos>) {
         return out
     }
 
-    private fun getBlockEdgesMemoized(block: BlockPos) =
-        Memoizer.blockEdgesCache.getOrPut(block) { getBlockEdges(block) }
-
     private fun getBlockEdges(block: BlockPos): Set<Edge3i> {
-        // map a block to its 12 corresponding physical edges
-        val corners = getBlockCornerPositions(block)
-        val edges = corners.flatMapIndexed { index, c ->
-            corners.subList(index + 1, corners.size).mapNotNull {
-                // corners are only adjacent if their positions are identical in 2 dimensions
-                if (
-                    (c.x == it.x && c.y == it.y) ||
-                    (c.x == it.x && c.z == it.z) ||
-                    (c.y == it.y && c.z == it.z)
-                ) Edge3i(c, it)
-                else null
-            }
-        }.toSet()
+        val edges = with(block.toBox()) {
+            setOf(
+                Edge3i(Vec3i(minX, minY, minZ), Vec3i(maxX, minY, minZ)),
+                Edge3i(Vec3i(minX, minY, minZ), Vec3i(minX, maxY, minZ)),
+                Edge3i(Vec3i(minX, minY, minZ), Vec3i(minX, minY, maxZ)),
+                Edge3i(Vec3i(maxX, minY, minZ), Vec3i(maxX, maxY, minZ)),
+                Edge3i(Vec3i(maxX, minY, minZ), Vec3i(maxX, minY, maxZ)),
+                Edge3i(Vec3i(minX, maxY, minZ), Vec3i(maxX, maxY, minZ)),
+                Edge3i(Vec3i(minX, maxY, minZ), Vec3i(minX, maxY, maxZ)),
+                Edge3i(Vec3i(maxX, maxY, minZ), Vec3i(maxX, maxY, maxZ)),
+                Edge3i(Vec3i(maxX, maxY, maxZ), Vec3i(maxX, minY, maxZ)),
+                Edge3i(Vec3i(maxX, maxY, maxZ), Vec3i(minX, maxY, maxZ)),
+                Edge3i(Vec3i(maxX, minY, maxZ), Vec3i(minX, minY, maxZ)),
+                Edge3i(Vec3i(minX, minY, maxZ), Vec3i(minX, maxY, maxZ)),
+            )
+        }
         if (edges.size != 12) throw IllegalStateException("A cube has 12 edges, not ${edges.size}")
         return edges
     }
@@ -88,20 +88,6 @@ class GraphRegion(private val blocks: Set<BlockPos>) {
         }
         if (faces.size != 6) throw IllegalStateException("A cube has 6 faces, not ${faces.size}")
         return faces
-    }
-
-    private fun getBlockCornerPositions(block: BlockPos): List<Vec3i> {
-        val box = block.toBox()
-        return listOf(
-            Vec3i(box.minX, box.minY, box.minZ),
-            Vec3i(box.maxX, box.minY, box.minZ),
-            Vec3i(box.minX, box.maxY, box.minZ),
-            Vec3i(box.minX, box.minY, box.maxZ),
-            Vec3i(box.maxX, box.maxY, box.minZ),
-            Vec3i(box.minX, box.maxY, box.maxZ),
-            Vec3i(box.maxX, box.minY, box.maxZ),
-            Vec3i(box.maxX, box.maxY, box.maxZ)
-        )
     }
 
     private class Edge3i(val vertex1: Vec3i, val vertex2: Vec3i) {
@@ -135,9 +121,5 @@ class GraphRegion(private val blocks: Set<BlockPos>) {
             return cornerSet() == other.cornerSet()
         }
         override fun hashCode() = cornerSet().hashCode()
-    }
-
-    private object Memoizer {
-        val blockEdgesCache: MutableMap<BlockPos, Set<Edge3i>> = HashMap()
     }
 }
