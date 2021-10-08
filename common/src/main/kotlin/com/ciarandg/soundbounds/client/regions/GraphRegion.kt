@@ -49,10 +49,10 @@ class GraphRegion(private val blocks: Set<BlockPos>) {
         val nudgeInc = Z_INCREMENT.toFloat()
         val nudgeVec = with(toFloatVec(face.facing.vector)) { Vector3f(x * nudgeInc, y * nudgeInc, z * nudgeInc) }
         val out = listOf(
-            toFloatVec(face.corner1),
-            toFloatVec(face.corner2),
-            toFloatVec(face.corner3),
-            toFloatVec(face.corner4)
+            toFloatVec(face.bottomLeft),
+            toFloatVec(face.topLeft),
+            toFloatVec(face.topRight),
+            toFloatVec(face.bottomRight)
         )
         out.forEach { it.add(nudgeVec) }
         return out
@@ -65,12 +65,12 @@ class GraphRegion(private val blocks: Set<BlockPos>) {
         // map a block to its 6 corresponding faces
         val faces = with(block.toBox()) {
             setOf(
-                Face3i(Vec3i(minX, minY, minZ), Vec3i(maxX, minY, minZ), Vec3i(maxX, maxY, minZ), Vec3i(minX, maxY, minZ), Direction.NORTH),
+                Face3i(Vec3i(maxX, minY, minZ), Vec3i(maxX, maxY, minZ), Vec3i(minX, maxY, minZ), Vec3i(minX, minY, minZ), Direction.NORTH),
                 Face3i(Vec3i(minX, minY, minZ), Vec3i(minX, minY, maxZ), Vec3i(minX, maxY, maxZ), Vec3i(minX, maxY, minZ), Direction.WEST),
-                Face3i(Vec3i(minX, minY, minZ), Vec3i(maxX, minY, minZ), Vec3i(maxX, minY, maxZ), Vec3i(minX, minY, maxZ), Direction.UP),
-                Face3i(Vec3i(maxX, maxY, maxZ), Vec3i(minX, maxY, maxZ), Vec3i(minX, minY, maxZ), Vec3i(maxX, minY, maxZ), Direction.SOUTH),
-                Face3i(Vec3i(maxX, maxY, maxZ), Vec3i(maxX, maxY, minZ), Vec3i(maxX, minY, minZ), Vec3i(maxX, minY, maxZ), Direction.EAST),
-                Face3i(Vec3i(maxX, maxY, maxZ), Vec3i(minX, maxY, maxZ), Vec3i(minX, maxY, minZ), Vec3i(maxX, maxY, minZ), Direction.DOWN)
+                Face3i(Vec3i(minX, minY, minZ), Vec3i(maxX, minY, minZ), Vec3i(maxX, minY, maxZ), Vec3i(minX, minY, maxZ), Direction.DOWN),
+                Face3i(Vec3i(minX, minY, maxZ), Vec3i(maxX, minY, maxZ), Vec3i(maxX, maxY, maxZ), Vec3i(minX, maxY, maxZ), Direction.SOUTH),
+                Face3i(Vec3i(maxX, minY, maxZ), Vec3i(maxX, minY, minZ), Vec3i(maxX, maxY, minZ), Vec3i(maxX, maxY, maxZ), Direction.EAST),
+                Face3i(Vec3i(minX, maxY, maxZ), Vec3i(minX, maxY, minZ), Vec3i(maxX, maxY, minZ), Vec3i(maxX, maxY, maxZ), Direction.UP)
             )
         }
         if (faces.size != 6) throw IllegalStateException("A cube has 6 faces, not ${faces.size}")
@@ -122,17 +122,17 @@ class GraphRegion(private val blocks: Set<BlockPos>) {
     }
 
     private data class Face3i(
-        val corner1: Vec3i,
-        val corner2: Vec3i,
-        val corner3: Vec3i,
-        val corner4: Vec3i,
+        val bottomLeft: Vec3i,
+        val topLeft: Vec3i,
+        val topRight: Vec3i,
+        val bottomRight: Vec3i,
         val facing: Direction
     ) {
         init {
             with(cornerSet()) { if (size != 4) throw IllegalStateException("Face must have 4 unique corners, not $size") }
         }
 
-        fun cornerSet() = setOf(corner1, corner2, corner3, corner4)
+        fun cornerSet() = setOf(bottomLeft, topLeft, topRight, bottomRight)
 
         // equals and hashcode ignore the face's direction for my personal convenience :^)
         override fun equals(other: Any?): Boolean {
