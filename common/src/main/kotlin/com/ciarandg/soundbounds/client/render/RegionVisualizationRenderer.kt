@@ -36,8 +36,8 @@ object RegionVisualizationRenderer {
         for (face in outline) {
             MarkerSelectionRenderer.drawQuad(
                 vertexConsumer, matrixStack.peek().model, matrixStack.peek().normal,
-                with(face.first[0]) { Vector3f(x.toFloat(), y.toFloat(), z.toFloat()) },
-                with(face.first[2]) { Vector3f(x.toFloat(), y.toFloat(), z.toFloat()) },
+                with(face.first[0]) { Vector3f(x, y, z) },
+                with(face.first[2]) { Vector3f(x, y, z) },
                 face.second, RenderColor.WHITE
             )
         }

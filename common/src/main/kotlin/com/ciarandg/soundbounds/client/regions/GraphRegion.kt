@@ -1,6 +1,8 @@
 package com.ciarandg.soundbounds.client.regions
 
+import com.ciarandg.soundbounds.client.render.RenderUtils.Companion.Z_INCREMENT
 import com.ciarandg.soundbounds.client.render.toBox
+import net.minecraft.client.util.math.Vector3f
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3i
@@ -22,7 +24,7 @@ class GraphRegion(private val blocks: Set<BlockPos>) {
         return filtered.toSet()
     }
 
-    fun getFaceOutline(): Set<Pair<List<Vec3i>, Direction>> {
+    fun getFaceOutline(): Set<Pair<List<Vector3f>, Direction>> {
         // Faces on the perimeter are unique to their corresponding block within the region,
         // so I count the instances of each face and ditch anything with more than one instance
         val faceCounts = HashMap<Face3i, Int>()
@@ -33,11 +35,28 @@ class GraphRegion(private val blocks: Set<BlockPos>) {
             }
         }
         val filtered = faceCounts.entries.mapNotNull {
-            if (it.value == 1)
-                Pair(listOf(it.key.corner1, it.key.corner2, it.key.corner3, it.key.corner4), it.key.facing)
-            else null
+            if (it.value == 1) {
+                val nudged = nudgeFace(it.key)
+                Pair(nudged, it.key.facing)
+            } else null
         }
         return filtered.toSet()
+    }
+
+    private fun nudgeFace(face: Face3i): List<Vector3f> {
+        fun toFloatVec(intVec: Vec3i) = Vector3f(intVec.x.toFloat(), intVec.y.toFloat(), intVec.z.toFloat())
+
+        val nudgeInc = Z_INCREMENT.toFloat()
+        val nudgeVec = with(toFloatVec(face.facing.vector)) { Vector3f(x * nudgeInc, y * nudgeInc, z * nudgeInc) }
+        val out = listOf(
+            toFloatVec(face.corner1),
+            toFloatVec(face.corner2),
+            toFloatVec(face.corner3),
+            toFloatVec(face.corner4)
+        )
+        out.forEach { it.add(nudgeVec) }
+        return out
+        // val nudgeVec = with(face.facing.vector) { Vector3f(x.toFloat() * nudgeInc, y.toFloat() * nudgeInc, z.toFloat() * nudgeInc) }
     }
 
     private fun getBlockEdgesMemoized(block: BlockPos) =
