@@ -10,37 +10,32 @@ import java.lang.IllegalStateException
 
 @Suppress("UnstableApiUsage")
 class GraphRegion(private val blocks: Set<BlockPos>) {
+    // The wireframe and face outline operate on the same principle: within a given selection,
+    // any face/edge that ought to be shown as part of an outline will be unique to the block that
+    // contains it.
     fun getWireframe(): Set<Pair<Vec3i, Vec3i>> {
-        // Edges on the perimeter are unique to their corresponding block within the region,
-        // so I count the instances of each edge and ditch anything with more than one instance
-        val lineCounts = HashMap<Line3i, Int>()
-        blocks.map { getBlockEdgesMemoized(it) }.forEach { edgeSet ->
-            edgeSet.forEach { newLine ->
-                val currentCount = lineCounts.getOrDefault(newLine, 0)
-                lineCounts[newLine] = currentCount + 1
-            }
-        }
-        val filtered = lineCounts.entries.mapNotNull { if (it.value == 1) Pair(it.key.vertex1, it.key.vertex2) else null }
-        return filtered.toSet()
+        val unique = keepUnique(blocks.map { getBlockEdgesMemoized(it) })
+        val pairs = unique.map { Pair(it.vertex1, it.vertex2) }
+        return pairs.toSet()
+    }
+    fun getFaceOutline(): Set<Pair<List<Vector3f>, Direction>> {
+        val unique = keepUnique(blocks.map { getBlockFaces(it) })
+        val pairs = unique.map { Pair(nudgeFace(it), it.facing) }
+        return pairs.toSet()
     }
 
-    fun getFaceOutline(): Set<Pair<List<Vector3f>, Direction>> {
-        // Faces on the perimeter are unique to their corresponding block within the region,
-        // so I count the instances of each face and ditch anything with more than one instance
-        val faceCounts = HashMap<Face3i, Int>()
-        blocks.map { getBlockFaces(it) }.forEach { faceSet ->
-            faceSet.forEach { newFace ->
-                val currentCount = faceCounts.getOrDefault(newFace, 0)
-                faceCounts[newFace] = currentCount + 1
+    private fun <T> keepUnique(setList: List<Set<T>>): Set<T> {
+        val counts = HashMap<T, Int>()
+        setList.forEach { set ->
+            set.forEach { item ->
+                val currentCount = counts.getOrDefault(item, 0)
+                counts[item] = currentCount + 1
             }
         }
-        val filtered = faceCounts.entries.mapNotNull {
-            if (it.value == 1) {
-                val nudged = nudgeFace(it.key)
-                Pair(nudged, it.key.facing)
-            } else null
+        val unique = counts.entries.mapNotNull {
+            if (it.value == 1) it.key else null
         }
-        return filtered.toSet()
+        return unique.toSet()
     }
 
     private fun nudgeFace(face: Face3i): List<Vector3f> {
@@ -61,6 +56,24 @@ class GraphRegion(private val blocks: Set<BlockPos>) {
     private fun getBlockEdgesMemoized(block: BlockPos) =
         Memoizer.blockEdgesCache.getOrPut(block) { getBlockEdges(block) }
 
+    private fun getBlockEdges(block: BlockPos): Set<Edge3i> {
+        // map a block to its 12 corresponding physical edges
+        val corners = getBlockCornerPositions(block)
+        val edges = corners.flatMapIndexed { index, c ->
+            corners.subList(index + 1, corners.size).mapNotNull {
+                // corners are only adjacent if their positions are identical in 2 dimensions
+                if (
+                    (c.x == it.x && c.y == it.y) ||
+                    (c.x == it.x && c.z == it.z) ||
+                    (c.y == it.y && c.z == it.z)
+                ) Edge3i(c, it)
+                else null
+            }
+        }.toSet()
+        if (edges.size != 12) throw IllegalStateException("A cube has 12 edges, not ${edges.size}")
+        return edges
+    }
+
     private fun getBlockFaces(block: BlockPos): Set<Face3i> {
         // map a block to its 6 corresponding faces
         val faces = with(block.toBox()) {
@@ -77,24 +90,6 @@ class GraphRegion(private val blocks: Set<BlockPos>) {
         return faces
     }
 
-    private fun getBlockEdges(block: BlockPos): Set<Line3i> {
-        // map a block to its 12 corresponding physical edges
-        val corners = getBlockCornerPositions(block)
-        val edges = corners.flatMapIndexed { index, c ->
-            corners.subList(index + 1, corners.size).mapNotNull {
-                // corners are only adjacent if their positions are identical in 2 dimensions
-                if (
-                    (c.x == it.x && c.y == it.y) ||
-                    (c.x == it.x && c.z == it.z) ||
-                    (c.y == it.y && c.z == it.z)
-                ) Line3i(c, it)
-                else null
-            }
-        }.toSet()
-        if (edges.size != 12) throw IllegalStateException("A cube has 12 edges, not ${edges.size}")
-        return edges
-    }
-
     private fun getBlockCornerPositions(block: BlockPos): List<Vec3i> {
         val box = block.toBox()
         return listOf(
@@ -109,12 +104,12 @@ class GraphRegion(private val blocks: Set<BlockPos>) {
         )
     }
 
-    private class Line3i(val vertex1: Vec3i, val vertex2: Vec3i) {
+    private class Edge3i(val vertex1: Vec3i, val vertex2: Vec3i) {
         private val pair1 = Pair(vertex1, vertex2)
         private val pair2 = Pair(vertex2, vertex1)
 
         override fun equals(other: Any?): Boolean {
-            if (other !is Line3i) return false
+            if (other !is Edge3i) return false
             val otherPair = Pair(other.vertex1, other.vertex2)
             return pair1 == otherPair || pair2 == otherPair
         }
@@ -143,6 +138,6 @@ class GraphRegion(private val blocks: Set<BlockPos>) {
     }
 
     private object Memoizer {
-        val blockEdgesCache: MutableMap<BlockPos, Set<Line3i>> = HashMap()
+        val blockEdgesCache: MutableMap<BlockPos, Set<Edge3i>> = HashMap()
     }
 }
