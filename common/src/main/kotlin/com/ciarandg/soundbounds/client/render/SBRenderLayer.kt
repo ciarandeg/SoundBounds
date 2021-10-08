@@ -29,6 +29,7 @@ class SBRenderLayer(
                 MultiPhaseParameters.builder()
                     .lineWidth(LineWidth(OptionalDouble.of(lineWidth)))
                     .layering(VIEW_OFFSET_Z_LAYERING)
+                    .depthTest(ALWAYS_DEPTH_TEST)
                     .transparency(TRANSLUCENT_TRANSPARENCY)
                     .target(ITEM_TARGET)
                     .writeMaskState(ALL_MASK)
