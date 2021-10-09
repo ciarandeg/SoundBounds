@@ -116,17 +116,17 @@ class PlayerController(
         else view.notifyMetadataSyncFailed()
     }
 
-    fun createRegion(regionName: String, priority: Int) {
-        val state = WorldRegionState.get(world)
-        val m1 = model.marker1
-        val m2 = model.marker2
+    // fun createRegion(regionName: String, priority: Int) {
+    //     val state = WorldRegionState.get(world)
+    //     val m1 = model.marker1
+    //     val m2 = model.marker2
 
-        when {
-            state.regionExists(regionName) -> view.notifyFailed(FailureReason.REGION_NAME_CONFLICT)
-            m1 != null && m2 != null -> WorldControllers[world].createRegion(regionName, priority, m1, m2, listOf(view))
-            else -> view.notifyFailed(FailureReason.POS_MARKERS_MISSING)
-        }
-    }
+    //     when {
+    //         state.regionExists(regionName) -> view.notifyFailed(FailureReason.REGION_NAME_CONFLICT)
+    //         m1 != null && m2 != null -> WorldControllers[world].createRegion(regionName, priority, m1, m2, listOf(view))
+    //         else -> view.notifyFailed(FailureReason.POS_MARKERS_MISSING)
+    //     }
+    // }
 
     fun showIfRegionsOverlap(firstRegion: String, secondRegion: String) {
         // TODO check if regions overlap
@@ -148,18 +148,18 @@ class PlayerController(
         else view.showSongInfo(songID, song)
     }
 
-    fun addRegionVolume(regionName: String) {
-        val m1 = model.marker1
-        val m2 = model.marker2
-        if (m1 != null && m2 != null) WorldControllers[world].addRegionVolume(regionName, m1, m2, listOf(view))
-        else view.notifyFailed(FailureReason.POS_MARKERS_MISSING)
-    }
+    // fun addRegionVolume(regionName: String) {
+    //     val m1 = model.marker1
+    //     val m2 = model.marker2
+    //     if (m1 != null && m2 != null) WorldControllers[world].addRegionVolume(regionName, m1, m2, listOf(view))
+    //     else view.notifyFailed(FailureReason.POS_MARKERS_MISSING)
+    // }
 
-    fun listRegionVolumes(regionName: String) {
-        val region = WorldRegionState.get(world).getRegion(regionName)
-        if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
-        else view.showRegionVolumeList(regionName, region.bounds, paginator)
-    }
+    // fun listRegionVolumes(regionName: String) {
+    //     val region = WorldRegionState.get(world).getRegion(regionName)
+    //     if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
+    //     else view.showRegionVolumeList(regionName, region.bounds, paginator)
+    // }
 
     fun checkRegionContiguous(regionName: String) {
         // TODO check if region is contiguous

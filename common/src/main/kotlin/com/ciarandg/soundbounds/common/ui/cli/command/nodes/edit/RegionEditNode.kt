@@ -66,30 +66,30 @@ object RegionEditNode : CommandNode(
                 CommandNode(
                     LiteralNodeData("volumes", null, null),
                     listOf(
-                        CommandNode(
-                            LiteralNodeData(
-                                "add",
-                                "add selected volume to region"
-                            ) { ctx, wctrl, pctrl ->
-                                pctrl?.addRegionVolume(Arguments.regionNameExistingArgument.retrieve(ctx))
-                            },
-                            listOf()
-                        ),
-                        CommandNode(
-                            LiteralNodeData("remove", "remove volume from region", null),
-                            listOf(
-                                CommandNode(
-                                    IntArgNodeData(Arguments.regionVolumeIndexArgument) { ctx, wctrl, pctrl ->
-                                        wctrl.removeRegionVolume(
-                                            Arguments.regionNameExistingArgument.retrieve(ctx),
-                                            Arguments.regionVolumeIndexArgument.retrieve(ctx) - 1,
-                                            pctrl?.view?.let { listOf(it) } ?: listOf()
-                                        )
-                                    },
-                                    listOf()
-                                )
-                            )
-                        )
+                        // CommandNode(
+                        //     LiteralNodeData(
+                        //         "add",
+                        //         "add selected volume to region"
+                        //     ) { ctx, wctrl, pctrl ->
+                        //         pctrl?.addRegionVolume(Arguments.regionNameExistingArgument.retrieve(ctx))
+                        //     },
+                        //     listOf()
+                        // ),
+                        // CommandNode(
+                        //     LiteralNodeData("remove", "remove volume from region", null),
+                        //     listOf(
+                        //         CommandNode(
+                        //             IntArgNodeData(Arguments.regionVolumeIndexArgument) { ctx, wctrl, pctrl ->
+                        //                 wctrl.removeRegionVolume(
+                        //                     Arguments.regionNameExistingArgument.retrieve(ctx),
+                        //                     Arguments.regionVolumeIndexArgument.retrieve(ctx) - 1,
+                        //                     pctrl?.view?.let { listOf(it) } ?: listOf()
+                        //                 )
+                        //             },
+                        //             listOf()
+                        //         )
+                        //     )
+                        // )
                     )
                 ),
                 CommandNode(

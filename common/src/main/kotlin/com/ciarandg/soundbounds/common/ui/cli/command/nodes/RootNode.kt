@@ -113,25 +113,25 @@ object RootNode : CommandNode(
                 )
             )
         ),
-        CommandNode(
-            LiteralNodeData("create", "create a region", null),
-            listOf(
-                CommandNode(
-                    StringArgNodeData(Arguments.nameArgument, null),
-                    listOf(
-                        CommandNode(
-                            IntArgNodeData(Arguments.regionPriorityArgument) { ctx, wctrl, pctrl ->
-                                pctrl?.createRegion(
-                                    Arguments.nameArgument.retrieve(ctx),
-                                    Arguments.regionPriorityArgument.retrieve(ctx)
-                                )
-                            },
-                            listOf()
-                        )
-                    )
-                )
-            )
-        ),
+        // CommandNode(
+        //     LiteralNodeData("create", "create a region", null),
+        //     listOf(
+        //         CommandNode(
+        //             StringArgNodeData(Arguments.nameArgument, null),
+        //             listOf(
+        //                 CommandNode(
+        //                     IntArgNodeData(Arguments.regionPriorityArgument) { ctx, wctrl, pctrl ->
+        //                         pctrl?.createRegion(
+        //                             Arguments.nameArgument.retrieve(ctx),
+        //                             Arguments.regionPriorityArgument.retrieve(ctx)
+        //                         )
+        //                     },
+        //                     listOf()
+        //                 )
+        //             )
+        //         )
+        //     )
+        // ),
         CommandNode(
             LiteralNodeData("destroy", "destroy a region", null),
             listOf(

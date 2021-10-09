@@ -12,12 +12,9 @@ import com.ciarandg.soundbounds.common.regions.WorldRegionState
 import com.ciarandg.soundbounds.server.metadata.ServerMetaState
 import com.ciarandg.soundbounds.server.ui.PlayerView
 import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason.NO_SUCH_REGION
-import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason.REGION_MUST_HAVE_VOLUME
 import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason.REGION_NAME_CONFLICT
-import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason.VOLUME_INDEX_OOB
 import me.shedaniel.architectury.networking.NetworkManager
 import net.minecraft.server.world.ServerWorld
-import net.minecraft.util.math.BlockPos
 
 class WorldController(
     private val owner: ServerWorld
@@ -32,15 +29,15 @@ class WorldController(
         }
     }
 
-    fun createRegion(regionName: String, priority: Int, corner1: BlockPos, corner2: BlockPos, views: List<PlayerView>) =
-        editWorldState { state ->
-            if (!state.regionExists(regionName)) {
-                val region = RegionEntry(regionName, RegionData(priority, bounds = mutableListOf(Pair(corner1, corner2))))
-                state.putRegion(region.first, region.second)
-                pushRegionToClients(owner, region)
-                views.forEach { it.notifyRegionCreated(regionName, priority) }
-            } else views.forEach { it.notifyFailed(REGION_NAME_CONFLICT) }
-        }
+    // fun createRegion(regionName: String, priority: Int, corner1: BlockPos, corner2: BlockPos, views: List<PlayerView>) =
+    //     editWorldState { state ->
+    //         if (!state.regionExists(regionName)) {
+    //             val region = RegionEntry(regionName, RegionData(priority, bounds = mutableListOf(Pair(corner1, corner2))))
+    //             state.putRegion(region.first, region.second)
+    //             pushRegionToClients(owner, region)
+    //             views.forEach { it.notifyRegionCreated(regionName, priority) }
+    //         } else views.forEach { it.notifyFailed(REGION_NAME_CONFLICT) }
+    //     }
 
     fun destroyRegion(regionName: String, views: List<PlayerView>) = editWorldState { state ->
         if (state.removeRegion(regionName) != null) {
@@ -79,28 +76,28 @@ class WorldController(
             views.forEach { it.notifyRegionPlaylistTypeSet(regionName, oldType, type) }
         }
 
-    fun addRegionVolume(regionName: String, corner1: BlockPos, corner2: BlockPos, views: List<PlayerView>) =
-        editExistingRegion(regionName, views) { region, _ ->
-            val volume = Pair(corner1, corner2)
-            region.bounds.add(volume)
-            pushRegionToClients(owner, RegionEntry(regionName, region))
-            views.forEach { it.notifyRegionVolumeAdded(regionName, volume) }
-        }
+    // fun addRegionVolume(regionName: String, corner1: BlockPos, corner2: BlockPos, views: List<PlayerView>) =
+    //     editExistingRegion(regionName, views) { region, _ ->
+    //         val volume = Pair(corner1, corner2)
+    //         region.bounds.add(volume)
+    //         pushRegionToClients(owner, RegionEntry(regionName, region))
+    //         views.forEach { it.notifyRegionVolumeAdded(regionName, volume) }
+    //     }
 
-    fun removeRegionVolume(regionName: String, index: Int, views: List<PlayerView>) =
-        editExistingRegion(regionName, views) { region, _ ->
-            when {
-                index < 0 || index >= region.bounds.size ->
-                    views.forEach { it.notifyFailed(VOLUME_INDEX_OOB) }
-                region.bounds.size == 1 ->
-                    views.forEach { it.notifyFailed(REGION_MUST_HAVE_VOLUME) }
-                else -> {
-                    val volume = region.bounds.removeAt(index)
-                    pushRegionToClients(owner, RegionEntry(regionName, region))
-                    views.forEach { it.notifyRegionVolumeRemoved(regionName, index, volume) }
-                }
-            }
-        }
+    // fun removeRegionVolume(regionName: String, index: Int, views: List<PlayerView>) =
+    //     editExistingRegion(regionName, views) { region, _ ->
+    //         when {
+    //             index < 0 || index >= region.bounds.size ->
+    //                 views.forEach { it.notifyFailed(VOLUME_INDEX_OOB) }
+    //             region.bounds.size == 1 ->
+    //                 views.forEach { it.notifyFailed(REGION_MUST_HAVE_VOLUME) }
+    //             else -> {
+    //                 val volume = region.bounds.removeAt(index)
+    //                 pushRegionToClients(owner, RegionEntry(regionName, region))
+    //                 views.forEach { it.notifyRegionVolumeRemoved(regionName, index, volume) }
+    //             }
+    //         }
+    //     }
 
     fun setRegionPlaylistQueuePersistence(regionName: String, queuePersist: Boolean, views: List<PlayerView>) =
         editExistingRegion(regionName, views) { region, _ ->

@@ -38,33 +38,33 @@ object RegionInfoNode : CommandNode(
                         )
                     )
                 ),
-                CommandNode(
-                    LiteralNodeData(
-                        "volumes",
-                        "list volumes in region"
-                    ) { ctx, wctrl, pctrl ->
-                        if (pctrl != null) {
-                            val regionName = Arguments.regionNameExistingArgument.retrieve(ctx)
-                            pctrl.paginator.setState("sb info region $regionName volumes")
-                            pctrl.listRegionVolumes(regionName)
-                        }
-                    },
-                    listOf(
-                        CommandNode(
-                            IntArgNodeData(Arguments.pageNumArgument) { ctx, wctrl, pctrl ->
-                                if (pctrl != null) {
-                                    val regionName = Arguments.regionNameExistingArgument.retrieve(ctx)
-                                    pctrl.paginator.setState(
-                                        "sb info region $regionName volumes",
-                                        Arguments.pageNumArgument.retrieve(ctx)
-                                    )
-                                    pctrl.listRegionVolumes(regionName)
-                                }
-                            },
-                            listOf()
-                        )
-                    )
-                ),
+                // CommandNode(
+                //     LiteralNodeData(
+                //         "volumes",
+                //         "list volumes in region"
+                //     ) { ctx, wctrl, pctrl ->
+                //         if (pctrl != null) {
+                //             val regionName = Arguments.regionNameExistingArgument.retrieve(ctx)
+                //             pctrl.paginator.setState("sb info region $regionName volumes")
+                //             pctrl.listRegionVolumes(regionName)
+                //         }
+                //     },
+                //     listOf(
+                //         CommandNode(
+                //             IntArgNodeData(Arguments.pageNumArgument) { ctx, wctrl, pctrl ->
+                //                 if (pctrl != null) {
+                //                     val regionName = Arguments.regionNameExistingArgument.retrieve(ctx)
+                //                     pctrl.paginator.setState(
+                //                         "sb info region $regionName volumes",
+                //                         Arguments.pageNumArgument.retrieve(ctx)
+                //                     )
+                //                     pctrl.listRegionVolumes(regionName)
+                //                 }
+                //             },
+                //             listOf()
+                //         )
+                //     )
+                // ),
             )
         )
     )
