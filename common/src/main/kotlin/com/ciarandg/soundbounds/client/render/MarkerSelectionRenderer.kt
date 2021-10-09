@@ -22,7 +22,7 @@ import net.minecraft.util.math.Vec2f
 import kotlin.math.abs
 
 object MarkerSelectionRenderer {
-    private val selectionTexture = Identifier(SoundBounds.MOD_ID, "textures/entity/selection.png")
+    val selectionTexture = Identifier(SoundBounds.MOD_ID, "textures/entity/selection.png")
 
     // PRECONDITION: matrixStack is aligned to World's [0, 0, 0]
     fun renderPlayerMarkerSelection(matrixStack: MatrixStack) {
@@ -100,7 +100,7 @@ object MarkerSelectionRenderer {
         drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(minX, minY, minZ), Vector3f(maxX, minY, maxZ), Direction.DOWN, color)
     }
 
-    private fun drawQuad(
+    fun drawQuad(
         bufferBlockQuads: VertexConsumer,
         matrixPos: Matrix4f,
         matrixNormal: Matrix3f,
