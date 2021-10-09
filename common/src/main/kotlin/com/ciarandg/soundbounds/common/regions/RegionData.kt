@@ -8,7 +8,6 @@ import net.minecraft.nbt.IntTag
 import net.minecraft.nbt.ListTag
 import net.minecraft.nbt.StringTag
 import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3i
 import java.security.InvalidParameterException
 import kotlin.math.max
