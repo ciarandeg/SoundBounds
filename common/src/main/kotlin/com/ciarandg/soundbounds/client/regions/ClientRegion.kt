@@ -9,7 +9,7 @@ import kotlin.math.min
 data class ClientRegion(val data: RegionData) {
     val player = PlaylistPlayer(data.playlist, data.playlistType, data.queuePersistence)
 
-    val blockSet = data.volumes.flatMap {
+    val blockSet = data.bounds.flatMap {
         val first = it.first
         val second = it.second
 

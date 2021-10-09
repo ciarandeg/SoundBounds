@@ -35,7 +35,7 @@ class WorldController(
     fun createRegion(regionName: String, priority: Int, corner1: BlockPos, corner2: BlockPos, views: List<PlayerView>) =
         editWorldState { state ->
             if (!state.regionExists(regionName)) {
-                val region = RegionEntry(regionName, RegionData(priority, volumes = mutableListOf(Pair(corner1, corner2))))
+                val region = RegionEntry(regionName, RegionData(priority, bounds = mutableListOf(Pair(corner1, corner2))))
                 state.putRegion(region.first, region.second)
                 pushRegionToClients(owner, region)
                 views.forEach { it.notifyRegionCreated(regionName, priority) }
@@ -82,7 +82,7 @@ class WorldController(
     fun addRegionVolume(regionName: String, corner1: BlockPos, corner2: BlockPos, views: List<PlayerView>) =
         editExistingRegion(regionName, views) { region, _ ->
             val volume = Pair(corner1, corner2)
-            region.volumes.add(volume)
+            region.bounds.add(volume)
             pushRegionToClients(owner, RegionEntry(regionName, region))
             views.forEach { it.notifyRegionVolumeAdded(regionName, volume) }
         }
@@ -90,12 +90,12 @@ class WorldController(
     fun removeRegionVolume(regionName: String, index: Int, views: List<PlayerView>) =
         editExistingRegion(regionName, views) { region, _ ->
             when {
-                index < 0 || index >= region.volumes.size ->
+                index < 0 || index >= region.bounds.size ->
                     views.forEach { it.notifyFailed(VOLUME_INDEX_OOB) }
-                region.volumes.size == 1 ->
+                region.bounds.size == 1 ->
                     views.forEach { it.notifyFailed(REGION_MUST_HAVE_VOLUME) }
                 else -> {
-                    val volume = region.volumes.removeAt(index)
+                    val volume = region.bounds.removeAt(index)
                     pushRegionToClients(owner, RegionEntry(regionName, region))
                     views.forEach { it.notifyRegionVolumeRemoved(regionName, index, volume) }
                 }

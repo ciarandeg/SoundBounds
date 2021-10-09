@@ -1,5 +1,6 @@
 package com.ciarandg.soundbounds.common.regions
 
+import com.ciarandg.soundbounds.client.render.toBox
 import com.ciarandg.soundbounds.common.PlaylistType
 import com.ciarandg.soundbounds.common.PlaylistType.SEQUENTIAL
 import net.minecraft.nbt.CompoundTag
@@ -18,7 +19,7 @@ data class RegionData(
     var priority: Int = 0,
     var playlistType: PlaylistType = SEQUENTIAL,
     val playlist: MutableList<String> = ArrayList(),
-    val volumes: MutableList<Pair<BlockPos, BlockPos>> = ArrayList(),
+    val bounds: MutableSet<BlockPos> = HashSet(),
     var queuePersistence: Boolean = false
 ) {
     fun toTag(): CompoundTag {
@@ -26,13 +27,13 @@ data class RegionData(
         tag.putInt(Tag.PRIORITY.key, priority)
         tag.putString(Tag.PLAYLIST_TYPE.key, playlistType.toString())
         tag.put(Tag.PLAYLIST.key, playlistToTag(playlist))
-        tag.put(Tag.VOLUMES.key, volumesToTag(volumes))
+        tag.put(Tag.BOUNDS.key, boundsToTag(bounds))
         tag.putBoolean(Tag.PLAYLIST_PERSIST.key, queuePersistence)
         return tag
     }
 
     fun distanceFrom(pos: BlockPos): Double =
-        volumes.map { Box(it.first, it.second) }.minOf { box ->
+        bounds.map { it.toBox() }.minOf { box ->
             fun clamp(pos: Double, min: Double, max: Double) = min(max(pos, min), max)
             val closestPoint = Vec3i(
                 clamp(pos.x.toDouble(), box.minX, box.maxX),
@@ -49,10 +50,8 @@ data class RegionData(
             PRIORITY("priority"),
             PLAYLIST_TYPE("playlist-type"),
             PLAYLIST("playlist"),
-            VOLUMES("volumes"),
+            BOUNDS("bounds"),
             PLAYLIST_PERSIST("playlist-persist"),
-            CORNER1("c1"),
-            CORNER2("c2"),
             CORNER_X("x"),
             CORNER_Y("y"),
             CORNER_Z("z"),
@@ -63,7 +62,7 @@ data class RegionData(
                 tag.getInt(Tag.PRIORITY.key),
                 PlaylistType.valueOf(tag.getString(Tag.PLAYLIST_TYPE.key)),
                 tagToPlaylist(tag.getList(Tag.PLAYLIST.key, 8)),
-                tagToVolumeList(tag.getList(Tag.VOLUMES.key, 10)),
+                tagToBounds(tag.getList(Tag.BOUNDS.key, 10)),
                 tag.getBoolean(Tag.PLAYLIST_PERSIST.key)
             )
         }
@@ -73,16 +72,10 @@ data class RegionData(
             it.asString()
         }.toMutableList()
 
-        private fun tagToVolumeList(tag: ListTag) = tag.map {
-            if (it !is CompoundTag) throw InvalidParameterException("Volume tags must be compound")
-
-            val corner1 = it[Tag.CORNER1.key]
-            val corner2 = it[Tag.CORNER2.key]
-            if (corner1 !is CompoundTag || corner2 !is CompoundTag)
-                throw InvalidParameterException("Corner tags must be compound")
-
-            Pair(tagToBlockPos(corner1), tagToBlockPos(corner2))
-        }.toMutableList()
+        private fun tagToBounds(tag: ListTag) = tag.map {
+            if (it !is CompoundTag) throw InvalidParameterException("BlockPos tag must be compound")
+            tagToBlockPos(it)
+        }.toMutableSet()
 
         private fun tagToBlockPos(tag: CompoundTag) = BlockPos(
             tag.getInt(Tag.CORNER_X.key),
@@ -95,17 +88,10 @@ data class RegionData(
             return playlistTag
         }
 
-        private fun volumesToTag(volumes: List<Pair<BlockPos, BlockPos>>): ListTag {
-            val volumesTag = ListTag()
-            volumesTag.addAll(
-                volumes.map {
-                    val boundingBox = CompoundTag()
-                    boundingBox.put(Tag.CORNER1.key, blockPosToTag(it.first))
-                    boundingBox.put(Tag.CORNER2.key, blockPosToTag(it.second))
-                    boundingBox
-                }
-            )
-            return volumesTag
+        private fun boundsToTag(bounds: Set<BlockPos>): ListTag {
+            val boundsTag = ListTag()
+            boundsTag.addAll(bounds.map { blockPosToTag(it) })
+            return boundsTag
         }
 
         private fun blockPosToTag(pos: BlockPos): CompoundTag {

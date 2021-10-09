@@ -158,7 +158,7 @@ class PlayerController(
     fun listRegionVolumes(regionName: String) {
         val region = WorldRegionState.get(world).getRegion(regionName)
         if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
-        else view.showRegionVolumeList(regionName, region.volumes, paginator)
+        else view.showRegionVolumeList(regionName, region.bounds, paginator)
     }
 
     fun checkRegionContiguous(regionName: String) {

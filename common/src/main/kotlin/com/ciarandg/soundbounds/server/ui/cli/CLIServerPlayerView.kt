@@ -201,7 +201,7 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
                 bodyText("\nRegion priority: ") + priorityText(data.priority) +
                 bodyText("\nPlaylist type: ") + playlistTypeText(data.playlistType) +
                 bodyText("\nSong count: ") + quantityText(data.playlist.size) +
-                bodyText("\nVolume count: ") + quantityText(data.volumes.size) +
+                bodyText("\nVolume count: ") + quantityText(data.bounds.size) +
                 bodyText("\nPlaylist queue persistence? ") + bodyText(data.queuePersistence.toString())
         )
     }
