@@ -4,11 +4,12 @@ import com.ciarandg.soundbounds.client.render.RenderUtils.Companion.Z_INCREMENT
 import com.ciarandg.soundbounds.client.render.toBox
 import net.minecraft.client.util.math.Vector3f
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Box
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3i
 import java.lang.IllegalStateException
 
-class ClientRegionBounds(val blockSet: Set<BlockPos>) {
+class ClientRegionBounds(val blockSet: Set<BlockPos>, val focals: Set<BlockPos> = setOf()) {
     // The wireframe and face outline operate on the same principle: within a given selection,
     // any face/edge that ought to be shown as part of an outline will be unique to the block that
     // contains it.
@@ -17,6 +18,9 @@ class ClientRegionBounds(val blockSet: Set<BlockPos>) {
         val pairs = unique.map { Pair(it.vertex1, it.vertex2) }
         return pairs.toSet()
     }
+    fun getFocalWireframe(): Set<Set<Pair<Vec3i, Vec3i>>> =
+        focals.map { focal -> getBlockEdges(focal).map { edge -> Pair(edge.vertex1, edge.vertex2) }.toSet() }.toSet()
+
     fun getFaceOutline(): Set<Pair<List<Vector3f>, Direction>> {
         val unique = keepUnique(blockSet.map { getBlockFaces(it) })
         val pairs = unique.map { Pair(nudgeFace(it), it.facing) }
@@ -120,5 +124,40 @@ class ClientRegionBounds(val blockSet: Set<BlockPos>) {
             return cornerSet() == other.cornerSet()
         }
         override fun hashCode() = cornerSet().hashCode()
+    }
+
+    companion object {
+        fun fromBoxCorners(corner1: BlockPos?, corner2: BlockPos?, makeCornersFocals: Boolean): ClientRegionBounds? {
+            fun blockifyBox(box: Box): Set<BlockPos> {
+                val set: MutableSet<BlockPos> = HashSet()
+                val minVec = Vec3i(box.minX, box.minY, box.minZ)
+                val maxVec = Vec3i(box.maxX - 1, box.maxY - 1, box.maxZ - 1)
+                for (x in minVec.x..maxVec.x) {
+                    for (y in minVec.y..maxVec.y) {
+                        for (z in minVec.z..maxVec.z) {
+                            set.add(BlockPos(x, y, z))
+                        }
+                    }
+                }
+                return set
+            }
+
+            return when {
+                corner1 == null && corner2 == null -> null
+                corner1 != null && corner2 == null -> {
+                    val block = blockifyBox(corner1.toBox())
+                    if (makeCornersFocals) ClientRegionBounds(block, setOf(corner1)) else ClientRegionBounds(block)
+                }
+                corner1 == null && corner2 != null -> {
+                    val block = blockifyBox(corner2.toBox())
+                    if (makeCornersFocals) ClientRegionBounds(block, setOf(corner2)) else ClientRegionBounds(block)
+                }
+                corner1 != null && corner2 != null -> {
+                    val unionBox = blockifyBox(corner1.toBox().union(corner2.toBox()))
+                    if (makeCornersFocals) ClientRegionBounds(unionBox, setOf(corner1, corner2)) else ClientRegionBounds(unionBox)
+                }
+                else -> throw IllegalStateException("Tautologically impossible")
+            }
+        }
     }
 }
