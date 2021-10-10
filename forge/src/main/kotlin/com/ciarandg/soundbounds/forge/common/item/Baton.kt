@@ -1,10 +1,7 @@
 package com.ciarandg.soundbounds.forge.common.item
 
 import com.ciarandg.soundbounds.SoundBounds
-import com.ciarandg.soundbounds.forge.SoundBoundsForge
-import com.ciarandg.soundbounds.common.network.PosMarkerUpdateMessage
-import com.ciarandg.soundbounds.server.ui.cli.PosMarker
-import me.shedaniel.architectury.networking.NetworkManager
+import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
 import me.shedaniel.architectury.platform.Platform
 import me.shedaniel.architectury.utils.Env.CLIENT
 import me.shedaniel.architectury.utils.Env.SERVER
@@ -72,13 +69,10 @@ class Baton(settings: Settings?) : NetherStarItem(settings) {
                 SoundBounds.LOGGER.info("Set corner $corner to ${trace.blockPos.toImmutable()}")
                 corner.pos = trace.blockPos
                 corner.timestamp = currentTime
-
-                NetworkManager.sendToServer(
-                    SoundBounds.POS_MARKER_UPDATE_CHANNEL_C2S,
-                    PosMarkerUpdateMessage.buildBuffer(when (corner) {
-                        Corner.FIRST -> PosMarker.FIRST
-                        Corner.SECOND -> PosMarker.SECOND
-                    }, corner.pos, false))
+                when (corner) {
+                    Corner.FIRST -> ClientPlayerModel.marker1 = corner.pos
+                    Corner.SECOND -> ClientPlayerModel.marker2 = corner.pos
+                }
             }
         }
     }

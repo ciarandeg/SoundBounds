@@ -10,7 +10,6 @@ import com.ciarandg.soundbounds.common.network.CurrentRegionMessage
 import com.ciarandg.soundbounds.common.network.MetaHashCheckMessage
 import com.ciarandg.soundbounds.common.network.MetadataSyncMessage
 import com.ciarandg.soundbounds.common.network.NowPlayingMessage
-import com.ciarandg.soundbounds.common.network.PosMarkerUpdateMessage
 import com.ciarandg.soundbounds.common.network.RegionDestroyMessageS2C
 import com.ciarandg.soundbounds.common.network.RegionUpdateMessageS2C
 import com.ciarandg.soundbounds.common.network.VisualizeRegionMessageS2C
@@ -27,7 +26,6 @@ object ClientEvents {
         registerTicker()
         registerAudio()
         registerOptionsScreen()
-        registerPosMarkerUpdate()
         registerVisualizationRegionUpdate()
         registerMetaHashCheck()
         registerNowPlaying()
@@ -55,14 +53,6 @@ object ClientEvents {
             if (SBOptionsScreen.binding.isPressed && client.currentScreen == null)
                 client.openScreen(SBOptionsScreen())
         }
-    }
-
-    private fun registerPosMarkerUpdate() {
-        NetworkManager.registerReceiver(
-            NetworkManager.Side.S2C,
-            SoundBounds.POS_MARKER_UPDATE_CHANNEL_S2C,
-            PosMarkerUpdateMessage()
-        )
     }
 
     private fun registerVisualizationRegionUpdate() {

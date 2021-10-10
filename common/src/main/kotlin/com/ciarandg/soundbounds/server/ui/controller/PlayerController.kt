@@ -43,14 +43,6 @@ class PlayerController(
         )
     fun showCurrentRegion(regionName: String?) = view.showCurrentRegion(regionName)
 
-    // fun setPosMarker(marker: PosMarker, pos: BlockPos, showNotification: Boolean = true) {
-    //     when (marker) {
-    //         PosMarker.FIRST -> model.marker1 = pos
-    //         PosMarker.SECOND -> model.marker2 = pos
-    //     }
-    //     if (showNotification) view.notifyPosMarkerSet(marker, pos)
-    // }
-
     fun setVisualizingRegion(regionName: String) {
         val region = WorldRegionState.get(world).getRegion(regionName)
         if (region != null) {

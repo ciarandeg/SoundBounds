@@ -5,7 +5,6 @@ import com.ciarandg.soundbounds.common.network.CurrentRegionMessage
 import com.ciarandg.soundbounds.common.network.MetaHashCheckMessage
 import com.ciarandg.soundbounds.common.network.MetadataSyncMessage
 import com.ciarandg.soundbounds.common.network.NowPlayingMessage
-import com.ciarandg.soundbounds.common.network.PosMarkerUpdateMessage
 import com.ciarandg.soundbounds.common.ui.cli.argument.GroupNameArgumentType
 import com.ciarandg.soundbounds.common.ui.cli.argument.PTArgumentType
 import com.ciarandg.soundbounds.common.ui.cli.argument.RegionArgumentType
@@ -24,13 +23,6 @@ object CommonEvents {
         SongTagArgumentType.register()
         PTArgumentType.register()
         CommandRegistrationEvent.EVENT.register { dispatcher, _ -> SoundBoundsCommand.register(dispatcher) }
-
-        // Position marker update message registration
-        NetworkManager.registerReceiver(
-            NetworkManager.Side.C2S,
-            SoundBounds.POS_MARKER_UPDATE_CHANNEL_C2S,
-            PosMarkerUpdateMessage()
-        )
 
         // Metadata hash check registration
         NetworkManager.registerReceiver(

@@ -26,8 +26,6 @@ class SoundBounds {
         const val MOD_ID = "soundbounds"
         val LOGGER: Logger = LogManager.getLogger(MOD_ID)
 
-        val POS_MARKER_UPDATE_CHANNEL_S2C = Identifier(MOD_ID, "pos_marker_update_s2c")
-        val POS_MARKER_UPDATE_CHANNEL_C2S = Identifier(MOD_ID, "pos_marker_update_c2s")
         val VISUALIZE_REGION_CHANNEL_S2C = Identifier(MOD_ID, "visualize_region_c2s")
         val META_HASH_CHECK_S2C = Identifier(MOD_ID, "meta_hash_check_s2c")
         val META_HASH_CHECK_C2S = Identifier(MOD_ID, "meta_hash_check_c2s")
