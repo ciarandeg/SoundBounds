@@ -40,7 +40,7 @@ class ForgeClientEvents {
         matrixStack.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z)
 
         // Render player's bounds selection
-        MarkerSelectionRenderer.renderPlayerMarkerSelection(matrixStack)
+        MarkerSelectionRenderer.render(matrixStack)
 
         // Render region visualization
         val visualizationRegion = ClientWorldRegions[ClientPlayerModel.visualizationRegion]

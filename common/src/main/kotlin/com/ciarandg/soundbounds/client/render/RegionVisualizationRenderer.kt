@@ -1,5 +1,6 @@
 package com.ciarandg.soundbounds.client.render
 
+import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.regions.ClientRegionBounds
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.render.LightmapTextureManager
@@ -7,6 +8,7 @@ import net.minecraft.client.render.OverlayTexture
 import net.minecraft.client.render.VertexConsumer
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.client.util.math.Vector3f
+import net.minecraft.util.Identifier
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Matrix3f
 import net.minecraft.util.math.Matrix4f
@@ -15,34 +17,33 @@ import net.minecraft.util.math.Vec3i
 import kotlin.math.abs
 
 object RegionVisualizationRenderer {
+    private val regionHighlightTexture = Identifier(SoundBounds.MOD_ID, "textures/entity/selection.png")
+
     fun render(matrixStack: MatrixStack, region: ClientRegionBounds) {
         val source = MinecraftClient.getInstance().bufferBuilders.entityVertexConsumers
-        renderFaceOutline(matrixStack, source.getBuffer(SBRenderLayer.getSelectionHighlight(MarkerSelectionRenderer.selectionTexture)), region)
-        renderWireframe(matrixStack, source.getBuffer(SBRenderLayer.getThinLines()), region)
-        renderFocals(matrixStack, source.getBuffer(SBRenderLayer.getThickLines()), region)
+        renderFaceOutline(matrixStack, source.getBuffer(SBRenderLayer.getSelectionHighlight(regionHighlightTexture)), region)
+        renderRegionWireframe(matrixStack, source.getBuffer(SBRenderLayer.getThinLines()), region)
+        renderFocalWireframes(matrixStack, source.getBuffer(SBRenderLayer.getThickLines()), region)
         source.draw()
     }
 
-    private fun renderWireframe(matrixStack: MatrixStack, vertexConsumer: VertexConsumer, bounds: ClientRegionBounds) {
-        val model = matrixStack.peek().model
-        val color = RenderColor.CYAN
-        val wireframe = bounds.getWireframe()
-        wireframe.forEach { edge ->
-            drawVertex(edge.first, color, vertexConsumer, model)
-            drawVertex(edge.second, color, vertexConsumer, model)
-        }
+    private fun renderRegionWireframe(matrixStack: MatrixStack, vertexConsumer: VertexConsumer, bounds: ClientRegionBounds) {
+        renderWireframe(vertexConsumer, matrixStack.peek().model, bounds.getWireframe(), RenderColor.CYAN)
     }
 
-    private fun renderFocals(matrixStack: MatrixStack, vertexConsumer: VertexConsumer, bounds: ClientRegionBounds) {
+    private fun renderFocalWireframes(matrixStack: MatrixStack, vertexConsumer: VertexConsumer, bounds: ClientRegionBounds) {
         val model = matrixStack.peek().model
         val colors = listOf(RenderColor.BLUE, RenderColor.RED, RenderColor.GREEN)
         val wireframe = bounds.getFocalWireframe()
         wireframe.forEachIndexed { focalIndex, focal ->
-            focal.forEach { edge ->
-                val color = colors[focalIndex % colors.size]
-                drawVertex(edge.first, color, vertexConsumer, model)
-                drawVertex(edge.second, color, vertexConsumer, model)
-            }
+            renderWireframe(vertexConsumer, model, focal, colors[focalIndex % colors.size])
+        }
+    }
+
+    private fun renderWireframe(vertexConsumer: VertexConsumer, model: Matrix4f, edges: Set<Pair<Vec3i, Vec3i>>, color: RenderColor) {
+        edges.forEach { edge ->
+            drawVertex(edge.first, color, vertexConsumer, model)
+            drawVertex(edge.second, color, vertexConsumer, model)
         }
     }
 
@@ -95,9 +96,10 @@ object RegionVisualizationRenderer {
         val topRightUV = Vec2f(dimensions2D.x, 0.0f)
 
         val corners = when (facing) {
+            // bottom left, bottom right, top right, top left
             Direction.NORTH -> listOf(
-                bottomLeft, Vector3f(topRight.x, bottomLeft.y, bottomLeft.z), // bottom right
-                topRight, Vector3f(bottomLeft.x, topRight.y, bottomLeft.z) // top left
+                bottomLeft, Vector3f(topRight.x, bottomLeft.y, bottomLeft.z),
+                topRight, Vector3f(bottomLeft.x, topRight.y, bottomLeft.z)
             )
             Direction.EAST -> listOf(
                 bottomLeft, Vector3f(bottomLeft.x, bottomLeft.y, topRight.z),
