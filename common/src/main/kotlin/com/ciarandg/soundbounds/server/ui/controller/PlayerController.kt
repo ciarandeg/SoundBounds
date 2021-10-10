@@ -9,13 +9,11 @@ import com.ciarandg.soundbounds.server.ui.PlayerModel
 import com.ciarandg.soundbounds.server.ui.PlayerView
 import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason
 import com.ciarandg.soundbounds.server.ui.cli.CLIServerPlayerView
-import com.ciarandg.soundbounds.server.ui.cli.PosMarker
 import io.netty.buffer.Unpooled
 import me.shedaniel.architectury.networking.NetworkManager
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
-import net.minecraft.util.math.BlockPos
 import java.io.File
 
 class PlayerController(
@@ -45,13 +43,13 @@ class PlayerController(
         )
     fun showCurrentRegion(regionName: String?) = view.showCurrentRegion(regionName)
 
-    fun setPosMarker(marker: PosMarker, pos: BlockPos, showNotification: Boolean = true) {
-        when (marker) {
-            PosMarker.FIRST -> model.marker1 = pos
-            PosMarker.SECOND -> model.marker2 = pos
-        }
-        if (showNotification) view.notifyPosMarkerSet(marker, pos)
-    }
+    // fun setPosMarker(marker: PosMarker, pos: BlockPos, showNotification: Boolean = true) {
+    //     when (marker) {
+    //         PosMarker.FIRST -> model.marker1 = pos
+    //         PosMarker.SECOND -> model.marker2 = pos
+    //     }
+    //     if (showNotification) view.notifyPosMarkerSet(marker, pos)
+    // }
 
     fun setVisualizingRegion(regionName: String) {
         val region = WorldRegionState.get(world).getRegion(regionName)
@@ -116,17 +114,15 @@ class PlayerController(
         else view.notifyMetadataSyncFailed()
     }
 
-    // fun createRegion(regionName: String, priority: Int) {
-    //     val state = WorldRegionState.get(world)
-    //     val m1 = model.marker1
-    //     val m2 = model.marker2
-
-    //     when {
-    //         state.regionExists(regionName) -> view.notifyFailed(FailureReason.REGION_NAME_CONFLICT)
-    //         m1 != null && m2 != null -> WorldControllers[world].createRegion(regionName, priority, m1, m2, listOf(view))
-    //         else -> view.notifyFailed(FailureReason.POS_MARKERS_MISSING)
-    //     }
-    // }
+    fun createRegion(regionName: String, priority: Int) {
+        val state = WorldRegionState.get(world)
+        val selection = model.selection
+        when {
+            state.regionExists(regionName) -> view.notifyFailed(FailureReason.REGION_NAME_CONFLICT)
+            selection.isNotEmpty() -> WorldControllers[world].createRegion(regionName, priority, selection, listOf(view))
+            else -> view.notifyFailed(FailureReason.EMPTY_SELECTION)
+        }
+    }
 
     fun showIfRegionsOverlap(firstRegion: String, secondRegion: String) {
         // TODO check if regions overlap

@@ -75,32 +75,32 @@ object RootNode : CommandNode(
             ) { _, wctrl, pctrl -> if (pctrl != null) wctrl.auditRegions(listOf(pctrl.view)) },
             listOf()
         ),
-        CommandNode(
-            LiteralNodeData("pos1", "set your first position marker") { ctx, wctrl, pctrl ->
-                pctrl?.setPosMarker(PosMarker.FIRST, ctx.source.entity?.blockPos ?: BlockPos(0, 0, 0))
-            },
-            listOf(
-                CommandNode(
-                    BlockPosArgNodeData(Arguments.positionArgument) { ctx, wctrl, pctrl ->
-                        pctrl?.setPosMarker(PosMarker.FIRST, Arguments.positionArgument.retrieve(ctx))
-                    },
-                    listOf()
-                )
-            )
-        ),
-        CommandNode(
-            LiteralNodeData("pos2", "set your second position marker") { ctx, wctrl, pctrl ->
-                pctrl?.setPosMarker(PosMarker.SECOND, ctx.source.entity?.blockPos ?: BlockPos(0, 0, 0))
-            },
-            listOf(
-                CommandNode(
-                    BlockPosArgNodeData(Arguments.positionArgument) { ctx, wctrl, pctrl ->
-                        pctrl?.setPosMarker(PosMarker.SECOND, Arguments.positionArgument.retrieve(ctx))
-                    },
-                    listOf()
-                )
-            )
-        ),
+        // CommandNode(
+        //     LiteralNodeData("pos1", "set your first position marker") { ctx, wctrl, pctrl ->
+        //         pctrl?.setPosMarker(PosMarker.FIRST, ctx.source.entity?.blockPos ?: BlockPos(0, 0, 0))
+        //     },
+        //     listOf(
+        //         CommandNode(
+        //             BlockPosArgNodeData(Arguments.positionArgument) { ctx, wctrl, pctrl ->
+        //                 pctrl?.setPosMarker(PosMarker.FIRST, Arguments.positionArgument.retrieve(ctx))
+        //             },
+        //             listOf()
+        //         )
+        //     )
+        // ),
+        // CommandNode(
+        //     LiteralNodeData("pos2", "set your second position marker") { ctx, wctrl, pctrl ->
+        //         pctrl?.setPosMarker(PosMarker.SECOND, ctx.source.entity?.blockPos ?: BlockPos(0, 0, 0))
+        //     },
+        //     listOf(
+        //         CommandNode(
+        //             BlockPosArgNodeData(Arguments.positionArgument) { ctx, wctrl, pctrl ->
+        //                 pctrl?.setPosMarker(PosMarker.SECOND, Arguments.positionArgument.retrieve(ctx))
+        //             },
+        //             listOf()
+        //         )
+        //     )
+        // ),
         CommandNode(
             LiteralNodeData("visualize", "graphically visualize a region", null),
             listOf(
@@ -113,25 +113,25 @@ object RootNode : CommandNode(
                 )
             )
         ),
-        // CommandNode(
-        //     LiteralNodeData("create", "create a region", null),
-        //     listOf(
-        //         CommandNode(
-        //             StringArgNodeData(Arguments.nameArgument, null),
-        //             listOf(
-        //                 CommandNode(
-        //                     IntArgNodeData(Arguments.regionPriorityArgument) { ctx, wctrl, pctrl ->
-        //                         pctrl?.createRegion(
-        //                             Arguments.nameArgument.retrieve(ctx),
-        //                             Arguments.regionPriorityArgument.retrieve(ctx)
-        //                         )
-        //                     },
-        //                     listOf()
-        //                 )
-        //             )
-        //         )
-        //     )
-        // ),
+        CommandNode(
+            LiteralNodeData("create", "create a region", null),
+            listOf(
+                CommandNode(
+                    StringArgNodeData(Arguments.nameArgument, null),
+                    listOf(
+                        CommandNode(
+                            IntArgNodeData(Arguments.regionPriorityArgument) { ctx, wctrl, pctrl ->
+                                pctrl?.createRegion(
+                                    Arguments.nameArgument.retrieve(ctx),
+                                    Arguments.regionPriorityArgument.retrieve(ctx)
+                                )
+                            },
+                            listOf()
+                        )
+                    )
+                )
+            )
+        ),
         CommandNode(
             LiteralNodeData("destroy", "destroy a region", null),
             listOf(

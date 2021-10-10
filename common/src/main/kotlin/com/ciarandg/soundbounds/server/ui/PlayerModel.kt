@@ -4,6 +4,5 @@ import net.minecraft.util.math.BlockPos
 
 data class PlayerModel(
     var curSongID: String? = null,
-    var marker1: BlockPos? = null,
-    var marker2: BlockPos? = null
+    var selection: Set<BlockPos> = setOf()
 )

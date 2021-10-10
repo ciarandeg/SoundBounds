@@ -15,6 +15,7 @@ import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason.NO_SUCH_REGIO
 import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason.REGION_NAME_CONFLICT
 import me.shedaniel.architectury.networking.NetworkManager
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.util.math.BlockPos
 
 class WorldController(
     private val owner: ServerWorld
@@ -29,15 +30,15 @@ class WorldController(
         }
     }
 
-    // fun createRegion(regionName: String, priority: Int, corner1: BlockPos, corner2: BlockPos, views: List<PlayerView>) =
-    //     editWorldState { state ->
-    //         if (!state.regionExists(regionName)) {
-    //             val region = RegionEntry(regionName, RegionData(priority, bounds = mutableListOf(Pair(corner1, corner2))))
-    //             state.putRegion(region.first, region.second)
-    //             pushRegionToClients(owner, region)
-    //             views.forEach { it.notifyRegionCreated(regionName, priority) }
-    //         } else views.forEach { it.notifyFailed(REGION_NAME_CONFLICT) }
-    //     }
+    fun createRegion(regionName: String, priority: Int, bounds: Set<BlockPos>, views: List<PlayerView>) =
+        editWorldState { state ->
+            if (!state.regionExists(regionName)) {
+                val region = RegionEntry(regionName, RegionData(priority, bounds = HashSet(bounds)))
+                state.putRegion(region.first, region.second)
+                pushRegionToClients(owner, region)
+                views.forEach { it.notifyRegionCreated(regionName, priority) }
+            } else views.forEach { it.notifyFailed(REGION_NAME_CONFLICT) }
+        }
 
     fun destroyRegion(regionName: String, views: List<PlayerView>) = editWorldState { state ->
         if (state.removeRegion(regionName) != null) {

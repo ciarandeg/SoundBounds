@@ -309,7 +309,7 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
 
     override fun notifyFailed(reason: PlayerView.FailureReason) = sendError(
         when (reason) {
-            PlayerView.FailureReason.POS_MARKERS_MISSING -> "Position markers not set"
+            PlayerView.FailureReason.EMPTY_SELECTION -> "You have not selected any blocks"
             PlayerView.FailureReason.NO_SUCH_REGION -> "Requested region does not exist"
             PlayerView.FailureReason.NO_SUCH_GROUP -> "Requested group does not exist"
             PlayerView.FailureReason.REGION_NAME_CONFLICT -> "Requested region name is taken"

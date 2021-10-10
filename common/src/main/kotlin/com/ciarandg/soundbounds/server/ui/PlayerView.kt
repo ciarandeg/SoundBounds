@@ -42,7 +42,7 @@ interface PlayerView {
     fun notifyFailed(reason: FailureReason)
 
     enum class FailureReason {
-        POS_MARKERS_MISSING,
+        EMPTY_SELECTION,
         NO_SUCH_REGION,
         NO_SUCH_GROUP,
         REGION_NAME_CONFLICT,
