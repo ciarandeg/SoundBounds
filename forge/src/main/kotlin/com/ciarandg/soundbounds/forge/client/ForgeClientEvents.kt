@@ -45,6 +45,6 @@ class ForgeClientEvents {
         // Render region visualization
         val visualizationRegion = ClientWorldRegions[ClientPlayerModel.visualizationRegion]
         if (visualizationRegion == null) ClientPlayerModel.visualizationRegion = null
-        else RegionVisualizationRenderer.renderRegionVisualization(matrixStack, visualizationRegion.bounds)
+        else RegionVisualizationRenderer.render(matrixStack, visualizationRegion.bounds)
     }
 }

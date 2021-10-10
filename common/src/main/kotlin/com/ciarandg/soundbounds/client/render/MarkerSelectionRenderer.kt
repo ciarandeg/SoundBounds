@@ -23,6 +23,6 @@ object MarkerSelectionRenderer {
         marker2: BlockPos?
     ) {
         val bounds = ClientRegionBounds.fromBoxCorners(marker1, marker2, true)
-        if (bounds != null) RegionVisualizationRenderer.renderRegionVisualization(matrixStack, bounds)
+        if (bounds != null) RegionVisualizationRenderer.render(matrixStack, bounds)
     }
 }

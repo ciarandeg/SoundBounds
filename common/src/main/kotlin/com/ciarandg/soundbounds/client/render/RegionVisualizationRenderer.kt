@@ -15,7 +15,7 @@ import net.minecraft.util.math.Vec3i
 import kotlin.math.abs
 
 object RegionVisualizationRenderer {
-    fun renderRegionVisualization(matrixStack: MatrixStack, region: ClientRegionBounds) {
+    fun render(matrixStack: MatrixStack, region: ClientRegionBounds) {
         val source = MinecraftClient.getInstance().bufferBuilders.entityVertexConsumers
         renderFaceOutline(matrixStack, source.getBuffer(SBRenderLayer.getSelectionHighlight(MarkerSelectionRenderer.selectionTexture)), region)
         renderWireframe(matrixStack, source.getBuffer(SBRenderLayer.getThinLines()), region)
