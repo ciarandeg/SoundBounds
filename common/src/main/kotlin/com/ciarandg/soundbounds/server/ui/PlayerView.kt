@@ -1,5 +1,6 @@
 package com.ciarandg.soundbounds.server.ui
 
+import com.ciarandg.soundbounds.client.ui.BatonMode
 import com.ciarandg.soundbounds.common.PlaylistType
 import com.ciarandg.soundbounds.common.metadata.JsonSongMeta
 import com.ciarandg.soundbounds.common.regions.RegionData
@@ -12,6 +13,7 @@ interface PlayerView {
     val owner: PlayerEntity
     fun showNowPlaying(nowPlaying: String)
     fun notifyMetaMismatch()
+    fun notifyBatonModeSet(batonMode: BatonMode)
     fun showNoSongPlaying()
     fun showCurrentRegion(regionName: String?)
     fun showAuditReport(regionsWithEmptyPlaylists: Set<String>, regionsMissingMeta: Set<Pair<String, Set<String>>>)

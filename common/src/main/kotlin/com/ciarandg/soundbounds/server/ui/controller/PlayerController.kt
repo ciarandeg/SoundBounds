@@ -1,7 +1,9 @@
 package com.ciarandg.soundbounds.server.ui.controller
 
 import com.ciarandg.soundbounds.SoundBounds
+import com.ciarandg.soundbounds.client.ui.BatonMode
 import com.ciarandg.soundbounds.common.network.CreateRegionMessage
+import com.ciarandg.soundbounds.common.network.SetBatonModeMessageS2C
 import com.ciarandg.soundbounds.common.network.VisualizeRegionMessageS2C
 import com.ciarandg.soundbounds.common.regions.WorldRegionState
 import com.ciarandg.soundbounds.common.ui.cli.Paginator
@@ -49,6 +51,11 @@ class PlayerController(
             NetworkManager.sendToPlayer(owner, SoundBounds.VISUALIZE_REGION_CHANNEL_S2C, VisualizeRegionMessageS2C.buildBuffer(regionName))
             view.notifyVisualizationRegionChanged(regionName)
         } else view.notifyFailed(FailureReason.NO_SUCH_REGION)
+    }
+
+    fun setBatonMode(batonMode: BatonMode) {
+        NetworkManager.sendToPlayer(owner, SoundBounds.SET_BATON_MODE_CHANNEL_S2C, SetBatonModeMessageS2C.buildBuffer(batonMode))
+        view.notifyBatonModeSet(batonMode)
     }
 
     fun notifyMetaMismatch() = view.notifyMetaMismatch()

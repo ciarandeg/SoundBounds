@@ -14,6 +14,7 @@ import com.ciarandg.soundbounds.common.network.MetadataSyncMessage
 import com.ciarandg.soundbounds.common.network.NowPlayingMessage
 import com.ciarandg.soundbounds.common.network.RegionDestroyMessageS2C
 import com.ciarandg.soundbounds.common.network.RegionUpdateMessageS2C
+import com.ciarandg.soundbounds.common.network.SetBatonModeMessageS2C
 import com.ciarandg.soundbounds.common.network.VisualizeRegionMessageS2C
 import me.shedaniel.architectury.event.events.GuiEvent
 import me.shedaniel.architectury.event.events.TickEvent
@@ -28,6 +29,7 @@ object ClientEvents {
         registerTicker()
         registerAudio()
         registerOptionsScreen()
+        registerSetBatonMode()
         registerSelectionCommit()
         registerRegionCreate()
         registerVisualizationRegionUpdate()
@@ -57,6 +59,14 @@ object ClientEvents {
             if (SBOptionsScreen.binding.isPressed && client.currentScreen == null)
                 client.openScreen(SBOptionsScreen())
         }
+    }
+
+    private fun registerSetBatonMode() {
+        NetworkManager.registerReceiver(
+            NetworkManager.Side.S2C,
+            SoundBounds.SET_BATON_MODE_CHANNEL_S2C,
+            SetBatonModeMessageS2C()
+        )
     }
 
     private fun registerSelectionCommit() {

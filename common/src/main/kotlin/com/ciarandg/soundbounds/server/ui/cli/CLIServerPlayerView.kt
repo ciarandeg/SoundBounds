@@ -1,5 +1,6 @@
 package com.ciarandg.soundbounds.server.ui.cli
 
+import com.ciarandg.soundbounds.client.ui.BatonMode
 import com.ciarandg.soundbounds.common.PlaylistType
 import com.ciarandg.soundbounds.common.metadata.JsonSongMeta
 import com.ciarandg.soundbounds.common.regions.RegionData
@@ -78,6 +79,8 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
             "Update and enable your resource pack, " +
             "or sync your client's metadata to the server."
     )
+
+    override fun notifyBatonModeSet(batonMode: BatonMode) = sendWithBadge(bodyText("Baton mode set to $batonMode"))
 
     override fun showNoSongPlaying() =
         sendWithBadge(bodyText("No song currently playing"))
