@@ -6,7 +6,6 @@ import com.ciarandg.soundbounds.common.network.VisualizeRegionMessageS2C
 import com.ciarandg.soundbounds.common.regions.WorldRegionState
 import com.ciarandg.soundbounds.common.ui.cli.Paginator
 import com.ciarandg.soundbounds.server.metadata.ServerMetaState
-import com.ciarandg.soundbounds.server.ui.PlayerModel
 import com.ciarandg.soundbounds.server.ui.PlayerView
 import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason
 import com.ciarandg.soundbounds.server.ui.cli.CLIServerPlayerView
@@ -21,7 +20,6 @@ import java.io.File
 class PlayerController(
     val owner: ServerPlayerEntity,
     val view: PlayerView = CLIServerPlayerView(owner),
-    private val model: PlayerModel = PlayerModel()
 ) {
     val paginator = Paginator()
     private val world: ServerWorld
