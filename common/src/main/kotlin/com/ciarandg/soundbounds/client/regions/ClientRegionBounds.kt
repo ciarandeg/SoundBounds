@@ -8,7 +8,7 @@ import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3i
 import java.lang.IllegalStateException
 
-class ClientRegionBounds(val blockSet: Set<BlockPos>, val focals: Set<BlockPos> = setOf()) {
+class ClientRegionBounds(var blockSet: Set<BlockPos>) {
     // The wireframes and face outline operate on the same principle: within a given selection,
     // any face/edge that ought to be shown as part of an outline will be unique to the block that
     // contains it.
@@ -17,9 +17,6 @@ class ClientRegionBounds(val blockSet: Set<BlockPos>, val focals: Set<BlockPos> 
         val pairs = unique.map { Pair(it.vertex1, it.vertex2) }
         return pairs.toSet()
     }
-
-    fun getFocalWireframe(): Set<Set<Pair<Vec3i, Vec3i>>> =
-        focals.map { focal -> getBlockEdges(focal).map { edge -> Pair(edge.vertex1, edge.vertex2) }.toSet() }.toSet()
 
     fun getFaceOutline(): Set<Pair<List<Vector3f>, Direction>> {
         val unique = keepUnique(blockSet.map { getBlockFaces(it) })

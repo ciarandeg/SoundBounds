@@ -6,6 +6,7 @@ import com.ciarandg.soundbounds.client.render.MarkerSelectionRenderer
 import com.ciarandg.soundbounds.client.render.RegionVisualizationRenderer
 import com.ciarandg.soundbounds.client.render.RegionVisualizationRenderer.existingRegionTexture
 import com.ciarandg.soundbounds.client.render.RenderColor
+import com.ciarandg.soundbounds.client.render.SBRenderLayer
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
 import com.ciarandg.soundbounds.forge.common.item.Baton
 import me.shedaniel.architectury.utils.GameInstance
@@ -47,6 +48,8 @@ class ForgeClientEvents {
         // Render region visualization
         val visualizationRegion = ClientWorldRegions[ClientPlayerModel.visualizationRegion]
         if (visualizationRegion == null) ClientPlayerModel.visualizationRegion = null
-        else RegionVisualizationRenderer.render(matrixStack, visualizationRegion.bounds, existingRegionTexture, RenderColor(116, 64, 160))
+        else RegionVisualizationRenderer.renderFilledWireframe(
+            matrixStack, visualizationRegion.bounds, existingRegionTexture, SBRenderLayer.getThinLines(), RenderColor(116, 64, 160)
+        )
     }
 }

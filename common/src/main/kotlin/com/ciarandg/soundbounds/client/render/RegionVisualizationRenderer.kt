@@ -5,6 +5,7 @@ import com.ciarandg.soundbounds.client.regions.ClientRegionBounds
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.render.LightmapTextureManager
 import net.minecraft.client.render.OverlayTexture
+import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.VertexConsumer
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.client.util.math.Vector3f
@@ -21,25 +22,21 @@ object RegionVisualizationRenderer {
     val committedHighlightTexture = Identifier(SoundBounds.MOD_ID, "textures/entity/committed_selection.png")
     val existingRegionTexture = Identifier(SoundBounds.MOD_ID, "textures/entity/existing_region.png")
 
-    fun render(matrixStack: MatrixStack, region: ClientRegionBounds, texture: Identifier, color: RenderColor) {
+    fun renderFilledWireframe(matrixStack: MatrixStack, bounds: ClientRegionBounds, texture: Identifier, wireframeLayer: RenderLayer, color: RenderColor) {
         val source = MinecraftClient.getInstance().bufferBuilders.entityVertexConsumers
-        renderFaceOutline(matrixStack, source.getBuffer(SBRenderLayer.getSelectionHighlight(texture)), region)
-        renderRegionWireframe(matrixStack, source.getBuffer(SBRenderLayer.getThinLines()), region, color)
-        renderFocalWireframes(matrixStack, source.getBuffer(SBRenderLayer.getThickLines()), region)
+        renderFaceOutline(matrixStack, source.getBuffer(SBRenderLayer.getSelectionHighlight(texture)), bounds)
+        renderWireframe(matrixStack, source.getBuffer(wireframeLayer), bounds, color)
         source.draw()
     }
 
-    private fun renderRegionWireframe(matrixStack: MatrixStack, vertexConsumer: VertexConsumer, bounds: ClientRegionBounds, color: RenderColor) {
-        renderWireframe(vertexConsumer, matrixStack.peek().model, bounds.getWireframe(), color)
+    fun renderWireframe(matrixStack: MatrixStack, bounds: ClientRegionBounds, wireframeLayer: RenderLayer, color: RenderColor) {
+        val source = MinecraftClient.getInstance().bufferBuilders.entityVertexConsumers
+        renderWireframe(matrixStack, source.getBuffer(wireframeLayer), bounds, color)
+        source.draw()
     }
 
-    private fun renderFocalWireframes(matrixStack: MatrixStack, vertexConsumer: VertexConsumer, bounds: ClientRegionBounds) {
-        val model = matrixStack.peek().model
-        val colors = listOf(RenderColor.BLUE, RenderColor.RED, RenderColor.GREEN)
-        val wireframe = bounds.getFocalWireframe()
-        wireframe.forEachIndexed { focalIndex, focal ->
-            renderWireframe(vertexConsumer, model, focal, colors[focalIndex % colors.size])
-        }
+    private fun renderWireframe(matrixStack: MatrixStack, vertexConsumer: VertexConsumer, bounds: ClientRegionBounds, color: RenderColor) {
+        renderWireframe(vertexConsumer, matrixStack.peek().model, bounds.getWireframe(), color)
     }
 
     private fun renderWireframe(vertexConsumer: VertexConsumer, model: Matrix4f, edges: Set<Pair<Vec3i, Vec3i>>, color: RenderColor) {

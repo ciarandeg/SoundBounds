@@ -76,7 +76,7 @@ class Baton(settings: Settings?) : NetherStarItem(settings) {
                     Corner.SECOND -> ClientPlayerModel.marker2 = corner.pos
                 }
                 with (ClientPlayerModel) {
-                    uncommittedSelection = RegionSelection.fromBoxCorners(marker1, marker2, true)
+                    uncommittedSelection = RegionSelection.fromBoxCorners(marker1, marker2)
                 }
             }
         }
