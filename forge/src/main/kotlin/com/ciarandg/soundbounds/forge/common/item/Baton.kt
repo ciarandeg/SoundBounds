@@ -1,8 +1,8 @@
 package com.ciarandg.soundbounds.forge.common.item
 
 import com.ciarandg.soundbounds.SoundBounds
-import com.ciarandg.soundbounds.client.regions.ClientRegionBounds
 import com.ciarandg.soundbounds.client.regions.RegionSelection
+import com.ciarandg.soundbounds.client.regions.ClientPositionMarker
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
 import me.shedaniel.architectury.platform.Platform
 import me.shedaniel.architectury.utils.Env.CLIENT
@@ -72,11 +72,11 @@ class Baton(settings: Settings?) : NetherStarItem(settings) {
                 corner.pos = trace.blockPos
                 corner.timestamp = currentTime
                 when (corner) {
-                    Corner.FIRST -> ClientPlayerModel.marker1 = corner.pos
-                    Corner.SECOND -> ClientPlayerModel.marker2 = corner.pos
+                    Corner.FIRST -> ClientPlayerModel.marker1 = ClientPositionMarker(corner.pos)
+                    Corner.SECOND -> ClientPlayerModel.marker2 = ClientPositionMarker(corner.pos)
                 }
                 with (ClientPlayerModel) {
-                    uncommittedSelection = RegionSelection.fromBoxCorners(marker1, marker2)
+                    uncommittedSelection = RegionSelection.fromBoxCorners(marker1?.getPos(), marker2?.getPos())
                 }
             }
         }
