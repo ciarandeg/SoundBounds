@@ -115,6 +115,9 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
         sendWithBadge(head)
     }
 
+    override fun notifyCommittedToSelection() =
+        sendWithBadge(bodyText("Successfully committed selection"))
+
     override fun notifyPosMarkerSet(marker: PosMarker, pos: BlockPos) = sendWithBadge(
         bodyText("Set marker ") + posMarkerText(marker) + bodyText(" to ") + blockPosText(pos)
     )

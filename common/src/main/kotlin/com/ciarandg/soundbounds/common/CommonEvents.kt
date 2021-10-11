@@ -1,6 +1,8 @@
 package com.ciarandg.soundbounds.common
 
 import com.ciarandg.soundbounds.SoundBounds
+import com.ciarandg.soundbounds.common.network.CommitSelectionMessage
+import com.ciarandg.soundbounds.common.network.CreateRegionMessage
 import com.ciarandg.soundbounds.common.network.CurrentRegionMessage
 import com.ciarandg.soundbounds.common.network.MetaHashCheckMessage
 import com.ciarandg.soundbounds.common.network.MetadataSyncMessage
@@ -23,6 +25,20 @@ object CommonEvents {
         SongTagArgumentType.register()
         PTArgumentType.register()
         CommandRegistrationEvent.EVENT.register { dispatcher, _ -> SoundBoundsCommand.register(dispatcher) }
+
+        // Selection commit registration
+        NetworkManager.registerReceiver(
+            NetworkManager.Side.C2S,
+            SoundBounds.COMMIT_SELECTION_CHANNEL_C2S,
+            CommitSelectionMessage()
+        )
+
+        // Region creation registration
+        NetworkManager.registerReceiver(
+            NetworkManager.Side.C2S,
+            SoundBounds.CREATE_REGION_CHANNEL_C2S,
+            CreateRegionMessage()
+        )
 
         // Metadata hash check registration
         NetworkManager.registerReceiver(

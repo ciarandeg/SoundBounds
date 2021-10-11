@@ -85,6 +85,12 @@ object RootNode : CommandNode(
             )
         ),
         CommandNode(
+            LiteralNodeData("commit", "commit pending changes to selection") { ctx, wctrl, pctrl ->
+                pctrl?.commitToSelection()
+            },
+            listOf()
+        ),
+        CommandNode(
             LiteralNodeData("create", "create a region", null),
             listOf(
                 CommandNode(

@@ -1,6 +1,7 @@
 package com.ciarandg.soundbounds.server.ui.controller
 
 import com.ciarandg.soundbounds.SoundBounds
+import com.ciarandg.soundbounds.common.network.CreateRegionMessage
 import com.ciarandg.soundbounds.common.network.VisualizeRegionMessageS2C
 import com.ciarandg.soundbounds.common.regions.WorldRegionState
 import com.ciarandg.soundbounds.common.ui.cli.Paginator
@@ -14,6 +15,7 @@ import me.shedaniel.architectury.networking.NetworkManager
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.util.math.BlockPos
 import java.io.File
 
 class PlayerController(
@@ -106,12 +108,23 @@ class PlayerController(
         else view.notifyMetadataSyncFailed()
     }
 
+    fun commitToSelection() {
+        NetworkManager.sendToPlayer(owner, SoundBounds.COMMIT_SELECTION_CHANNEL_S2C, PacketByteBuf(Unpooled.buffer()))
+    }
+
+    fun notifyCommittedToSelection() {
+        view.notifyCommittedToSelection()
+    }
+
     fun createRegion(regionName: String, priority: Int) {
+        NetworkManager.sendToPlayer(owner, SoundBounds.CREATE_REGION_CHANNEL_S2C, CreateRegionMessage.buildBufferS2C(regionName, priority))
+    }
+
+    fun createRegion(regionName: String, priority: Int, bounds: Set<BlockPos>) {
         val state = WorldRegionState.get(world)
-        val selection = model.selection
         when {
             state.regionExists(regionName) -> view.notifyFailed(FailureReason.REGION_NAME_CONFLICT)
-            selection.isNotEmpty() -> WorldControllers[world].createRegion(regionName, priority, selection, listOf(view))
+            bounds.isNotEmpty() -> WorldControllers[world].createRegion(regionName, priority, bounds, listOf(view))
             else -> view.notifyFailed(FailureReason.EMPTY_SELECTION)
         }
     }

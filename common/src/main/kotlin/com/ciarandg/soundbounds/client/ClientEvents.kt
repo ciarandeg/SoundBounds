@@ -6,6 +6,8 @@ import com.ciarandg.soundbounds.client.metadata.ClientMeta
 import com.ciarandg.soundbounds.client.options.SBClientOptions
 import com.ciarandg.soundbounds.client.options.SBOptionsScreen
 import com.ciarandg.soundbounds.client.regions.RegionSwitcher
+import com.ciarandg.soundbounds.common.network.CommitSelectionMessage
+import com.ciarandg.soundbounds.common.network.CreateRegionMessage
 import com.ciarandg.soundbounds.common.network.CurrentRegionMessage
 import com.ciarandg.soundbounds.common.network.MetaHashCheckMessage
 import com.ciarandg.soundbounds.common.network.MetadataSyncMessage
@@ -26,6 +28,8 @@ object ClientEvents {
         registerTicker()
         registerAudio()
         registerOptionsScreen()
+        registerSelectionCommit()
+        registerRegionCreate()
         registerVisualizationRegionUpdate()
         registerMetaHashCheck()
         registerNowPlaying()
@@ -53,6 +57,22 @@ object ClientEvents {
             if (SBOptionsScreen.binding.isPressed && client.currentScreen == null)
                 client.openScreen(SBOptionsScreen())
         }
+    }
+
+    private fun registerSelectionCommit() {
+        NetworkManager.registerReceiver(
+            NetworkManager.Side.S2C,
+            SoundBounds.COMMIT_SELECTION_CHANNEL_S2C,
+            CommitSelectionMessage()
+        )
+    }
+
+    private fun registerRegionCreate() {
+        NetworkManager.registerReceiver(
+            NetworkManager.Side.S2C,
+            SoundBounds.CREATE_REGION_CHANNEL_S2C,
+            CreateRegionMessage()
+        )
     }
 
     private fun registerVisualizationRegionUpdate() {

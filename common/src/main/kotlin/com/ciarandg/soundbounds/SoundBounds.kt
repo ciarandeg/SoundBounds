@@ -27,6 +27,10 @@ class SoundBounds {
         val LOGGER: Logger = LogManager.getLogger(MOD_ID)
 
         val VISUALIZE_REGION_CHANNEL_S2C = Identifier(MOD_ID, "visualize_region_c2s")
+        val COMMIT_SELECTION_CHANNEL_S2C = Identifier(MOD_ID, "commit_selection_s2c")
+        val COMMIT_SELECTION_CHANNEL_C2S = Identifier(MOD_ID, "commit_selection_c2s")
+        val CREATE_REGION_CHANNEL_S2C = Identifier(MOD_ID, "create_region_s2c")
+        val CREATE_REGION_CHANNEL_C2S = Identifier(MOD_ID, "create_region_c2s")
         val META_HASH_CHECK_S2C = Identifier(MOD_ID, "meta_hash_check_s2c")
         val META_HASH_CHECK_C2S = Identifier(MOD_ID, "meta_hash_check_c2s")
         val NOW_PLAYING_CHANNEL_C2S = Identifier(MOD_ID, "now_playing_c2s")

@@ -76,7 +76,7 @@ data class RegionData(
             tagToBlockPos(it)
         }.toMutableSet()
 
-        private fun tagToBlockPos(tag: CompoundTag) = BlockPos(
+        fun tagToBlockPos(tag: CompoundTag) = BlockPos(
             tag.getInt(Tag.CORNER_X.key),
             tag.getInt(Tag.CORNER_Y.key),
             tag.getInt(Tag.CORNER_Z.key)
@@ -93,7 +93,7 @@ data class RegionData(
             return boundsTag
         }
 
-        private fun blockPosToTag(pos: BlockPos): CompoundTag {
+        fun blockPosToTag(pos: BlockPos): CompoundTag {
             val t = CompoundTag()
             t.put(Tag.CORNER_X.key, IntTag.of(pos.x))
             t.put(Tag.CORNER_Y.key, IntTag.of(pos.y))

@@ -128,7 +128,7 @@ class ClientRegionBounds(val blockSet: Set<BlockPos>, val focals: Set<BlockPos> 
     }
 
     companion object {
-        fun fromBoxCorners(corner1: BlockPos?, corner2: BlockPos?, makeCornersFocals: Boolean): ClientRegionBounds? {
+        fun fromBoxCorners(corner1: BlockPos?, corner2: BlockPos?, makeCornersFocals: Boolean): ClientRegionBounds {
             fun blockifyBox(box: Box): Set<BlockPos> {
                 val set: MutableSet<BlockPos> = HashSet()
                 val minVec = Vec3i(box.minX, box.minY, box.minZ)
@@ -144,7 +144,7 @@ class ClientRegionBounds(val blockSet: Set<BlockPos>, val focals: Set<BlockPos> 
             }
 
             return when {
-                corner1 == null && corner2 == null -> null
+                corner1 == null && corner2 == null -> ClientRegionBounds(setOf())
                 corner1 != null && corner2 == null -> {
                     val block = blockifyBox(corner1.toBox())
                     if (makeCornersFocals) ClientRegionBounds(block, setOf(corner1)) else ClientRegionBounds(block)
