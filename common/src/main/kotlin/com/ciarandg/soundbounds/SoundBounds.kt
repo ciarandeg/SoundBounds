@@ -26,7 +26,7 @@ class SoundBounds {
         const val MOD_ID = "soundbounds"
         val LOGGER: Logger = LogManager.getLogger(MOD_ID)
 
-        val VISUALIZE_REGION_CHANNEL_S2C = Identifier(MOD_ID, "visualize_region_c2s")
+        val VISUALIZE_REGION_CHANNEL_S2C = Identifier(MOD_ID, "visualize_region_s2c")
         val COMMIT_SELECTION_CHANNEL_S2C = Identifier(MOD_ID, "commit_selection_s2c")
         val COMMIT_SELECTION_CHANNEL_C2S = Identifier(MOD_ID, "commit_selection_c2s")
         val CREATE_REGION_CHANNEL_S2C = Identifier(MOD_ID, "create_region_s2c")
