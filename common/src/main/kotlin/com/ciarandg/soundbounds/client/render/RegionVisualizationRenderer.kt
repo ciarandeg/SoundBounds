@@ -17,18 +17,20 @@ import net.minecraft.util.math.Vec3i
 import kotlin.math.abs
 
 object RegionVisualizationRenderer {
-    private val regionHighlightTexture = Identifier(SoundBounds.MOD_ID, "textures/entity/selection.png")
+    val uncommittedHighlightTexture = Identifier(SoundBounds.MOD_ID, "textures/entity/uncommitted_selection.png")
+    val committedHighlightTexture = Identifier(SoundBounds.MOD_ID, "textures/entity/committed_selection.png")
+    val existingRegionTexture = Identifier(SoundBounds.MOD_ID, "textures/entity/existing_region.png")
 
-    fun render(matrixStack: MatrixStack, region: ClientRegionBounds) {
+    fun render(matrixStack: MatrixStack, region: ClientRegionBounds, texture: Identifier, color: RenderColor) {
         val source = MinecraftClient.getInstance().bufferBuilders.entityVertexConsumers
-        renderFaceOutline(matrixStack, source.getBuffer(SBRenderLayer.getSelectionHighlight(regionHighlightTexture)), region)
-        renderRegionWireframe(matrixStack, source.getBuffer(SBRenderLayer.getThinLines()), region)
+        renderFaceOutline(matrixStack, source.getBuffer(SBRenderLayer.getSelectionHighlight(texture)), region)
+        renderRegionWireframe(matrixStack, source.getBuffer(SBRenderLayer.getThinLines()), region, color)
         renderFocalWireframes(matrixStack, source.getBuffer(SBRenderLayer.getThickLines()), region)
         source.draw()
     }
 
-    private fun renderRegionWireframe(matrixStack: MatrixStack, vertexConsumer: VertexConsumer, bounds: ClientRegionBounds) {
-        renderWireframe(vertexConsumer, matrixStack.peek().model, bounds.getWireframe(), RenderColor.CYAN)
+    private fun renderRegionWireframe(matrixStack: MatrixStack, vertexConsumer: VertexConsumer, bounds: ClientRegionBounds, color: RenderColor) {
+        renderWireframe(vertexConsumer, matrixStack.peek().model, bounds.getWireframe(), color)
     }
 
     private fun renderFocalWireframes(matrixStack: MatrixStack, vertexConsumer: VertexConsumer, bounds: ClientRegionBounds) {

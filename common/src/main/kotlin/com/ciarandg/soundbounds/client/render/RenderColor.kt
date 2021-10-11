@@ -9,6 +9,12 @@ data class RenderColor(
     val blue: Float,
     val alpha: Float = CEIL
 ) {
+    constructor(red: Int, green: Int, blue: Int, alpha: Int = 255) : this(
+        red.toFloat() / 255.0f,
+        green.toFloat() / 255.0f,
+        blue.toFloat() / 255.0f,
+        alpha.toFloat() / 255.0f
+    )
 
     operator fun plus(c: RenderColor) = RenderColor(
         min(red + c.red, CEIL),

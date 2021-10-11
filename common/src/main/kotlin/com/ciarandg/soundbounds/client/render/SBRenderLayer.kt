@@ -21,7 +21,7 @@ class SBRenderLayer(
     endAction: () -> Unit
 ) : RenderLayer(name, vertexFormat, drawMode, expectedBufferSize, hasCrumbling, translucent, startAction, endAction) {
     companion object {
-        fun getThinLines() = getLines(3.0)
+        fun getThinLines() = getLines(4.0)
         fun getThickLines() = getLines(5.0)
         fun getLines(lineWidth: Double): RenderLayer {
             return of(
