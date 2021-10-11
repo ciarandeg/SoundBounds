@@ -1,7 +1,6 @@
 package com.ciarandg.soundbounds.common.network
 
 import com.ciarandg.soundbounds.SoundBounds
-import com.ciarandg.soundbounds.client.regions.ClientRegionBounds
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
 import com.ciarandg.soundbounds.common.regions.RegionData
 import com.ciarandg.soundbounds.server.ui.controller.PlayerControllers
@@ -57,8 +56,10 @@ class CreateRegionMessage : NetworkManager.NetworkReceiver {
 
             val compound = CompoundTag()
             val blockList = ListTag()
-            blockList.addAll(ClientPlayerModel.committedSelection.blockSet.map { RegionData.blockPosToTag(it) })
-            ClientPlayerModel.committedSelection = ClientRegionBounds(setOf())
+            with(ClientPlayerModel) {
+                blockList.addAll(committedSelection.bounds.blockSet.map { RegionData.blockPosToTag(it) })
+                committedSelection.reset()
+            }
             compound.put(BLOCK_LIST_KEY, blockList)
             buf.writeCompoundTag(compound)
 

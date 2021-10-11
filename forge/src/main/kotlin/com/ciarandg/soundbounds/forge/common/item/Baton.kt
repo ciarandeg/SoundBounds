@@ -2,6 +2,7 @@ package com.ciarandg.soundbounds.forge.common.item
 
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.regions.ClientRegionBounds
+import com.ciarandg.soundbounds.client.regions.RegionSelection
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
 import me.shedaniel.architectury.platform.Platform
 import me.shedaniel.architectury.utils.Env.CLIENT
@@ -75,7 +76,7 @@ class Baton(settings: Settings?) : NetherStarItem(settings) {
                     Corner.SECOND -> ClientPlayerModel.marker2 = corner.pos
                 }
                 with (ClientPlayerModel) {
-                    uncommittedSelection = ClientRegionBounds.fromBoxCorners(marker1, marker2, true)
+                    uncommittedSelection = RegionSelection.fromBoxCorners(marker1, marker2, true)
                 }
             }
         }
