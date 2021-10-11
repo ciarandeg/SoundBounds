@@ -4,6 +4,7 @@ import com.ciarandg.soundbounds.client.regions.ClientPositionMarker
 import com.ciarandg.soundbounds.client.regions.RegionSelection
 
 object ClientPlayerModel {
+    var batonMode = BatonMode.ADDITIVE
     var marker1: ClientPositionMarker? = null
     var marker2: ClientPositionMarker? = null
     var uncommittedSelection = RegionSelection()

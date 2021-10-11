@@ -3,7 +3,6 @@ package com.ciarandg.soundbounds.client.render
 import com.ciarandg.soundbounds.client.regions.ClientPositionMarker
 import com.ciarandg.soundbounds.client.regions.ClientRegionBounds
 import com.ciarandg.soundbounds.client.render.RegionVisualizationRenderer.committedHighlightTexture
-import com.ciarandg.soundbounds.client.render.RegionVisualizationRenderer.uncommittedHighlightTexture
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.util.Identifier
@@ -13,7 +12,7 @@ object MarkerSelectionRenderer {
     fun render(matrixStack: MatrixStack) {
         with(ClientPlayerModel) {
             renderSelection(matrixStack, committedSelection.bounds, committedHighlightTexture, RenderColor(64, 160, 85))
-            renderSelection(matrixStack, uncommittedSelection.bounds, uncommittedHighlightTexture, RenderColor(64, 78, 160))
+            renderSelection(matrixStack, uncommittedSelection.bounds, batonMode.texture, batonMode.wireframeColor)
             marker1?.let { renderMarker(it, matrixStack, RenderColor.BLUE) }
             marker2?.let { renderMarker(it, matrixStack, RenderColor.RED) }
         }

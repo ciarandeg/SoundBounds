@@ -1,6 +1,7 @@
 package com.ciarandg.soundbounds.common.network
 
 import com.ciarandg.soundbounds.SoundBounds
+import com.ciarandg.soundbounds.client.ui.BatonMode
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
 import com.ciarandg.soundbounds.server.ui.controller.PlayerControllers
 import io.netty.buffer.Unpooled
@@ -16,7 +17,10 @@ class CommitSelectionMessage : NetworkManager.NetworkReceiver {
     override fun receive(buf: PacketByteBuf, ctx: NetworkManager.PacketContext) {
         if (ctx.player.world.isClient) {
             with(ClientPlayerModel) {
-                committedSelection.add(uncommittedSelection.bounds)
+                when (batonMode) {
+                    BatonMode.ADDITIVE -> committedSelection.add(uncommittedSelection.bounds)
+                    BatonMode.SUBTRACTIVE -> committedSelection.subtract(uncommittedSelection.bounds)
+                }
                 uncommittedSelection.reset()
                 marker1 = null
                 marker2 = null
