@@ -1,8 +1,5 @@
 package com.ciarandg.soundbounds.client.ui
 
-import com.ciarandg.soundbounds.client.regions.ClientPositionMarker
-import com.ciarandg.soundbounds.client.regions.RegionSelection
-
 object ClientPlayerModel {
     var batonMode = BatonMode.ADDITIVE
     var marker1: ClientPositionMarker? = null

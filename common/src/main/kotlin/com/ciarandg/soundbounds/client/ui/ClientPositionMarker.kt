@@ -1,5 +1,6 @@
-package com.ciarandg.soundbounds.client.regions
+package com.ciarandg.soundbounds.client.ui
 
+import com.ciarandg.soundbounds.client.regions.ClientRegionBounds
 import net.minecraft.util.math.BlockPos
 
 class ClientPositionMarker(position: BlockPos) {

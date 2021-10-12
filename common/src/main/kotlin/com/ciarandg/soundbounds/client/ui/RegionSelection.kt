@@ -1,5 +1,6 @@
-package com.ciarandg.soundbounds.client.regions
+package com.ciarandg.soundbounds.client.ui
 
+import com.ciarandg.soundbounds.client.regions.ClientRegionBounds
 import com.ciarandg.soundbounds.client.render.toBox
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box

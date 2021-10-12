@@ -1,6 +1,6 @@
 package com.ciarandg.soundbounds.client.render
 
-import com.ciarandg.soundbounds.client.regions.ClientPositionMarker
+import com.ciarandg.soundbounds.client.ui.ClientPositionMarker
 import com.ciarandg.soundbounds.client.regions.ClientRegionBounds
 import com.ciarandg.soundbounds.client.render.RegionVisualizationRenderer.committedHighlightTexture
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
