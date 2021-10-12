@@ -1,6 +1,6 @@
 package com.ciarandg.soundbounds.common.network
 
-import com.ciarandg.soundbounds.client.ui.BatonMode
+import com.ciarandg.soundbounds.client.ui.CommitMode
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
 import io.netty.buffer.Unpooled
 import me.shedaniel.architectury.networking.NetworkManager
@@ -10,12 +10,12 @@ import net.minecraft.network.PacketByteBuf
 // but I plan on getting rid of this message soon anyways in favour of a graphical solution
 class SetBatonModeMessageS2C : NetworkManager.NetworkReceiver {
     override fun receive(buf: PacketByteBuf, ctx: NetworkManager.PacketContext) {
-        ClientPlayerModel.batonState.mode = BatonMode.valueOf(buf.readString())
+        ClientPlayerModel.batonState.commitMode = CommitMode.valueOf(buf.readString())
     }
     companion object {
-        fun buildBuffer(batonMode: BatonMode): PacketByteBuf {
+        fun buildBuffer(commitMode: CommitMode): PacketByteBuf {
             val buf = PacketByteBuf(Unpooled.buffer())
-            buf.writeString(batonMode.name)
+            buf.writeString(commitMode.name)
             return buf
         }
     }

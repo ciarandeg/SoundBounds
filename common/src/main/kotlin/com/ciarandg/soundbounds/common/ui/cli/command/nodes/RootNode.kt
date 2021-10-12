@@ -1,6 +1,6 @@
 package com.ciarandg.soundbounds.common.ui.cli.command.nodes
 
-import com.ciarandg.soundbounds.client.ui.BatonMode
+import com.ciarandg.soundbounds.client.ui.CommitMode
 import com.ciarandg.soundbounds.common.ui.cli.Arguments
 import com.ciarandg.soundbounds.common.ui.cli.CommandNode
 import com.ciarandg.soundbounds.common.ui.cli.IntArgNodeData
@@ -89,24 +89,22 @@ object RootNode : CommandNode(
             LiteralNodeData("mode", null, null),
             listOf(
                 CommandNode(
-                    LiteralNodeData("baton", null, null),
+                    LiteralNodeData("commit", null, null),
                     listOf(
                         CommandNode(
                             LiteralNodeData(
-                                "additive", "set your baton mode to additive",
-                                { ctx, wctrl, pctrl ->
-                                    pctrl?.setBatonMode(BatonMode.ADDITIVE)
-                                }
-                            ),
+                                "additive", "set your commit mode to additive"
+                            ) { ctx, wctrl, pctrl ->
+                                pctrl?.setBatonMode(CommitMode.ADDITIVE)
+                            },
                             listOf()
                         ),
                         CommandNode(
                             LiteralNodeData(
-                                "subtractive", "set your baton mode to subtractive",
-                                { ctx, wctrl, pctrl ->
-                                    pctrl?.setBatonMode(BatonMode.SUBTRACTIVE)
-                                }
-                            ),
+                                "subtractive", "set your commit mode to subtractive"
+                            ) { ctx, wctrl, pctrl ->
+                                pctrl?.setBatonMode(CommitMode.SUBTRACTIVE)
+                            },
                             listOf()
                         ),
                     )
