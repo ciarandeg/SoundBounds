@@ -1,9 +1,9 @@
 package com.ciarandg.soundbounds.client.render
 
-import com.ciarandg.soundbounds.client.ui.baton.selection.ClientPositionMarker
 import com.ciarandg.soundbounds.client.regions.ClientRegionBounds
 import com.ciarandg.soundbounds.client.render.RegionVisualizationRenderer.committedHighlightTexture
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
+import com.ciarandg.soundbounds.client.ui.baton.selection.ClientPositionMarker
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.util.Identifier
 
