@@ -1,4 +1,4 @@
-package com.ciarandg.soundbounds.client.ui
+package com.ciarandg.soundbounds.client.ui.baton
 
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.render.RenderColor

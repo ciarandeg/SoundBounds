@@ -1,4 +1,4 @@
-package com.ciarandg.soundbounds.client.ui
+package com.ciarandg.soundbounds.client.ui.baton.selection
 
 import com.ciarandg.soundbounds.client.regions.ClientRegionBounds
 import net.minecraft.util.math.BlockPos

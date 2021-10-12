@@ -1,6 +1,7 @@
 package com.ciarandg.soundbounds.client.ui
 
-import me.shedaniel.architectury.event.events.TickEvent
+import com.ciarandg.soundbounds.client.ui.baton.PlayerBatonState
+import com.ciarandg.soundbounds.client.ui.baton.selection.RegionSelection
 
 object ClientPlayerModel {
     val batonState = PlayerBatonState()

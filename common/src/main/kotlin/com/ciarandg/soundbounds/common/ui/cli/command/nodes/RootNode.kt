@@ -1,6 +1,6 @@
 package com.ciarandg.soundbounds.common.ui.cli.command.nodes
 
-import com.ciarandg.soundbounds.client.ui.CommitMode
+import com.ciarandg.soundbounds.client.ui.baton.CommitMode
 import com.ciarandg.soundbounds.common.ui.cli.Arguments
 import com.ciarandg.soundbounds.common.ui.cli.CommandNode
 import com.ciarandg.soundbounds.common.ui.cli.IntArgNodeData

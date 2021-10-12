@@ -1,7 +1,7 @@
 package com.ciarandg.soundbounds.server.ui.controller
 
 import com.ciarandg.soundbounds.SoundBounds
-import com.ciarandg.soundbounds.client.ui.CommitMode
+import com.ciarandg.soundbounds.client.ui.baton.CommitMode
 import com.ciarandg.soundbounds.common.network.CreateRegionMessage
 import com.ciarandg.soundbounds.common.network.SetBatonModeMessageS2C
 import com.ciarandg.soundbounds.common.network.VisualizeRegionMessageS2C

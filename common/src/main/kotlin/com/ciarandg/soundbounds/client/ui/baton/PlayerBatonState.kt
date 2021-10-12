@@ -1,4 +1,6 @@
-package com.ciarandg.soundbounds.client.ui
+package com.ciarandg.soundbounds.client.ui.baton
+
+import com.ciarandg.soundbounds.client.ui.baton.selection.ClientPositionMarker
 
 class PlayerBatonState {
     var commitMode = CommitMode.ADDITIVE

@@ -1,6 +1,6 @@
 package com.ciarandg.soundbounds.common.network
 
-import com.ciarandg.soundbounds.client.ui.CommitMode
+import com.ciarandg.soundbounds.client.ui.baton.CommitMode
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
 import io.netty.buffer.Unpooled
 import me.shedaniel.architectury.networking.NetworkManager
