@@ -2,7 +2,7 @@ package com.ciarandg.soundbounds.forge.client
 
 import com.ciarandg.soundbounds.client.audio.GameMusicVolume
 import com.ciarandg.soundbounds.client.regions.ClientWorldRegions
-import com.ciarandg.soundbounds.client.render.MarkerSelectionRenderer
+import com.ciarandg.soundbounds.client.render.SelectionRenderer
 import com.ciarandg.soundbounds.client.render.RegionVisualizationRenderer
 import com.ciarandg.soundbounds.client.render.RegionVisualizationRenderer.existingRegionTexture
 import com.ciarandg.soundbounds.client.render.RenderColor
@@ -43,7 +43,7 @@ class ForgeClientEvents {
         matrixStack.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z)
 
         // Render player's bounds selection
-        MarkerSelectionRenderer.render(matrixStack)
+        SelectionRenderer.render(matrixStack)
 
         // Render region visualization
         val visualizationRegion = ClientWorldRegions[ClientPlayerModel.visualizationRegion]

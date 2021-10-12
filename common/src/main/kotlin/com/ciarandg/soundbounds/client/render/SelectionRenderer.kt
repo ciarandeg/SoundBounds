@@ -7,14 +7,14 @@ import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.util.Identifier
 
-object MarkerSelectionRenderer {
+object SelectionRenderer {
     // PRECONDITION: matrixStack is aligned to World's [0, 0, 0]
     fun render(matrixStack: MatrixStack) {
         with(ClientPlayerModel) {
             renderSelection(matrixStack, committedSelection.bounds, committedHighlightTexture, RenderColor(64, 160, 85))
-            renderSelection(matrixStack, uncommittedSelection.bounds, batonMode.texture, batonMode.wireframeColor)
-            marker1?.let { renderMarker(it, matrixStack, RenderColor.BLUE) }
-            marker2?.let { renderMarker(it, matrixStack, RenderColor.RED) }
+            renderSelection(matrixStack, uncommittedSelection.bounds, batonState.mode.texture, batonState.mode.wireframeColor)
+            batonState.marker1?.let { renderMarker(it, matrixStack, RenderColor.BLUE) }
+            batonState.marker2?.let { renderMarker(it, matrixStack, RenderColor.RED) }
         }
     }
 

@@ -72,11 +72,11 @@ class Baton(settings: Settings?) : NetherStarItem(settings) {
                 corner.pos = trace.blockPos
                 corner.timestamp = currentTime
                 when (corner) {
-                    Corner.FIRST -> ClientPlayerModel.marker1 = ClientPositionMarker(corner.pos)
-                    Corner.SECOND -> ClientPlayerModel.marker2 = ClientPositionMarker(corner.pos)
+                    Corner.FIRST -> ClientPlayerModel.batonState.marker1 = ClientPositionMarker(corner.pos)
+                    Corner.SECOND -> ClientPlayerModel.batonState.marker2 = ClientPositionMarker(corner.pos)
                 }
                 with (ClientPlayerModel) {
-                    uncommittedSelection = RegionSelection.fromBoxCorners(marker1?.getPos(), marker2?.getPos())
+                    uncommittedSelection = RegionSelection.fromBoxCorners(batonState.marker1?.getPos(), batonState.marker2?.getPos())
                 }
             }
         }

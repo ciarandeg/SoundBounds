@@ -17,13 +17,13 @@ class CommitSelectionMessage : NetworkManager.NetworkReceiver {
     override fun receive(buf: PacketByteBuf, ctx: NetworkManager.PacketContext) {
         if (ctx.player.world.isClient) {
             with(ClientPlayerModel) {
-                when (batonMode) {
+                when (batonState.mode) {
                     BatonMode.ADDITIVE -> committedSelection.add(uncommittedSelection.bounds)
                     BatonMode.SUBTRACTIVE -> committedSelection.subtract(uncommittedSelection.bounds)
                 }
                 uncommittedSelection.reset()
-                marker1 = null
-                marker2 = null
+                batonState.marker1 = null
+                batonState.marker2 = null
             }
             NetworkManager.sendToServer(SoundBounds.COMMIT_SELECTION_CHANNEL_C2S, buildBufferC2S())
         } else {

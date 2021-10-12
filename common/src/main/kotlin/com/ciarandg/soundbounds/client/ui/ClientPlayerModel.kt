@@ -1,9 +1,9 @@
 package com.ciarandg.soundbounds.client.ui
 
+import me.shedaniel.architectury.event.events.TickEvent
+
 object ClientPlayerModel {
-    var batonMode = BatonMode.ADDITIVE
-    var marker1: ClientPositionMarker? = null
-    var marker2: ClientPositionMarker? = null
+    val batonState = PlayerBatonState()
     var uncommittedSelection = RegionSelection()
     var committedSelection = RegionSelection()
     var visualizationRegion: String? = null

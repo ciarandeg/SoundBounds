@@ -10,7 +10,7 @@ import net.minecraft.network.PacketByteBuf
 // but I plan on getting rid of this message soon anyways in favour of a graphical solution
 class SetBatonModeMessageS2C : NetworkManager.NetworkReceiver {
     override fun receive(buf: PacketByteBuf, ctx: NetworkManager.PacketContext) {
-        ClientPlayerModel.batonMode = BatonMode.valueOf(buf.readString())
+        ClientPlayerModel.batonState.mode = BatonMode.valueOf(buf.readString())
     }
     companion object {
         fun buildBuffer(batonMode: BatonMode): PacketByteBuf {
