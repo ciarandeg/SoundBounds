@@ -142,6 +142,10 @@ class PlayerController(
         }
     }
 
+    fun saveAndExitEditingSession() {
+        NetworkManager.sendToPlayer(owner, SoundBounds.SAVE_EXIT_EDITING_SESSION_CHANNEL_S2C, PacketByteBuf(Unpooled.buffer()))
+    }
+
     fun showIfRegionsOverlap(firstRegion: String, secondRegion: String) {
         // TODO check if regions overlap
         view.notifyRegionOverlaps("", "", false)

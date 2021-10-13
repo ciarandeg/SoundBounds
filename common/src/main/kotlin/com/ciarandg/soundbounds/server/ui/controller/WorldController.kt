@@ -88,6 +88,15 @@ class WorldController(
         views.forEach { it.notifyEditingSessionOpened(regionName) }
     }
 
+    fun saveExitEditingSession(regionName: String, blockSet: Set<BlockPos>, views: List<PlayerView>) {
+        editExistingRegion(regionName, views) { region, _ ->
+            region.bounds.clear()
+            region.bounds.addAll(blockSet)
+            editingSessionManifest.endSession(regionName)
+            pushRegionToClients(owner, RegionEntry(regionName, region))
+        }
+    }
+
     fun setRegionPlaylistQueuePersistence(regionName: String, queuePersist: Boolean, views: List<PlayerView>) =
         editExistingRegion(regionName, views) { region, _ ->
             region.queuePersistence = queuePersist

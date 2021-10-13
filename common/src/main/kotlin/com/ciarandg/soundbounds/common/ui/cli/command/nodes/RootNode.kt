@@ -86,6 +86,12 @@ object RootNode : CommandNode(
             )
         ),
         CommandNode(
+            LiteralNodeData("save", "save the region you're currently editing") { ctx, wctrl, pctrl ->
+                pctrl?.saveAndExitEditingSession()
+            },
+            listOf()
+        ),
+        CommandNode(
             LiteralNodeData("mode", null, null),
             listOf(
                 CommandNode(

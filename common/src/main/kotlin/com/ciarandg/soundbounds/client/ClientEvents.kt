@@ -15,6 +15,7 @@ import com.ciarandg.soundbounds.common.network.NowPlayingMessage
 import com.ciarandg.soundbounds.common.network.OpenEditingSessionMessageS2C
 import com.ciarandg.soundbounds.common.network.RegionDestroyMessageS2C
 import com.ciarandg.soundbounds.common.network.RegionUpdateMessageS2C
+import com.ciarandg.soundbounds.common.network.SaveExitEditingSessionMessage
 import com.ciarandg.soundbounds.common.network.SetBatonModeMessageS2C
 import com.ciarandg.soundbounds.common.network.VisualizeRegionMessageS2C
 import me.shedaniel.architectury.event.events.GuiEvent
@@ -34,6 +35,7 @@ object ClientEvents {
         registerSelectionCommit()
         registerRegionCreate()
         registerOpenEditingSession()
+        registerSaveExitEditingSession()
         registerVisualizationRegionUpdate()
         registerMetaHashCheck()
         registerNowPlaying()
@@ -92,6 +94,14 @@ object ClientEvents {
             NetworkManager.Side.S2C,
             SoundBounds.OPEN_EDITING_SESSION_CHANNEL_S2C,
             OpenEditingSessionMessageS2C()
+        )
+    }
+
+    private fun registerSaveExitEditingSession() {
+        NetworkManager.registerReceiver(
+            NetworkManager.Side.S2C,
+            SoundBounds.SAVE_EXIT_EDITING_SESSION_CHANNEL_S2C,
+            SaveExitEditingSessionMessage()
         )
     }
 

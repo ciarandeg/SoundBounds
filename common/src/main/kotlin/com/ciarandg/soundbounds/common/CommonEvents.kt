@@ -7,6 +7,7 @@ import com.ciarandg.soundbounds.common.network.CurrentRegionMessage
 import com.ciarandg.soundbounds.common.network.MetaHashCheckMessage
 import com.ciarandg.soundbounds.common.network.MetadataSyncMessage
 import com.ciarandg.soundbounds.common.network.NowPlayingMessage
+import com.ciarandg.soundbounds.common.network.SaveExitEditingSessionMessage
 import com.ciarandg.soundbounds.common.ui.cli.argument.GroupNameArgumentType
 import com.ciarandg.soundbounds.common.ui.cli.argument.PTArgumentType
 import com.ciarandg.soundbounds.common.ui.cli.argument.RegionArgumentType
@@ -38,6 +39,12 @@ object CommonEvents {
             NetworkManager.Side.C2S,
             SoundBounds.CREATE_REGION_CHANNEL_C2S,
             CreateRegionMessage()
+        )
+
+        NetworkManager.registerReceiver(
+            NetworkManager.Side.C2S,
+            SoundBounds.SAVE_EXIT_EDITING_SESSION_CHANNEL_C2S,
+            SaveExitEditingSessionMessage()
         )
 
         // Metadata hash check registration
