@@ -134,6 +134,14 @@ class PlayerController(
         }
     }
 
+    fun openEditingSession(regionName: String) {
+        val state = WorldRegionState.get(world)
+        when {
+            !state.regionExists(regionName) -> view.notifyFailed(FailureReason.NO_SUCH_REGION)
+            else -> WorldControllers[world].openEditingSession(owner, regionName, listOf(view))
+        }
+    }
+
     fun showIfRegionsOverlap(firstRegion: String, secondRegion: String) {
         // TODO check if regions overlap
         view.notifyRegionOverlaps("", "", false)

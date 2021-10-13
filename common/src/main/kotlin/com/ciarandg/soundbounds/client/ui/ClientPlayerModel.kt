@@ -7,5 +7,6 @@ object ClientPlayerModel {
     val batonState = PlayerBatonState()
     var uncommittedSelection = RegionSelection()
     var committedSelection = RegionSelection()
+    var editingRegion: String? = null
     var visualizationRegion: String? = null
 }

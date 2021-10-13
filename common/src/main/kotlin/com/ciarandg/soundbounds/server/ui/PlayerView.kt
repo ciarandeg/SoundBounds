@@ -18,6 +18,7 @@ interface PlayerView {
     fun showCurrentRegion(regionName: String?)
     fun showAuditReport(regionsWithEmptyPlaylists: Set<String>, regionsMissingMeta: Set<Pair<String, Set<String>>>)
     fun notifyCommittedToSelection()
+    fun notifyEditingSessionOpened(regionName: String)
     fun notifyPosMarkerSet(marker: PosMarker, pos: BlockPos)
     fun notifyVisualizationRegionChanged(regionName: String)
     fun showRegionList(regions: List<Map.Entry<String, RegionData>>, paginator: Paginator)

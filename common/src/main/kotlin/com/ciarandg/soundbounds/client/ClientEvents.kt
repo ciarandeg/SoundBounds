@@ -12,6 +12,7 @@ import com.ciarandg.soundbounds.common.network.CurrentRegionMessage
 import com.ciarandg.soundbounds.common.network.MetaHashCheckMessage
 import com.ciarandg.soundbounds.common.network.MetadataSyncMessage
 import com.ciarandg.soundbounds.common.network.NowPlayingMessage
+import com.ciarandg.soundbounds.common.network.OpenEditingSessionMessageS2C
 import com.ciarandg.soundbounds.common.network.RegionDestroyMessageS2C
 import com.ciarandg.soundbounds.common.network.RegionUpdateMessageS2C
 import com.ciarandg.soundbounds.common.network.SetBatonModeMessageS2C
@@ -32,6 +33,7 @@ object ClientEvents {
         registerSetBatonMode()
         registerSelectionCommit()
         registerRegionCreate()
+        registerOpenEditingSession()
         registerVisualizationRegionUpdate()
         registerMetaHashCheck()
         registerNowPlaying()
@@ -82,6 +84,14 @@ object ClientEvents {
             NetworkManager.Side.S2C,
             SoundBounds.CREATE_REGION_CHANNEL_S2C,
             CreateRegionMessage()
+        )
+    }
+
+    private fun registerOpenEditingSession() {
+        NetworkManager.registerReceiver(
+            NetworkManager.Side.S2C,
+            SoundBounds.OPEN_EDITING_SESSION_CHANNEL_S2C,
+            OpenEditingSessionMessageS2C()
         )
     }
 

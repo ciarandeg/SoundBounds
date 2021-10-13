@@ -4,6 +4,7 @@ import com.ciarandg.soundbounds.RegionEntry
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.common.PlaylistType
 import com.ciarandg.soundbounds.common.metadata.JsonMeta
+import com.ciarandg.soundbounds.common.network.OpenEditingSessionMessageS2C
 import com.ciarandg.soundbounds.common.network.RegionDestroyMessageS2C
 import com.ciarandg.soundbounds.common.network.RegionUpdateMessageS2C
 import com.ciarandg.soundbounds.common.regions.RegionAuditor
@@ -13,13 +14,17 @@ import com.ciarandg.soundbounds.server.metadata.ServerMetaState
 import com.ciarandg.soundbounds.server.ui.PlayerView
 import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason.NO_SUCH_REGION
 import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason.REGION_NAME_CONFLICT
+import com.ciarandg.soundbounds.server.ui.model.EditingSessionManifest
 import me.shedaniel.architectury.networking.NetworkManager
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
 
 class WorldController(
     private val owner: ServerWorld
 ) {
+    private val editingSessionManifest = EditingSessionManifest()
+
     fun auditRegions(views: List<PlayerView>) = editWorldState { state ->
         val regions = state.getAllRegions()
         views.forEach {
@@ -77,28 +82,11 @@ class WorldController(
             views.forEach { it.notifyRegionPlaylistTypeSet(regionName, oldType, type) }
         }
 
-    // fun addRegionVolume(regionName: String, corner1: BlockPos, corner2: BlockPos, views: List<PlayerView>) =
-    //     editExistingRegion(regionName, views) { region, _ ->
-    //         val volume = Pair(corner1, corner2)
-    //         region.bounds.add(volume)
-    //         pushRegionToClients(owner, RegionEntry(regionName, region))
-    //         views.forEach { it.notifyRegionVolumeAdded(regionName, volume) }
-    //     }
-
-    // fun removeRegionVolume(regionName: String, index: Int, views: List<PlayerView>) =
-    //     editExistingRegion(regionName, views) { region, _ ->
-    //         when {
-    //             index < 0 || index >= region.bounds.size ->
-    //                 views.forEach { it.notifyFailed(VOLUME_INDEX_OOB) }
-    //             region.bounds.size == 1 ->
-    //                 views.forEach { it.notifyFailed(REGION_MUST_HAVE_VOLUME) }
-    //             else -> {
-    //                 val volume = region.bounds.removeAt(index)
-    //                 pushRegionToClients(owner, RegionEntry(regionName, region))
-    //                 views.forEach { it.notifyRegionVolumeRemoved(regionName, index, volume) }
-    //             }
-    //         }
-    //     }
+    fun openEditingSession(player: ServerPlayerEntity, regionName: String, views: List<PlayerView>) {
+        editingSessionManifest.requestNewSession(player, regionName)
+        NetworkManager.sendToPlayer(player, SoundBounds.OPEN_EDITING_SESSION_CHANNEL_S2C, OpenEditingSessionMessageS2C.buildBuffer(regionName))
+        views.forEach { it.notifyEditingSessionOpened(regionName) }
+    }
 
     fun setRegionPlaylistQueuePersistence(regionName: String, queuePersist: Boolean, views: List<PlayerView>) =
         editExistingRegion(regionName, views) { region, _ ->
