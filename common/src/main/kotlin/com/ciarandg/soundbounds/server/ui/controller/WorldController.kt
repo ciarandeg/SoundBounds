@@ -108,6 +108,7 @@ class WorldController(
             region.bounds.addAll(blockSet)
             editingSessionManifest.endSession(regionName)
             pushRegionToClients(owner, RegionEntry(regionName, region))
+            views.forEach { it.notifySavedRegionEdit(regionName) }
         }
     }
 

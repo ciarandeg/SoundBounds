@@ -124,6 +124,10 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
     override fun notifyEditingSessionOpened(regionName: String) =
         sendWithBadge(bodyText("Now editing region ") + regionNameText(regionName))
 
+    override fun notifySavedRegionEdit(regionName: String) {
+        sendWithBadge(bodyText("Saved region ") + regionNameText(regionName))
+    }
+
     override fun notifyPosMarkerSet(marker: PosMarker, pos: BlockPos) = sendWithBadge(
         bodyText("Set marker ") + posMarkerText(marker) + bodyText(" to ") + blockPosText(pos)
     )
