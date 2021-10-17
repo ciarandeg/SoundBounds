@@ -13,8 +13,15 @@ import com.ciarandg.soundbounds.common.regions.WorldRegionState
 import com.ciarandg.soundbounds.server.metadata.ServerMetaState
 import com.ciarandg.soundbounds.server.ui.PlayerView
 import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason.NO_SUCH_REGION
+import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason.OTHER_PLAYER_EDITING_REGION
+import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason.PLAYER_ALREADY_EDITING_REGION
+import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason.PLAYER_CURRENTLY_EDITING_DIFFERENT_REGION
 import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason.REGION_NAME_CONFLICT
 import com.ciarandg.soundbounds.server.ui.model.EditingSessionManifest
+import com.ciarandg.soundbounds.server.ui.model.EditingSessionManifest.Companion.NewSessionResult.OTHER_ALREADY_EDITING_REQUESTED
+import com.ciarandg.soundbounds.server.ui.model.EditingSessionManifest.Companion.NewSessionResult.REQUESTER_ALREADY_EDITING_OTHER
+import com.ciarandg.soundbounds.server.ui.model.EditingSessionManifest.Companion.NewSessionResult.REQUESTER_ALREADY_EDITING_REQUESTED
+import com.ciarandg.soundbounds.server.ui.model.EditingSessionManifest.Companion.NewSessionResult.SUCCESS
 import me.shedaniel.architectury.networking.NetworkManager
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
@@ -83,9 +90,16 @@ class WorldController(
         }
 
     fun openEditingSession(player: ServerPlayerEntity, regionName: String, views: List<PlayerView>) {
-        editingSessionManifest.requestNewSession(player, regionName)
-        NetworkManager.sendToPlayer(player, SoundBounds.OPEN_EDITING_SESSION_CHANNEL_S2C, OpenEditingSessionMessageS2C.buildBuffer(regionName))
-        views.forEach { it.notifyEditingSessionOpened(regionName) }
+        fun fail(reason: PlayerView.FailureReason) = views.forEach { it.notifyFailed(reason) }
+        when (editingSessionManifest.requestNewSession(player, regionName)) {
+            REQUESTER_ALREADY_EDITING_REQUESTED -> fail(PLAYER_ALREADY_EDITING_REGION)
+            REQUESTER_ALREADY_EDITING_OTHER -> fail(PLAYER_CURRENTLY_EDITING_DIFFERENT_REGION)
+            OTHER_ALREADY_EDITING_REQUESTED -> fail(OTHER_PLAYER_EDITING_REGION)
+            SUCCESS -> {
+                NetworkManager.sendToPlayer(player, SoundBounds.OPEN_EDITING_SESSION_CHANNEL_S2C, OpenEditingSessionMessageS2C.buildBuffer(regionName))
+                views.forEach { it.notifyEditingSessionOpened(regionName) }
+            }
+        }
     }
 
     fun saveExitEditingSession(regionName: String, blockSet: Set<BlockPos>, views: List<PlayerView>) {

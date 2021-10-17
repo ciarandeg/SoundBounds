@@ -329,6 +329,9 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
             PlayerView.FailureReason.GHOST_SONG -> "Although there are regions containing requested song ID, the song has no metadata. Please delete it or resync."
             PlayerView.FailureReason.SONG_POS_OOB -> "Requested song position is out of bounds"
             PlayerView.FailureReason.PLAYER_NOT_SYNCER -> "You are not whitelisted to sync metadata"
+            PlayerView.FailureReason.PLAYER_ALREADY_EDITING_REGION -> "You are already editing this region"
+            PlayerView.FailureReason.PLAYER_CURRENTLY_EDITING_DIFFERENT_REGION -> "You must save your edits before attempting to edit another region"
+            PlayerView.FailureReason.OTHER_PLAYER_EDITING_REGION -> "There is another player currently editing the requested region"
         }
     )
 
