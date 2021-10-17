@@ -35,6 +35,8 @@ class SoundBounds {
         val OPEN_EDITING_SESSION_CHANNEL_S2C = Identifier(MOD_ID, "open_editing_session_s2c")
         val SAVE_EXIT_EDITING_SESSION_CHANNEL_S2C = Identifier(MOD_ID, "save_exit_editing_session_s2c")
         val SAVE_EXIT_EDITING_SESSION_CHANNEL_C2S = Identifier(MOD_ID, "save_exit_editing_session_c2s")
+        val CANCEL_EDITING_SESSION_CHANNEL_S2C = Identifier(MOD_ID, "cancel_editing_session_s2c")
+        val CANCEL_EDITING_SESSION_CHANNEL_C2S = Identifier(MOD_ID, "cancel_editing_session_c2s")
         val META_HASH_CHECK_S2C = Identifier(MOD_ID, "meta_hash_check_s2c")
         val META_HASH_CHECK_C2S = Identifier(MOD_ID, "meta_hash_check_c2s")
         val NOW_PLAYING_CHANNEL_C2S = Identifier(MOD_ID, "now_playing_c2s")

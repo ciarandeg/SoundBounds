@@ -92,6 +92,12 @@ object RootNode : CommandNode(
             listOf()
         ),
         CommandNode(
+            LiteralNodeData("cancel", "cancel your editing session") { ctx, wctrl, pctrl ->
+                pctrl?.cancelEditingSession()
+            },
+            listOf()
+        ),
+        CommandNode(
             LiteralNodeData("mode", null, null),
             listOf(
                 CommandNode(

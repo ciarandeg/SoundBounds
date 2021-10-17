@@ -19,6 +19,7 @@ interface PlayerView {
     fun showAuditReport(regionsWithEmptyPlaylists: Set<String>, regionsMissingMeta: Set<Pair<String, Set<String>>>)
     fun notifyCommittedToSelection()
     fun notifyEditingSessionOpened(regionName: String)
+    fun notifyEditingSessionCanceled(regionName: String)
     fun notifySavedRegionEdit(regionName: String)
     fun notifyPosMarkerSet(marker: PosMarker, pos: BlockPos)
     fun notifyVisualizationRegionChanged(regionName: String)

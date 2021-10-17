@@ -112,6 +112,11 @@ class WorldController(
         }
     }
 
+    fun cancelEditingSession(regionName: String, views: List<PlayerView>) {
+        editingSessionManifest.endSession(regionName)
+        views.forEach { it.notifyEditingSessionCanceled(regionName) }
+    }
+
     fun setRegionPlaylistQueuePersistence(regionName: String, queuePersist: Boolean, views: List<PlayerView>) =
         editExistingRegion(regionName, views) { region, _ ->
             region.queuePersistence = queuePersist

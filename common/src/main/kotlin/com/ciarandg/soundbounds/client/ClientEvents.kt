@@ -6,6 +6,7 @@ import com.ciarandg.soundbounds.client.metadata.ClientMeta
 import com.ciarandg.soundbounds.client.options.SBClientOptions
 import com.ciarandg.soundbounds.client.options.SBOptionsScreen
 import com.ciarandg.soundbounds.client.regions.RegionSwitcher
+import com.ciarandg.soundbounds.common.network.CancelEditingSessionMessage
 import com.ciarandg.soundbounds.common.network.CommitSelectionMessage
 import com.ciarandg.soundbounds.common.network.CreateRegionMessage
 import com.ciarandg.soundbounds.common.network.CurrentRegionMessage
@@ -36,6 +37,7 @@ object ClientEvents {
         registerRegionCreate()
         registerOpenEditingSession()
         registerSaveExitEditingSession()
+        registerCancelEditingSession()
         registerVisualizationRegionUpdate()
         registerMetaHashCheck()
         registerNowPlaying()
@@ -102,6 +104,14 @@ object ClientEvents {
             NetworkManager.Side.S2C,
             SoundBounds.SAVE_EXIT_EDITING_SESSION_CHANNEL_S2C,
             SaveExitEditingSessionMessage()
+        )
+    }
+
+    private fun registerCancelEditingSession() {
+        NetworkManager.registerReceiver(
+            NetworkManager.Side.S2C,
+            SoundBounds.CANCEL_EDITING_SESSION_CHANNEL_S2C,
+            CancelEditingSessionMessage()
         )
     }
 

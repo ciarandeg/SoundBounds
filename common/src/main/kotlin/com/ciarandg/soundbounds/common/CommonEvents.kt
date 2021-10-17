@@ -1,6 +1,7 @@
 package com.ciarandg.soundbounds.common
 
 import com.ciarandg.soundbounds.SoundBounds
+import com.ciarandg.soundbounds.common.network.CancelEditingSessionMessage
 import com.ciarandg.soundbounds.common.network.CommitSelectionMessage
 import com.ciarandg.soundbounds.common.network.CreateRegionMessage
 import com.ciarandg.soundbounds.common.network.CurrentRegionMessage
@@ -41,10 +42,16 @@ object CommonEvents {
             CreateRegionMessage()
         )
 
+        // Editing session save/exit
         NetworkManager.registerReceiver(
             NetworkManager.Side.C2S,
             SoundBounds.SAVE_EXIT_EDITING_SESSION_CHANNEL_C2S,
             SaveExitEditingSessionMessage()
+        )
+        NetworkManager.registerReceiver(
+            NetworkManager.Side.C2S,
+            SoundBounds.CANCEL_EDITING_SESSION_CHANNEL_C2S,
+            CancelEditingSessionMessage()
         )
 
         // Metadata hash check registration
