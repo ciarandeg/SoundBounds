@@ -5,4 +5,4 @@ import com.ciarandg.soundbounds.client.ui.radial.RadialButton
 
 class UndoButton : RadialButton(
     { SoundBounds.LOGGER.info("UNDOING") }
-) {}
+)

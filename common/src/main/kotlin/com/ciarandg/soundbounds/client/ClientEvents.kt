@@ -6,6 +6,7 @@ import com.ciarandg.soundbounds.client.metadata.ClientMeta
 import com.ciarandg.soundbounds.client.options.SBClientOptions
 import com.ciarandg.soundbounds.client.options.SBOptionsScreen
 import com.ciarandg.soundbounds.client.regions.RegionSwitcher
+import com.ciarandg.soundbounds.client.ui.radial.BatonMenu
 import com.ciarandg.soundbounds.common.network.CancelEditingSessionMessage
 import com.ciarandg.soundbounds.common.network.CommitSelectionMessage
 import com.ciarandg.soundbounds.common.network.CreateRegionMessage
@@ -31,6 +32,7 @@ object ClientEvents {
         initializeOptions()
         registerTicker()
         registerAudio()
+        registerBatonMenu()
         registerOptionsScreen()
         registerSetBatonMode()
         registerSelectionCommit()
@@ -55,6 +57,16 @@ object ClientEvents {
     private fun registerAudio() {
         ClientPlayerEvent.CLIENT_PLAYER_JOIN.register { GameMusicVolume.update() }
         ClientPlayerEvent.CLIENT_PLAYER_QUIT.register { RegionSwitcher.purge() }
+    }
+
+    private fun registerBatonMenu() {
+        KeyBindings.registerKeyBinding(BatonMenu.binding)
+
+        TickEvent.PLAYER_POST.register {
+            val client = MinecraftClient.getInstance()
+            if (BatonMenu.binding.isPressed && client.currentScreen == null)
+                SoundBounds.LOGGER.info("Opening baton menu ${System.currentTimeMillis()}")
+        }
     }
 
     private fun registerOptionsScreen() {

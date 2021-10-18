@@ -5,5 +5,4 @@ import com.ciarandg.soundbounds.client.ui.radial.RadialButton
 
 class RedoButton : RadialButton(
     { SoundBounds.LOGGER.info("REDOING") }
-) {
-}
+)

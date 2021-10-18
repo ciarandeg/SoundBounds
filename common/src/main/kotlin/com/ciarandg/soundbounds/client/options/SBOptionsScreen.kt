@@ -1,5 +1,6 @@
 package com.ciarandg.soundbounds.client.options
 
+import com.ciarandg.soundbounds.SoundBounds
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.client.gui.widget.OptionButtonWidget
@@ -120,7 +121,7 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Client Options")) {
     companion object {
         private const val FADE_SLIDER_SKEW: Double = 2.0
         private const val IDLE_SLIDER_SKEW: Double = 2.0
-        val binding = KeyBinding("Client Options Screen", GLFW.GLFW_KEY_B, "SoundBounds")
+        val binding = KeyBinding("Client Options Screen", GLFW.GLFW_KEY_B, SoundBounds.KEYBIND_CATEGORY)
 
         private fun formatDuration(
             milliseconds: Long,
