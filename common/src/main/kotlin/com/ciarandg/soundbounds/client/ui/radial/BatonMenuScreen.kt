@@ -14,8 +14,10 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.math.Vec2f
 import org.lwjgl.glfw.GLFW
 import kotlin.math.atan2
+import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.min
+import kotlin.math.sin
 
 class BatonMenuScreen : Screen(LiteralText("Bounds Baton Menu")) {
     private val origin = client?.mouse?.let { Vec2f(it.x.toFloat(), it.y.toFloat()) } ?: Vec2f(0.0f, 0.0f)
@@ -62,6 +64,8 @@ class BatonMenuScreen : Screen(LiteralText("Bounds Baton Menu")) {
         }
 
     private data class PolarCoord(val radius: Double, val angle: Double) {
+        fun toCartesian(): Pair<Double, Double> = Pair(radius * cos(angle), radius * sin(angle))
+
         companion object {
             fun fromScreenCoords(mouseX: Int, mouseY: Int, width: Int, height: Int) =
                 fromScreenCoords(mouseX.toDouble(), mouseY.toDouble(), width.toDouble() / 2, height.toDouble() / 2)
