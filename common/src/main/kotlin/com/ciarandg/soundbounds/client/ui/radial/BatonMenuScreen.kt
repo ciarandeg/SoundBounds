@@ -29,7 +29,7 @@ class BatonMenuScreen : Screen(LiteralText("Bounds Baton Menu")) {
         super.render(matrices, mouseX, mouseY, delta)
         renderMenu()
         if (SHOW_DEBUG_LINE) renderDebugLine(mouseX, mouseY)
-        val polar = PolarCoord.fromScreenCoords(mouseX.toDouble(), mouseY.toDouble(), width.toDouble() / 2, height.toDouble() / 2)
+        val polar = PolarCoord.fromScreenCoords(mouseX, mouseY, width, height)
         SoundBounds.LOGGER.info("RADIUS: ${polar.radius} ANGLE: ${polar.angle}")
     }
 
@@ -63,6 +63,8 @@ class BatonMenuScreen : Screen(LiteralText("Bounds Baton Menu")) {
 
     private data class PolarCoord(val radius: Double, val angle: Double) {
         companion object {
+            fun fromScreenCoords(mouseX: Int, mouseY: Int, width: Int, height: Int) =
+                fromScreenCoords(mouseX.toDouble(), mouseY.toDouble(), width.toDouble() / 2, height.toDouble() / 2)
             fun fromScreenCoords(mouseX: Double, mouseY: Double, centerX: Double, centerY: Double) =
                 fromCartesian(mouseX - centerX, centerY - mouseY)
             fun fromCartesian(x: Double, y: Double) = PolarCoord(radiusFromCartesian(x, y), angleFromCartesian(x, y))
