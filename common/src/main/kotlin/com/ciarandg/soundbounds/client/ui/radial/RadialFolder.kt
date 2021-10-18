@@ -1,7 +1,7 @@
 package com.ciarandg.soundbounds.client.ui.radial
 
 open class RadialFolder(
-    val children: List<RadialButton> = listOf(),
+    val children: List<RadialButton>,
     startTheta: Float,
     endTheta: Float
 ) : RadialButton(
