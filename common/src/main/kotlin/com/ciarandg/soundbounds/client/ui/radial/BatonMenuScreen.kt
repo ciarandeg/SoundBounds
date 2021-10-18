@@ -25,10 +25,9 @@ class BatonMenuScreen : Screen(LiteralText("Bounds Baton Menu")) {
     override fun render(matrices: MatrixStack, mouseX: Int, mouseY: Int, delta: Float) {
         renderBackground(matrices)
         super.render(matrices, mouseX, mouseY, delta)
-        renderMenu()
-        if (SHOW_DEBUG_LINE) renderDebugLine(mouseX, mouseY)
         val polar = PolarCoordinate.fromScreenCoords(mouseX, mouseY, width, height)
-        SoundBounds.LOGGER.info("RADIUS: ${polar.radius} ANGLE: ${polar.angle}")
+        renderMenu(min(width, height) * 0.75, width.toDouble() / 2, height.toDouble() / 2, polar)
+        if (SHOW_DEBUG_LINE) renderDebugLine(mouseX, mouseY)
     }
 
     private fun renderDebugLine(mouseX: Int, mouseY: Int) =
@@ -39,16 +38,17 @@ class BatonMenuScreen : Screen(LiteralText("Bounds Baton Menu")) {
             draw()
         }
 
-    private fun renderMenu() =
+    private fun renderMenu(length: Double, centerX: Double, centerY: Double, mousePos: PolarCoordinate) =
         with(MinecraftClient.getInstance().bufferBuilders.entityVertexConsumers) {
-            val buffer = getBuffer(SBRenderLayer.getBatonRadialMenu(menuTexture))
-            val centerX = width.toDouble() / 2
-            val centerY = height.toDouble() / 2
-            val menuLength = min(width, height) * 0.75
-            val minX = centerX - menuLength / 2
-            val maxX = centerX + menuLength / 2
-            val minY = centerY - menuLength / 2
-            val maxY = centerY + menuLength / 2
+            val textureRadius = 0.75
+            val buffer = getBuffer(SBRenderLayer.getBatonRadialMenu(
+                if (mousePos.radius > length * textureRadius / 2) bigMenuTexture
+                else smallMenuTexture
+            ))
+            val minX = centerX - length / 2
+            val maxX = centerX + length / 2
+            val minY = centerY - length / 2
+            val maxY = centerY + length / 2
 
             fun drawVertex(x: Double, y: Double, uv: Vec2f) =
                 buffer.vertex(x, y, 0.0).texture(uv.x, uv.y).next()
@@ -62,6 +62,7 @@ class BatonMenuScreen : Screen(LiteralText("Bounds Baton Menu")) {
     companion object {
         const val SHOW_DEBUG_LINE = true
         val binding = KeyBinding("Baton Radial Menu", GLFW.GLFW_KEY_EQUAL, SoundBounds.KEYBIND_CATEGORY)
-        private val menuTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/menu.png")
+        private val bigMenuTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/menu_big.png")
+        private val smallMenuTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/menu_small.png")
     }
 }
