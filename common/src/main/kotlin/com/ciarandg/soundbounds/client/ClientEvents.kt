@@ -7,6 +7,7 @@ import com.ciarandg.soundbounds.client.options.SBClientOptions
 import com.ciarandg.soundbounds.client.options.SBOptionsScreen
 import com.ciarandg.soundbounds.client.regions.RegionSwitcher
 import com.ciarandg.soundbounds.client.ui.radial.BatonMenu
+import com.ciarandg.soundbounds.common.item.IBaton
 import com.ciarandg.soundbounds.common.network.CancelEditingSessionMessage
 import com.ciarandg.soundbounds.common.network.CommitSelectionMessage
 import com.ciarandg.soundbounds.common.network.CreateRegionMessage
@@ -64,7 +65,11 @@ object ClientEvents {
 
         TickEvent.PLAYER_POST.register {
             val client = MinecraftClient.getInstance()
-            if (BatonMenu.binding.isPressed && client.currentScreen == null)
+            if (
+                BatonMenu.binding.isPressed &&
+                client.player?.isHolding { it is IBaton } == true &&
+                client.currentScreen == null
+            )
                 SoundBounds.LOGGER.info("Opening baton menu ${System.currentTimeMillis()}")
         }
     }
