@@ -33,14 +33,6 @@ class BatonMenuScreen : Screen(LiteralText("Bounds Baton Menu")) {
             draw()
         }
 
-    fun click(mousePos: Vec2f) {
-        getHoveredButton(origin, mousePos).onClick()
-    }
-
-    private fun getHoveredButton(origin: Vec2f, mousePos: Vec2f): RadialButton {
-        TODO()
-    }
-
     companion object {
         const val SHOW_DEBUG_LINE = true
         val binding = KeyBinding("Baton Radial Menu", GLFW.GLFW_KEY_EQUAL, SoundBounds.KEYBIND_CATEGORY)
