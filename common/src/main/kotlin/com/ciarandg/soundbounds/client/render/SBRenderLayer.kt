@@ -50,5 +50,16 @@ class SBRenderLayer(
                 GL_QUADS, 256, true, false, multiPhaseParameters
             )
         }
+
+        fun getBatonRadialMenu(texture: Identifier): RenderLayer {
+            val multiPhaseParameters: MultiPhaseParameters =
+                MultiPhaseParameters.builder()
+                    .texture(Texture(texture, false, false))
+                    .build(true)
+            return of(
+                "${SoundBounds.MOD_ID}_radial_menu", VertexFormats.POSITION_TEXTURE,
+                GL_QUADS, 256, true, false, multiPhaseParameters
+            )
+        }
     }
 }
