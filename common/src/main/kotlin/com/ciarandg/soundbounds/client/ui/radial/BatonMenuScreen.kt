@@ -27,7 +27,7 @@ class BatonMenuScreen : Screen(LiteralText("Bounds Baton Menu")) {
         renderBackground(matrices)
         super.render(matrices, mouseX, mouseY, delta)
         if (SHOW_DEBUG_LINE) renderDebugLine(mouseX, mouseY)
-        renderMenu(matrices.peek().normal)
+        renderMenu()
     }
 
     private fun renderDebugLine(mouseX: Int, mouseY: Int) =
@@ -38,7 +38,7 @@ class BatonMenuScreen : Screen(LiteralText("Bounds Baton Menu")) {
             draw()
         }
 
-    private fun renderMenu(matrixNormal: Matrix3f) =
+    private fun renderMenu() =
         with(MinecraftClient.getInstance().bufferBuilders.entityVertexConsumers) {
             val buffer = getBuffer(SBRenderLayer.getBatonRadialMenu(menuTexture))
             val centerX = width.toDouble() / 2
