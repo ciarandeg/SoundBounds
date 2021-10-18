@@ -27,8 +27,8 @@ class BatonMenuScreen : Screen(LiteralText("Bounds Baton Menu")) {
     override fun render(matrices: MatrixStack, mouseX: Int, mouseY: Int, delta: Float) {
         renderBackground(matrices)
         super.render(matrices, mouseX, mouseY, delta)
-        if (SHOW_DEBUG_LINE) renderDebugLine(mouseX, mouseY)
         renderMenu()
+        if (SHOW_DEBUG_LINE) renderDebugLine(mouseX, mouseY)
         val polar = PolarCoord.fromScreenCoords(mouseX.toDouble(), mouseY.toDouble(), width.toDouble() / 2, height.toDouble() / 2)
         SoundBounds.LOGGER.info("RADIUS: ${polar.radius} ANGLE: ${polar.angle}")
     }
