@@ -13,6 +13,8 @@ import net.minecraft.text.LiteralText
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.Vec2f
 import org.lwjgl.glfw.GLFW
+import kotlin.math.atan2
+import kotlin.math.hypot
 import kotlin.math.min
 
 class BatonMenuScreen : Screen(LiteralText("Bounds Baton Menu")) {
@@ -27,6 +29,8 @@ class BatonMenuScreen : Screen(LiteralText("Bounds Baton Menu")) {
         super.render(matrices, mouseX, mouseY, delta)
         if (SHOW_DEBUG_LINE) renderDebugLine(mouseX, mouseY)
         renderMenu()
+        val polar = PolarCoord.fromScreenCoords(mouseX.toDouble(), mouseY.toDouble(), width.toDouble() / 2, height.toDouble() / 2)
+        SoundBounds.LOGGER.info("RADIUS: ${polar.radius} ANGLE: ${polar.angle}")
     }
 
     private fun renderDebugLine(mouseX: Int, mouseY: Int) =
@@ -56,6 +60,23 @@ class BatonMenuScreen : Screen(LiteralText("Bounds Baton Menu")) {
             drawVertex(minX, minY, Vec2f(0.0f, 0.0f))
             draw()
         }
+
+    private data class PolarCoord(val radius: Double, val angle: Double) {
+        companion object {
+            fun fromScreenCoords(mouseX: Double, mouseY: Double, centerX: Double, centerY: Double) =
+                fromCartesian(mouseX - centerX, centerY - mouseY)
+            fun fromCartesian(x: Double, y: Double) = PolarCoord(radiusFromCartesian(x, y), angleFromCartesian(x, y))
+
+            private fun radiusFromCartesian(x: Double, y: Double) = hypot(x, y).let {
+                when {
+                    it.isNaN() -> maxOf(x, y)
+                    else -> it
+                }
+            }
+
+            private fun angleFromCartesian(x: Double, y: Double) = atan2(x, y)
+        }
+    }
 
     companion object {
         const val SHOW_DEBUG_LINE = true
