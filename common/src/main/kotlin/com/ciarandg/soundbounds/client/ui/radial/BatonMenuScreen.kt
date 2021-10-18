@@ -4,6 +4,7 @@ import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.ui.radial.buttons.RedoButton
 import com.ciarandg.soundbounds.client.ui.radial.buttons.UndoButton
 import net.minecraft.client.gui.screen.Screen
+import net.minecraft.client.gui.widget.AbstractPressableButtonWidget
 import net.minecraft.client.options.KeyBinding
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.text.LiteralText
@@ -18,8 +19,8 @@ class BatonMenuScreen : Screen(LiteralText("Bounds Baton Menu")) {
     private val redoButton = RedoButton()
 
     override fun render(matrices: MatrixStack, mouseX: Int, mouseY: Int, delta: Float) {
-        super.render(matrices, mouseX, mouseY, delta)
         renderBackground(matrices)
+        super.render(matrices, mouseX, mouseY, delta)
     }
 
     fun click(mousePos: Vec2f) {
