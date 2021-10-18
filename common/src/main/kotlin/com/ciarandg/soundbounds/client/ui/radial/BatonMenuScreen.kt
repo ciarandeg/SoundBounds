@@ -11,7 +11,6 @@ import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.text.LiteralText
 import net.minecraft.util.Identifier
-import net.minecraft.util.math.Matrix3f
 import net.minecraft.util.math.Vec2f
 import org.lwjgl.glfw.GLFW
 import kotlin.math.min
