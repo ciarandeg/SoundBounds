@@ -3,7 +3,7 @@ package com.ciarandg.soundbounds.client.event
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.ClientTicker
 import com.ciarandg.soundbounds.client.audio.GameMusicVolume
-import com.ciarandg.soundbounds.client.event.events.BatonMenuEvent
+import com.ciarandg.soundbounds.client.event.handlers.BatonMenuEventHandler
 import com.ciarandg.soundbounds.client.metadata.ClientMeta
 import com.ciarandg.soundbounds.client.options.SBClientOptions
 import com.ciarandg.soundbounds.client.options.SBOptionsScreen
@@ -33,7 +33,7 @@ object ClientEvents {
         initializeOptions()
         registerTicker()
         registerAudio()
-        BatonMenuEvent.register()
+        BatonMenuEventHandler.register()
         registerOptionsScreen()
         registerSetBatonMode()
         registerSelectionCommit()

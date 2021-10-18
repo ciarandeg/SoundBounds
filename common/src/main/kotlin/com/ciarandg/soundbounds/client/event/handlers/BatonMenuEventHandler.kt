@@ -1,5 +1,6 @@
-package com.ciarandg.soundbounds.client.event.events
+package com.ciarandg.soundbounds.client.event.handlers
 
+import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.ui.radial.BatonMenu
 import com.ciarandg.soundbounds.common.item.IBaton
 import me.shedaniel.architectury.event.events.TickEvent
@@ -7,13 +8,17 @@ import me.shedaniel.architectury.registry.KeyBindings
 import net.minecraft.client.MinecraftClient
 import net.minecraft.util.math.Vec2f
 
-object BatonMenuEvent {
+object BatonMenuEventHandler {
     private var menu: BatonMenu? = null
 
     fun register() {
         KeyBindings.registerKeyBinding(BatonMenu.binding)
         TickEvent.PLAYER_POST.register {
-            menu = if (!isBindingPressed()) null else BatonMenu(getMousePos())
+            menu = when {
+                !isBindingPressed() -> null
+                menu == null -> BatonMenu(getMousePos())
+                else -> menu
+            }
             menu?.draw()
         }
     }
@@ -24,5 +29,5 @@ object BatonMenuEvent {
             currentScreen == null
     }
 
-    private fun getMousePos() = with(MinecraftClient.getInstance().mouse) { Vec2f(x.toFloat(), y.toFloat())  }
+    private fun getMousePos() = with(MinecraftClient.getInstance().mouse) { Vec2f(x.toFloat(), y.toFloat()) }
 }
