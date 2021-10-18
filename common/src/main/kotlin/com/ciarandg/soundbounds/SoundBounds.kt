@@ -1,6 +1,6 @@
 package com.ciarandg.soundbounds
 
-import com.ciarandg.soundbounds.client.ClientEvents
+import com.ciarandg.soundbounds.client.event.ClientEvents
 import com.ciarandg.soundbounds.client.regions.ClientRegion
 import com.ciarandg.soundbounds.common.CommonEvents
 import com.ciarandg.soundbounds.common.regions.RegionData

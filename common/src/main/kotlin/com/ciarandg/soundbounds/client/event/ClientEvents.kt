@@ -1,13 +1,13 @@
-package com.ciarandg.soundbounds.client
+package com.ciarandg.soundbounds.client.event
 
 import com.ciarandg.soundbounds.SoundBounds
+import com.ciarandg.soundbounds.client.ClientTicker
 import com.ciarandg.soundbounds.client.audio.GameMusicVolume
+import com.ciarandg.soundbounds.client.event.events.BatonMenuEvent
 import com.ciarandg.soundbounds.client.metadata.ClientMeta
 import com.ciarandg.soundbounds.client.options.SBClientOptions
 import com.ciarandg.soundbounds.client.options.SBOptionsScreen
 import com.ciarandg.soundbounds.client.regions.RegionSwitcher
-import com.ciarandg.soundbounds.client.ui.radial.BatonMenu
-import com.ciarandg.soundbounds.common.item.IBaton
 import com.ciarandg.soundbounds.common.network.CancelEditingSessionMessage
 import com.ciarandg.soundbounds.common.network.CommitSelectionMessage
 import com.ciarandg.soundbounds.common.network.CreateRegionMessage
@@ -33,7 +33,7 @@ object ClientEvents {
         initializeOptions()
         registerTicker()
         registerAudio()
-        registerBatonMenu()
+        BatonMenuEvent.register()
         registerOptionsScreen()
         registerSetBatonMode()
         registerSelectionCommit()
@@ -58,20 +58,6 @@ object ClientEvents {
     private fun registerAudio() {
         ClientPlayerEvent.CLIENT_PLAYER_JOIN.register { GameMusicVolume.update() }
         ClientPlayerEvent.CLIENT_PLAYER_QUIT.register { RegionSwitcher.purge() }
-    }
-
-    private fun registerBatonMenu() {
-        KeyBindings.registerKeyBinding(BatonMenu.binding)
-
-        TickEvent.PLAYER_POST.register {
-            val client = MinecraftClient.getInstance()
-            if (
-                BatonMenu.binding.isPressed &&
-                client.player?.isHolding { it is IBaton } == true &&
-                client.currentScreen == null
-            )
-                SoundBounds.LOGGER.info("Opening baton menu ${System.currentTimeMillis()}")
-        }
     }
 
     private fun registerOptionsScreen() {
