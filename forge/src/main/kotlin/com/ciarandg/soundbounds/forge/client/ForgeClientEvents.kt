@@ -35,7 +35,7 @@ class ForgeClientEvents {
     @SubscribeEvent
     fun render(event: RenderWorldLastEvent) {
         val player = MinecraftClient.getInstance().player ?: return
-        if (!player.itemsHand.any { it.item is Baton }) return
+        if (!player.isHolding { it.item is Baton }) return
 
         // Offset by camera position, since it is reset by RenderWorldLastEvent
         val matrixStack = event.matrixStack
