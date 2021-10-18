@@ -5,7 +5,7 @@ open class RadialFolder(
     startTheta: Float,
     endTheta: Float
 ) : RadialButton(
-    {}, startTheta, endTheta
+    {}
 ) {
     fun drawChildren() {
         // call each button's draw function
