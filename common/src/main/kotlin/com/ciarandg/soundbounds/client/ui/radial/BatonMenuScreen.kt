@@ -17,20 +17,14 @@ class BatonMenuScreen : Screen(LiteralText("Bounds Baton Menu")) {
     private val undoButton = UndoButton()
     private val redoButton = RedoButton()
 
-    override fun tick() {
-        if (!binding.isPressed) onClose()
-        super.tick()
-    }
-
-    override fun render(matrices: MatrixStack?, mouseX: Int, mouseY: Int, delta: Float) {
+    override fun render(matrices: MatrixStack, mouseX: Int, mouseY: Int, delta: Float) {
         super.render(matrices, mouseX, mouseY, delta)
+        renderBackground(matrices)
     }
 
     fun click(mousePos: Vec2f) {
         getHoveredButton(origin, mousePos).onClick()
     }
-
-    fun draw() {}
 
     private fun getHoveredButton(origin: Vec2f, mousePos: Vec2f): RadialButton {
         TODO()
