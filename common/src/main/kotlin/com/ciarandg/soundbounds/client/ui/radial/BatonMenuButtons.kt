@@ -36,6 +36,7 @@ class BatonMenuButtons {
         )
     )
     private var openFolder: RadialFolder? = null
+    private var lastFolderChildSelected: RadialButton? = null
 
     fun getHoveredButton(mousePos: PolarCoordinate): RadialButton {
         val hoveredTopLevel =
@@ -44,8 +45,17 @@ class BatonMenuButtons {
                     throw IllegalStateException("No usable button at mouse position $mousePos")
                 }
             }
+        val oldFolder = openFolder
         openFolder = if (hoveredTopLevel is RadialFolder) hoveredTopLevel else null
-        return hoveredTopLevel
+        if (openFolder != oldFolder) lastFolderChildSelected = null
+        val child = openFolder?.let { folder ->
+            if (folder.isHovered(mousePos)) lastFolderChildSelected = null
+            try { folder.children.first { it.isBisected(mousePos) } } catch (e: NoSuchElementException) {
+                lastFolderChildSelected
+            }
+        }
+        lastFolderChildSelected = child
+        return child ?: hoveredTopLevel
     }
 
     companion object {
