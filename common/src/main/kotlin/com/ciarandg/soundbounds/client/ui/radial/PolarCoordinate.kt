@@ -1,5 +1,6 @@
 package com.ciarandg.soundbounds.client.ui.radial
 
+import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.hypot
@@ -22,6 +23,6 @@ data class PolarCoordinate(val radius: Double, val angle: Double) {
             }
         }
 
-        private fun angleFromCartesian(x: Double, y: Double) = atan2(x, y)
+        private fun angleFromCartesian(x: Double, y: Double) = atan2(x, y).let { if (it < 0.0) it + 2.0 * PI else it }
     }
 }
