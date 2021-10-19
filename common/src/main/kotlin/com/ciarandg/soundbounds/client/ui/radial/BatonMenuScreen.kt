@@ -19,8 +19,10 @@ class BatonMenuScreen : Screen(LiteralText("Bounds Baton Menu")) {
     override fun render(matrices: MatrixStack, mouseX: Int, mouseY: Int, delta: Float) {
         renderBackground(matrices)
         super.render(matrices, mouseX, mouseY, delta)
+        val textureWidth = min(width, height) * 0.75
         val polar = PolarCoordinate.fromScreenCoords(mouseX, mouseY, width, height)
-        renderMenu(polar, min(width, height) * 0.75, width.toDouble() / 2, height.toDouble() / 2)
+        val polarScaled = PolarCoordinate(polar.radius / (textureWidth * 0.5), polar.angle)
+        renderMenu(polarScaled, textureWidth, width.toDouble() / 2, height.toDouble() / 2)
         if (SHOW_DEBUG_LINE) renderDebugLine(mouseX, mouseY)
     }
 
