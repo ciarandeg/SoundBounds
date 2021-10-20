@@ -1,6 +1,6 @@
 package com.ciarandg.soundbounds.client.event.handlers
 
-import com.ciarandg.soundbounds.client.ui.radial.BatonMenuScreen
+import com.ciarandg.soundbounds.client.ui.radial.baton.BatonMenuScreen
 import com.ciarandg.soundbounds.common.item.IBaton
 import me.shedaniel.architectury.event.events.TickEvent
 import me.shedaniel.architectury.registry.KeyBindings

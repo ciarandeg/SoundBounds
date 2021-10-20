@@ -1,8 +1,9 @@
-package com.ciarandg.soundbounds.client.ui.radial
+package com.ciarandg.soundbounds.client.ui.radial.baton
 
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.render.RenderColor
 import com.ciarandg.soundbounds.client.render.SBRenderLayer
+import com.ciarandg.soundbounds.client.ui.radial.PolarCoordinate
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.options.KeyBinding
@@ -14,7 +15,7 @@ import org.lwjgl.glfw.GLFW
 import kotlin.math.min
 
 class BatonMenuScreen : Screen(LiteralText("Bounds Baton Menu")) {
-    private val menuButtons = BatonMenuButtons()
+    private val menuButtons = BatonMenuPrimaryGroup()
 
     override fun render(matrices: MatrixStack, mouseX: Int, mouseY: Int, delta: Float) {
         renderBackground(matrices)
