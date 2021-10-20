@@ -14,7 +14,7 @@ import net.minecraft.util.Identifier
 class BatonMenuPrimaryGroup : MenuButtonGroup(
     listOf(
         RadialFolder({ BatonMenuSecondaryCommitGroup() }, HALF.rad + EIGHTH.rad, FULL.rad, commitHoverTexture),
-        RadialFolder({ TODO() }, ZERO.rad, QUARTER.rad + EIGHTH.rad, selectionHoverTexture),
+        RadialFolder({ BatonMenuSecondaryCommitGroup() }, ZERO.rad, QUARTER.rad + EIGHTH.rad, selectionHoverTexture),
         object : RadialButton({}, QUARTER.rad + EIGHTH.rad, HALF.rad, redoHoverTexture) {},
         object : RadialButton({}, HALF.rad, HALF.rad + EIGHTH.rad, undoHoverTexture) {}
     )

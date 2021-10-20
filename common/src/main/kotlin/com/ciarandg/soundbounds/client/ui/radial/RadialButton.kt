@@ -3,7 +3,7 @@ package com.ciarandg.soundbounds.client.ui.radial
 import net.minecraft.util.Identifier
 
 abstract class RadialButton(
-    private val onClick: () -> Any,
+    val onClick: () -> Any,
     private val startAngle: Double,
     private val endAngle: Double,
     val hoverTexture: Identifier
