@@ -8,77 +8,37 @@ class BatonMenuButtons {
     private val buttons: List<RadialButton> = listOf(
         RadialFolder(
             listOf(
-                object : RadialButton({}, BUTTON_RADIUS, 1.0, ZERO, QUARTER - EIGHTH, subTexture1) {},
-                object : RadialButton({}, BUTTON_RADIUS, 1.0, QUARTER - EIGHTH, QUARTER, subTexture2) {}
+                object : RadialButton({}, ZERO, THIRD, commitSubtractiveHoverTexture) {},
+                object : RadialButton({}, THIRD, THIRD + THIRD, commitHighlightHoverTexture) {},
+                object : RadialButton({}, THIRD + THIRD, FULL, commitAdditiveHoverTexture) {}
             ),
-            0.0, BUTTON_RADIUS, ZERO, QUARTER, folderTexture1
+            HALF + EIGHTH, FULL, commitHoverTexture
         ),
         RadialFolder(
-            listOf(
-                object : RadialButton({}, BUTTON_RADIUS, 1.0, QUARTER, HALF - EIGHTH, subTexture3) {},
-                object : RadialButton({}, BUTTON_RADIUS, 1.0, HALF - EIGHTH, HALF, subTexture4) {}
-            ),
-            0.0, BUTTON_RADIUS, QUARTER, HALF, folderTexture2
+            listOf(),
+            ZERO, QUARTER + EIGHTH, selectionHoverTexture
         ),
-        RadialFolder(
-            listOf(
-                object : RadialButton({}, BUTTON_RADIUS, 1.0, HALF, THREE_QUARTERS - EIGHTH, subTexture5) {},
-                object : RadialButton({}, BUTTON_RADIUS, 1.0, THREE_QUARTERS - EIGHTH, THREE_QUARTERS, subTexture6) {}
-            ),
-            0.0, BUTTON_RADIUS, HALF, THREE_QUARTERS, folderTexture3
-        ),
-        RadialFolder(
-            listOf(
-                object : RadialButton({}, BUTTON_RADIUS, 1.0, THREE_QUARTERS, FULL - EIGHTH, subTexture7) {},
-                object : RadialButton({}, BUTTON_RADIUS, 1.0, FULL - EIGHTH, FULL, subTexture8) {}
-            ),
-            0.0, BUTTON_RADIUS, THREE_QUARTERS, FULL, folderTexture4
-        )
+        object : RadialButton({}, QUARTER + EIGHTH, HALF, redoHoverTexture) {},
+        object : RadialButton({}, HALF, HALF + EIGHTH, undoHoverTexture) {}
     )
-    private var openFolder: RadialFolder? = null
-    private var lastFolderChildSelected: RadialButton? = null
 
-    fun getHoveredButton(mousePos: PolarCoordinate): RadialButton {
-        val hoveredTopLevel =
-            try { buttons.first { it.isHovered(mousePos) } } catch (e: NoSuchElementException) {
-                openFolder ?: try { buttons.first { it.isBisected(mousePos) } } catch (e: NoSuchElementException) {
-                    throw IllegalStateException("No usable button at mouse position $mousePos")
-                }
-            }
-        val oldFolder = openFolder
-        openFolder = if (hoveredTopLevel is RadialFolder) hoveredTopLevel else null
-        if (openFolder != oldFolder) lastFolderChildSelected = null
-        val child = openFolder?.let { folder ->
-            if (folder.isHovered(mousePos)) lastFolderChildSelected = null
-            try { folder.children.first { it.isBisected(mousePos) } } catch (e: NoSuchElementException) {
-                lastFolderChildSelected
-            }
-        }
-        lastFolderChildSelected = child
-        return child ?: hoveredTopLevel
-    }
+    fun getHoveredButton(mousePos: PolarCoordinate): RadialButton = buttons.first { it.isBisected(mousePos) }
 
     companion object {
-        private val folderTexture1 = Identifier(SoundBounds.MOD_ID, "textures/radial/menu_unfold_1.png")
-        private val folderTexture2 = Identifier(SoundBounds.MOD_ID, "textures/radial/menu_unfold_2.png")
-        private val folderTexture3 = Identifier(SoundBounds.MOD_ID, "textures/radial/menu_unfold_3.png")
-        private val folderTexture4 = Identifier(SoundBounds.MOD_ID, "textures/radial/menu_unfold_4.png")
-        private val subTexture1 = Identifier(SoundBounds.MOD_ID, "textures/radial/menu_sub_1.png")
-        private val subTexture2 = Identifier(SoundBounds.MOD_ID, "textures/radial/menu_sub_2.png")
-        private val subTexture3 = Identifier(SoundBounds.MOD_ID, "textures/radial/menu_sub_3.png")
-        private val subTexture4 = Identifier(SoundBounds.MOD_ID, "textures/radial/menu_sub_4.png")
-        private val subTexture5 = Identifier(SoundBounds.MOD_ID, "textures/radial/menu_sub_5.png")
-        private val subTexture6 = Identifier(SoundBounds.MOD_ID, "textures/radial/menu_sub_6.png")
-        private val subTexture7 = Identifier(SoundBounds.MOD_ID, "textures/radial/menu_sub_7.png")
-        private val subTexture8 = Identifier(SoundBounds.MOD_ID, "textures/radial/menu_sub_8.png")
+        private val commitHoverTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/primary_commit_hover.png")
+        private val selectionHoverTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/primary_selection_hover.png")
+        private val undoHoverTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/primary_undo_hover.png")
+        private val redoHoverTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/primary_redo_hover.png")
+
+        private val commitAdditiveHoverTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/secondary_commit_additive_hover.png")
+        private val commitSubtractiveHoverTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/secondary_commit_subtractive_hover.png")
+        private val commitHighlightHoverTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/secondary_commit_highlight_hover.png")
 
         const val ZERO = 0.0
         const val EIGHTH = PI * 0.25
         const val QUARTER = PI * 0.5
+        const val THIRD = PI * 2.0 / 3.0
         const val HALF = PI
-        const val THREE_QUARTERS = PI * 1.5
         const val FULL = PI * 2.0
-
-        const val BUTTON_RADIUS = 0.75
     }
 }
