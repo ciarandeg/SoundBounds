@@ -26,17 +26,14 @@ class BatonMenuScreen : Screen(LiteralText("Bounds Baton Menu")) {
         renderBackground(matrices)
         super.render(matrices, mouseX, mouseY, delta)
         val textureWidth = min(width, height) * 0.75
-        val polar = PolarCoordinate.fromScreenCoords(mouseX, mouseY, width, height)
-        val polarScaled = PolarCoordinate(polar.radius / (textureWidth * 0.5), polar.angle)
-        renderMenu(polarScaled, textureWidth, width.toDouble() / 2, height.toDouble() / 2)
+        renderMenu(getMousePosPolar(mouseX, mouseY), textureWidth, width.toDouble() / 2, height.toDouble() / 2)
         if (SHOW_DEBUG_LINE) renderDebugLine(mouseX, mouseY)
     }
 
     override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
         when (button) {
             GLFW.GLFW_MOUSE_BUTTON_LEFT -> {
-                val mousePos = PolarCoordinate.fromCartesian(mouseX, mouseY)
-                when (val hovered = buttonGroups.peek().getHoveredButton(mousePos)) {
+                when (val hovered = buttonGroups.peek().getHoveredButton(getMousePosPolar(mouseX, mouseY))) {
                     is RadialFolder -> buttonGroups.push(hovered.getSubGroup())
                     else -> {
                         hovered.onClick()
@@ -76,6 +73,13 @@ class BatonMenuScreen : Screen(LiteralText("Bounds Baton Menu")) {
             drawVertex(minX, minY, Vec2f(0.0f, 0.0f))
             draw()
         }
+
+    private fun getMousePosPolar(mouseX: Int, mouseY: Int) = getMousePosPolar(mouseX.toDouble(), mouseY.toDouble())
+    private fun getMousePosPolar(mouseX: Double, mouseY: Double): PolarCoordinate {
+        val centerX = width / 2.0
+        val centerY = height / 2.0
+        return PolarCoordinate.fromCartesian(mouseX - centerX, mouseY - centerY)
+    }
 
     companion object {
         const val SHOW_DEBUG_LINE = true
