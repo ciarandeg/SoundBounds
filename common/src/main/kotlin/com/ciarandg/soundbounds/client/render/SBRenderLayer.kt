@@ -1,6 +1,8 @@
 package com.ciarandg.soundbounds.client.render
 
 import com.ciarandg.soundbounds.SoundBounds
+import com.mojang.blaze3d.platform.GlStateManager
+import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.VertexFormat
 import net.minecraft.client.render.VertexFormats
@@ -47,6 +49,29 @@ class SBRenderLayer(
                     .build(true)
             return of(
                 "${SoundBounds.MOD_ID}_selection_highlight", VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL,
+                GL_QUADS, 256, true, false, multiPhaseParameters
+            )
+        }
+
+        fun getBatonRadialMenu(texture: Identifier): RenderLayer {
+            val transparency = Transparency(
+                "${SoundBounds.MOD_ID}_src_rgba_transparency",
+                {
+                    RenderSystem.enableBlend()
+                    RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA)
+                },
+                {
+                    RenderSystem.disableBlend()
+                    RenderSystem.defaultBlendFunc()
+                }
+            )
+            val multiPhaseParameters: MultiPhaseParameters =
+                MultiPhaseParameters.builder()
+                    .texture(Texture(texture, false, false))
+                    .transparency(transparency)
+                    .build(true)
+            return of(
+                "${SoundBounds.MOD_ID}_radial_menu", VertexFormats.POSITION_TEXTURE,
                 GL_QUADS, 256, true, false, multiPhaseParameters
             )
         }

@@ -1,6 +1,6 @@
 package com.ciarandg.soundbounds
 
-import com.ciarandg.soundbounds.client.ClientEvents
+import com.ciarandg.soundbounds.client.event.ClientEvents
 import com.ciarandg.soundbounds.client.regions.ClientRegion
 import com.ciarandg.soundbounds.common.CommonEvents
 import com.ciarandg.soundbounds.common.regions.RegionData
@@ -24,6 +24,7 @@ class SoundBounds {
 
     companion object {
         const val MOD_ID = "soundbounds"
+        const val KEYBIND_CATEGORY = "SoundBounds"
         val LOGGER: Logger = LogManager.getLogger(MOD_ID)
 
         val SET_BATON_MODE_CHANNEL_S2C = Identifier(MOD_ID, "set_baton_mode_s2c")

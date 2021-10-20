@@ -4,6 +4,7 @@ import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.ui.baton.selection.RegionSelection
 import com.ciarandg.soundbounds.client.ui.baton.selection.ClientPositionMarker
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
+import com.ciarandg.soundbounds.common.item.IBaton
 import me.shedaniel.architectury.platform.Platform
 import me.shedaniel.architectury.utils.Env.CLIENT
 import me.shedaniel.architectury.utils.Env.SERVER
@@ -25,7 +26,7 @@ import net.minecraft.util.hit.HitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 
-class Baton(settings: Settings?) : NetherStarItem(settings) {
+class Baton(settings: Settings?) : IBaton, NetherStarItem(settings) {
     companion object {
         private const val cooldown = 1000
     }
