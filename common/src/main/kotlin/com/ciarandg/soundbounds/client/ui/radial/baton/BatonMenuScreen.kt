@@ -78,7 +78,7 @@ class BatonMenuScreen : Screen(LiteralText("Bounds Baton Menu")) {
     private fun getMousePosPolar(mouseX: Double, mouseY: Double): PolarCoordinate {
         val centerX = width / 2.0
         val centerY = height / 2.0
-        return PolarCoordinate.fromCartesian(mouseX - centerX, mouseY - centerY)
+        return PolarCoordinate.fromCartesian(mouseX - centerX, centerY - mouseY)
     }
 
     companion object {
