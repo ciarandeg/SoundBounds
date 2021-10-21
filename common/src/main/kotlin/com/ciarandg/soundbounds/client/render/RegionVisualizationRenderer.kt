@@ -18,7 +18,14 @@ object RegionVisualizationRenderer {
     private fun renderWireframe(matrixStack: MatrixStack, vertexConsumer: VertexConsumer, region: ClientRegion) {
         val model = matrixStack.peek().model
         val color = RenderColor.CYAN
-        val wireframe = GraphRegion(region.blockSet.value).getWireframe()
+        val wireframe = if (region === regionCache) {
+            wireframeCache ?: throw IllegalStateException()
+        } else {
+            val wf = GraphRegion(region.blockSet.value).getWireframe()
+            regionCache = region
+            wireframeCache = wf
+            wf
+        }
         for (edge in wireframe) {
             fun drawVertex(v: Vec3i) {
                 val xyz = listOf(v.x, v.y, v.z).map { it.toFloat() }
@@ -28,4 +35,7 @@ object RegionVisualizationRenderer {
             drawVertex(edge.second)
         }
     }
+
+    private var regionCache: ClientRegion? = null
+    private var wireframeCache: Set<Pair<Vec3i, Vec3i>>? = null
 }
