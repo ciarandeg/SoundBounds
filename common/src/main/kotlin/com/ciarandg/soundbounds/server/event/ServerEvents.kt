@@ -1,4 +1,4 @@
-package com.ciarandg.soundbounds.server
+package com.ciarandg.soundbounds.server.event
 
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.common.network.RegionUpdateMessageS2C

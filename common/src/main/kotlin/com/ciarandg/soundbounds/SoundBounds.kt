@@ -2,9 +2,9 @@ package com.ciarandg.soundbounds
 
 import com.ciarandg.soundbounds.client.event.ClientEvents
 import com.ciarandg.soundbounds.client.regions.ClientRegion
-import com.ciarandg.soundbounds.common.CommonEvents
+import com.ciarandg.soundbounds.common.event.CommonEvents
 import com.ciarandg.soundbounds.common.regions.RegionData
-import com.ciarandg.soundbounds.server.ServerEvents
+import com.ciarandg.soundbounds.server.event.ServerEvents
 import me.shedaniel.architectury.event.events.LifecycleEvent
 import me.shedaniel.architectury.event.events.client.ClientLifecycleEvent
 import me.shedaniel.architectury.platform.Platform

@@ -1,4 +1,4 @@
-package com.ciarandg.soundbounds.common
+package com.ciarandg.soundbounds.common.event
 
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.common.network.CancelEditingSessionMessage
