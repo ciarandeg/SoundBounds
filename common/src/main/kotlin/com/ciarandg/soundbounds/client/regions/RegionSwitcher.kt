@@ -75,15 +75,6 @@ object RegionSwitcher {
     private fun getPlayer() =
         GameInstance.getClient().player ?: throw RuntimeException("No client player present")
 
-    // Vanilla Box#contains method has some weird rounding issues, doesn't do what I'm looking for
-    private fun Box.contains(player: PlayerEntity): Boolean {
-        fun adjustPos(pos: Vec3d) = Vec3d(floor(pos.x), pos.y, floor(pos.z))
-        fun withinDim(pos: Double, min: Double, max: Double) = pos in min..max
-
-        val pos = adjustPos(player.pos)
-        return withinDim(pos.x, minX, maxX) && withinDim(pos.y, minY, maxY) && withinDim(pos.z, minZ, maxZ)
-    }
-
     private class Swapper<T>(val postPush: (T?, T?) -> Unit) {
         var current: T? = null
             private set
