@@ -18,7 +18,7 @@ object RegionVisualizationRenderer {
     private fun renderWireframe(matrixStack: MatrixStack, vertexConsumer: VertexConsumer, region: ClientRegion) {
         val model = matrixStack.peek().model
         val color = RenderColor.CYAN
-        val wireframe = GraphRegion(region.blockSet).getWireframe()
+        val wireframe = GraphRegion(region.blockSet.value).getWireframe()
         for (edge in wireframe) {
             fun drawVertex(v: Vec3i) {
                 val xyz = listOf(v.x, v.y, v.z).map { it.toFloat() }
