@@ -9,7 +9,7 @@ internal class BlockTreeNodeMulti private constructor (
 
     constructor(minPos: Vec3iConst, maxPos: Vec3iConst) : this(minPos, maxPos, Color.WHITE)
 
-    override fun blockCount() = when (color) {
+    override fun blockCount(): Int = when (color) {
         Color.WHITE -> 0
         Color.BLACK -> {
             (maxPos.x - minPos.x + 1) * (maxPos.y - minPos.y + 1) * (maxPos.z - minPos.z + 1)
@@ -17,7 +17,7 @@ internal class BlockTreeNodeMulti private constructor (
         Color.GREY -> greyData.children.sumOf { it.blockCount() }
     }
 
-    override fun contains(element: Vec3iConst) = when (color) {
+    override fun contains(element: Vec3iConst): Boolean = when (color) {
         Color.WHITE -> false
         Color.BLACK -> canContain(element)
         Color.GREY -> greyData.children.any { it.contains(element) }
@@ -42,9 +42,9 @@ internal class BlockTreeNodeMulti private constructor (
             }
             Color.BLACK -> false
             Color.GREY -> {
-                // add to appropriate child node
-                // if all children are black, become black
-                TODO()
+                val result = greyData.findCorrespondingNode(element).add(element)
+                if (greyData.children.all { it.color == Color.BLACK }) becomeBlack()
+                result
             }
         }
     }
@@ -61,9 +61,9 @@ internal class BlockTreeNodeMulti private constructor (
             }
         }
         Color.GREY -> {
-            // remove from appropriate child node
-            // if all children are white, become white
-            TODO()
+            val result = greyData.findCorrespondingNode(element).remove(element)
+            if (greyData.children.all { it.color == Color.WHITE }) becomeWhite()
+            result
         }
     }
 
@@ -102,7 +102,7 @@ internal class BlockTreeNodeMulti private constructor (
     enum class Color { WHITE, BLACK, GREY }
 
     class GreyData(minPos: Vec3iConst, maxPos: Vec3iConst, childColor: Color = Color.WHITE) {
-        val children = listOf<BlockTreeNode>(
+        val children = listOf(
             BlockTreeNodeMulti(minPos, maxPos, childColor), // ---
             BlockTreeNodeMulti(minPos, maxPos, childColor), // +--
             BlockTreeNodeMulti(minPos, maxPos, childColor), // -+-
@@ -112,5 +112,6 @@ internal class BlockTreeNodeMulti private constructor (
             BlockTreeNodeMulti(minPos, maxPos, childColor), // -++
             BlockTreeNodeMulti(minPos, maxPos, childColor)  // +++
         )
+        fun findCorrespondingNode(block: Vec3iConst) = children.first { it.canContain(block) }
     }
 }
