@@ -1,7 +1,7 @@
 package com.ciarandg.soundbounds.client.regions.blocktree
 
 class BlockTree : MutableSet<Vec3iConst> {
-    private var rootNode: BlockTreeNode? = null
+    private var rootNode: BlockTreeNodeMulti? = null
 
     override val size: Int
         get() = rootNode?.blockCount() ?: 0
@@ -9,13 +9,13 @@ class BlockTree : MutableSet<Vec3iConst> {
     override fun add(element: Vec3iConst): Boolean =
         when (val root = rootNode) {
             null -> {
-                rootNode = BlockTreeNodeBlack(element)
+                rootNode = BlockTreeNodeMulti(element) // single black node
                 true
             }
             else -> {
                 if (root.canContain(element)) root.add(element)
                 else {
-                    rootNode = BlockTreeNodeGrey(root, BlockTreeNodeBlack(element))
+                    rootNode = BlockTreeNodeMulti(root, element) // grey node encapsulating old root and element
                     true
                 }
             }
@@ -35,7 +35,11 @@ class BlockTree : MutableSet<Vec3iConst> {
     }
 
     override fun iterator(): MutableIterator<Vec3iConst> = when (val root = rootNode) {
-        null -> BlockTreeNodeWhite.iterator()
+        null -> object : MutableIterator<Vec3iConst> {
+            override fun hasNext() = false
+            override fun next() = throw IllegalStateException("Can't get next item for empty tree")
+            override fun remove() = throw java.lang.IllegalStateException("Can't remove item from empty tree")
+        }
         else -> root.iterator()
     }
 

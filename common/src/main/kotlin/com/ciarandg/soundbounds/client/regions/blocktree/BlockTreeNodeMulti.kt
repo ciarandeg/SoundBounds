@@ -11,7 +11,19 @@ internal class BlockTreeNodeMulti private constructor (
 ) : BlockTreeNode {
     private var greyData = GreyData(minPos, maxPos, Color.WHITE) // should only be used when node is grey
 
-    constructor(minPos: Vec3iConst, maxPos: Vec3iConst) : this(minPos, maxPos, Color.WHITE)
+    // constructor(minPos: Vec3iConst, maxPos: Vec3iConst) : this(minPos, maxPos, Color.WHITE)
+    constructor(block: Vec3iConst) : this(block, block, Color.BLACK)
+    constructor(node: BlockTreeNodeMulti, outsider: Vec3iConst) : this(
+        Vec3iConst(min(node.minPos.x, outsider.x), min(node.minPos.y, outsider.y), min(node.minPos.z, outsider.z)),
+        Vec3iConst(max(node.maxPos.x, outsider.x), max(node.maxPos.y, outsider.y), max(node.maxPos.z, outsider.z)),
+        Color.GREY
+    ) {
+        val itr = node.iterator()
+        while (itr.hasNext()) {
+            add(itr.next())
+        }
+        add(outsider)
+    }
 
     override fun blockCount(): Int = when (color) {
         Color.WHITE -> 0
