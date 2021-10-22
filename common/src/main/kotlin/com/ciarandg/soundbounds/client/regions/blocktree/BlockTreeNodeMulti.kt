@@ -1,5 +1,7 @@
 package com.ciarandg.soundbounds.client.regions.blocktree
 
+import java.lang.IllegalStateException
+
 internal class BlockTreeNodeMulti private constructor (
     private val minPos: Vec3iConst,
     private val maxPos: Vec3iConst,
@@ -68,10 +70,7 @@ internal class BlockTreeNodeMulti private constructor (
     }
 
     override fun iterator(): MutableIterator<Vec3iConst> = when (color) {
-        Color.WHITE -> {
-            // useless iterator
-            TODO()
-        }
+        Color.WHITE -> whiteIterator
         Color.BLACK -> {
             // iterate through volume
             TODO()
@@ -113,5 +112,13 @@ internal class BlockTreeNodeMulti private constructor (
             BlockTreeNodeMulti(minPos, maxPos, childColor)  // +++
         )
         fun findCorrespondingNode(block: Vec3iConst) = children.first { it.canContain(block) }
+    }
+
+    companion object {
+        private val whiteIterator = object : MutableIterator<Vec3iConst> {
+            override fun hasNext() = false
+            override fun next() = throw IllegalStateException("White node iterator never has a next value")
+            override fun remove() = throw IllegalStateException("White node iterator has no values to remove")
+        }
     }
 }
