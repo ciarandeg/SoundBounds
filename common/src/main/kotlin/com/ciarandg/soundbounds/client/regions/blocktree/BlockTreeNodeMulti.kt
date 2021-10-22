@@ -71,9 +71,38 @@ internal class BlockTreeNodeMulti private constructor (
 
     override fun iterator(): MutableIterator<Vec3iConst> = when (color) {
         Color.WHITE -> whiteIterator
-        Color.BLACK -> {
-            // iterate through volume
-            TODO()
+        Color.BLACK -> object : MutableIterator<Vec3iConst> {
+            var current: Vec3iConst? = null
+            val totalBlocks = blockCount()
+            var index = 0
+
+            val width = maxPos.x - minPos.x + 1
+            val height = maxPos.y - minPos.y + 1
+
+            override fun hasNext() = index < totalBlocks
+
+            override fun next(): Vec3iConst {
+                if (!hasNext()) throw IllegalStateException("Can't get next when hasNext is false")
+                val next = indexToPos(index)
+                index++
+                current = next
+                return current ?: throw ConcurrentModificationException()
+            }
+
+            override fun remove() {
+                current?.let { remove(it) }
+                    ?: throw IllegalStateException("Attempted to remove a value that doesn't exist")
+                current = null
+            }
+
+            private fun indexToPos(i: Int): Vec3iConst {
+                // Stolen from here because I'm lazy: https://stackoverflow.com/a/34363187
+                val z = i / (width * height)
+                val j = i - (z * width * height)
+                val y = j / width
+                val x = j % width
+                return Vec3iConst(minPos.x + x, minPos.y + y, minPos.z + z)
+            }
         }
         Color.GREY -> {
             // iterate through children's iterators
