@@ -1,6 +1,8 @@
 package com.ciarandg.soundbounds.client.regions.blocktree
 
 import java.lang.IllegalStateException
+import kotlin.math.max
+import kotlin.math.min
 
 internal class BlockTreeNodeMulti private constructor (
     private val minPos: Vec3iConst,
@@ -144,15 +146,29 @@ internal class BlockTreeNodeMulti private constructor (
     enum class Color { WHITE, BLACK, GREY }
 
     class GreyData(minPos: Vec3iConst, maxPos: Vec3iConst, childColor: Color = Color.WHITE) {
+        private val midX = (maxPos.x - minPos.x) / 2
+        private val midY = (maxPos.x - minPos.x) / 2
+        private val midZ = (maxPos.x - minPos.x) / 2
+
+        private val middle = Vec3iConst(midX, midY, midZ)
+
+        private fun genNode(corner1: Vec3iConst, corner2: Vec3iConst, childColor: Color) : BlockTreeNodeMulti {
+            val cornerMin = Vec3iConst(min(corner1.x, corner2.x), min(corner1.y, corner2.y), min(corner1.z, corner2.z))
+            val cornerMax = Vec3iConst(max(corner1.x, corner2.x), min(corner1.y, corner2.y), min(corner1.z, corner2.z))
+            return BlockTreeNodeMulti(cornerMin, cornerMax, childColor)
+        }
+
+        // since we're dealing with discrete blocks, the area must be split with a bias toward one particular corner
+        // otherwise, there would be overlaps or gaps between our children's areas
         val children = listOf(
-            BlockTreeNodeMulti(minPos, maxPos, childColor), // ---
-            BlockTreeNodeMulti(minPos, maxPos, childColor), // +--
-            BlockTreeNodeMulti(minPos, maxPos, childColor), // -+-
-            BlockTreeNodeMulti(minPos, maxPos, childColor), // ++-
-            BlockTreeNodeMulti(minPos, maxPos, childColor), // --+
-            BlockTreeNodeMulti(minPos, maxPos, childColor), // +-+
-            BlockTreeNodeMulti(minPos, maxPos, childColor), // -++
-            BlockTreeNodeMulti(minPos, maxPos, childColor)  // +++
+            genNode(Vec3iConst(minPos.x, minPos.y, minPos.z), middle, childColor), // ---
+            genNode(Vec3iConst(maxPos.x, minPos.y, minPos.z), Vec3iConst(middle.x + 1, middle.y, middle.z), childColor), // +--
+            genNode(Vec3iConst(minPos.x, maxPos.y, minPos.z), Vec3iConst(middle.x, middle.y + 1, middle.z), childColor), // -+-
+            genNode(Vec3iConst(maxPos.x, maxPos.y, minPos.z), Vec3iConst(middle.x + 1, middle.y + 1, middle.z), childColor), // ++-
+            genNode(Vec3iConst(minPos.x, minPos.y, maxPos.z), Vec3iConst(middle.x, middle.y, middle.z + 1), childColor), // --+
+            genNode(Vec3iConst(maxPos.x, minPos.y, maxPos.z), Vec3iConst(middle.x + 1, middle.y, middle.z + 1), childColor), // +-+
+            genNode(Vec3iConst(minPos.x, maxPos.y, maxPos.z), Vec3iConst(middle.x, middle.y + 1, middle.z + 1), childColor), // -++
+            genNode(Vec3iConst(maxPos.x, maxPos.y, maxPos.z), Vec3iConst(middle.x + 1, middle.y + 1, middle.z + 1), childColor)  // +++
         )
         fun findCorrespondingNode(block: Vec3iConst) = children.first { it.canContain(block) }
     }
