@@ -104,9 +104,23 @@ internal class BlockTreeNodeMulti private constructor (
                 return Vec3iConst(minPos.x + x, minPos.y + y, minPos.z + z)
             }
         }
-        Color.GREY -> {
-            // iterate through children's iterators
-            TODO()
+        Color.GREY -> object : MutableIterator<Vec3iConst> {
+            val children = greyData.children.map { it.iterator() }
+            var current: Vec3iConst? = null
+
+            override fun hasNext() = children.any { it.hasNext() }
+
+            override fun next(): Vec3iConst {
+                val result = children.first { it.hasNext() }.next()
+                current = result
+                return result
+            }
+
+            override fun remove() {
+                current?.let { remove(it) }
+                    ?: throw IllegalStateException("Attempted to remove a value that doesn't exist")
+                current = null
+            }
         }
     }
 
