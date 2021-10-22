@@ -1,20 +1,21 @@
 package com.ciarandg.soundbounds.client.regions.blocktree
 
+import net.minecraft.util.math.BlockPos
 import java.lang.IllegalStateException
 import kotlin.math.max
 import kotlin.math.min
 
 internal class BlockTreeNodeMulti private constructor (
-    private val minPos: Vec3iConst,
-    private val maxPos: Vec3iConst,
+    private val minPos: BlockPos,
+    private val maxPos: BlockPos,
     private var color: Color
 ) : BlockTreeNode {
     private var greyData = GreyData(minPos, maxPos, Color.WHITE) // should only be used when node is grey
 
-    constructor(block: Vec3iConst) : this(block, block, Color.BLACK)
-    constructor(node: BlockTreeNodeMulti, outsider: Vec3iConst) : this(
-        Vec3iConst(min(node.minPos.x, outsider.x), min(node.minPos.y, outsider.y), min(node.minPos.z, outsider.z)),
-        Vec3iConst(max(node.maxPos.x, outsider.x), max(node.maxPos.y, outsider.y), max(node.maxPos.z, outsider.z)),
+    constructor(block: BlockPos) : this(block, block, Color.BLACK)
+    constructor(node: BlockTreeNodeMulti, outsider: BlockPos) : this(
+        BlockPos(min(node.minPos.x, outsider.x), min(node.minPos.y, outsider.y), min(node.minPos.z, outsider.z)),
+        BlockPos(max(node.maxPos.x, outsider.x), max(node.maxPos.y, outsider.y), max(node.maxPos.z, outsider.z)),
         Color.GREY
     ) {
         val itr = node.iterator()
@@ -32,17 +33,17 @@ internal class BlockTreeNodeMulti private constructor (
         Color.GREY -> greyData.children.sumOf { it.blockCount() }
     }
 
-    override fun contains(element: Vec3iConst): Boolean = when (color) {
+    override fun contains(element: BlockPos): Boolean = when (color) {
         Color.WHITE -> false
         Color.BLACK -> canContain(element)
         Color.GREY -> greyData.children.any { it.contains(element) }
     }
 
-    override fun canContain(block: Vec3iConst) =
+    override fun canContain(block: BlockPos) =
         block.x <= minPos.x && block.y <= minPos.y && block.z <= minPos.z &&
             block.x >= maxPos.x && block.y >= maxPos.y && block.z >= maxPos.z
 
-    override fun add(element: Vec3iConst): Boolean {
+    override fun add(element: BlockPos): Boolean {
         assert(canContain(element))
         return when (color) {
             Color.WHITE -> {
@@ -63,7 +64,7 @@ internal class BlockTreeNodeMulti private constructor (
         }
     }
 
-    override fun remove(element: Vec3iConst): Boolean = when (color) {
+    override fun remove(element: BlockPos): Boolean = when (color) {
         Color.WHITE -> false
         Color.BLACK -> {
             if (isAtomic()) {
@@ -81,10 +82,10 @@ internal class BlockTreeNodeMulti private constructor (
         }
     }
 
-    override fun iterator(): MutableIterator<Vec3iConst> = when (color) {
+    override fun iterator(): MutableIterator<BlockPos> = when (color) {
         Color.WHITE -> whiteIterator
-        Color.BLACK -> object : MutableIterator<Vec3iConst> {
-            var current: Vec3iConst? = null
+        Color.BLACK -> object : MutableIterator<BlockPos> {
+            var current: BlockPos? = null
             val totalBlocks = blockCount()
             var index = 0
 
@@ -93,7 +94,7 @@ internal class BlockTreeNodeMulti private constructor (
 
             override fun hasNext() = index < totalBlocks
 
-            override fun next(): Vec3iConst {
+            override fun next(): BlockPos {
                 if (!hasNext()) throw IllegalStateException("Can't get next when hasNext is false")
                 val next = indexToPos(index)
                 index++
@@ -107,22 +108,22 @@ internal class BlockTreeNodeMulti private constructor (
                 current = null
             }
 
-            private fun indexToPos(i: Int): Vec3iConst {
+            private fun indexToPos(i: Int): BlockPos {
                 // Stolen from here because I'm lazy: https://stackoverflow.com/a/34363187
                 val z = i / (width * height)
                 val j = i - (z * width * height)
                 val y = j / width
                 val x = j % width
-                return Vec3iConst(minPos.x + x, minPos.y + y, minPos.z + z)
+                return BlockPos(minPos.x + x, minPos.y + y, minPos.z + z)
             }
         }
-        Color.GREY -> object : MutableIterator<Vec3iConst> {
+        Color.GREY -> object : MutableIterator<BlockPos> {
             val children = greyData.children.map { it.iterator() }
-            var current: Vec3iConst? = null
+            var current: BlockPos? = null
 
             override fun hasNext() = children.any { it.hasNext() }
 
-            override fun next(): Vec3iConst {
+            override fun next(): BlockPos {
                 val result = children.first { it.hasNext() }.next()
                 current = result
                 return result
@@ -155,36 +156,36 @@ internal class BlockTreeNodeMulti private constructor (
 
     enum class Color { WHITE, BLACK, GREY }
 
-    class GreyData(minPos: Vec3iConst, maxPos: Vec3iConst, childColor: Color = Color.WHITE) {
+    class GreyData(minPos: BlockPos, maxPos: BlockPos, childColor: Color = Color.WHITE) {
         private val midX = (maxPos.x - minPos.x) / 2
         private val midY = (maxPos.x - minPos.x) / 2
         private val midZ = (maxPos.x - minPos.x) / 2
 
-        private val middle = Vec3iConst(midX, midY, midZ)
+        private val middle = BlockPos(midX, midY, midZ)
 
-        private fun genNode(corner1: Vec3iConst, corner2: Vec3iConst, childColor: Color): BlockTreeNodeMulti {
-            val cornerMin = Vec3iConst(min(corner1.x, corner2.x), min(corner1.y, corner2.y), min(corner1.z, corner2.z))
-            val cornerMax = Vec3iConst(max(corner1.x, corner2.x), min(corner1.y, corner2.y), min(corner1.z, corner2.z))
+        private fun genNode(corner1: BlockPos, corner2: BlockPos, childColor: Color): BlockTreeNodeMulti {
+            val cornerMin = BlockPos(min(corner1.x, corner2.x), min(corner1.y, corner2.y), min(corner1.z, corner2.z))
+            val cornerMax = BlockPos(max(corner1.x, corner2.x), min(corner1.y, corner2.y), min(corner1.z, corner2.z))
             return BlockTreeNodeMulti(cornerMin, cornerMax, childColor)
         }
 
         // since we're dealing with discrete blocks, the area must be split with a bias toward one particular corner
         // otherwise, there would be overlaps or gaps between our children's areas
         val children = listOf(
-            genNode(Vec3iConst(minPos.x, minPos.y, minPos.z), middle, childColor), // ---
-            genNode(Vec3iConst(maxPos.x, minPos.y, minPos.z), Vec3iConst(middle.x + 1, middle.y, middle.z), childColor), // +--
-            genNode(Vec3iConst(minPos.x, maxPos.y, minPos.z), Vec3iConst(middle.x, middle.y + 1, middle.z), childColor), // -+-
-            genNode(Vec3iConst(maxPos.x, maxPos.y, minPos.z), Vec3iConst(middle.x + 1, middle.y + 1, middle.z), childColor), // ++-
-            genNode(Vec3iConst(minPos.x, minPos.y, maxPos.z), Vec3iConst(middle.x, middle.y, middle.z + 1), childColor), // --+
-            genNode(Vec3iConst(maxPos.x, minPos.y, maxPos.z), Vec3iConst(middle.x + 1, middle.y, middle.z + 1), childColor), // +-+
-            genNode(Vec3iConst(minPos.x, maxPos.y, maxPos.z), Vec3iConst(middle.x, middle.y + 1, middle.z + 1), childColor), // -++
-            genNode(Vec3iConst(maxPos.x, maxPos.y, maxPos.z), Vec3iConst(middle.x + 1, middle.y + 1, middle.z + 1), childColor) // +++
+            genNode(BlockPos(minPos.x, minPos.y, minPos.z), middle, childColor), // ---
+            genNode(BlockPos(maxPos.x, minPos.y, minPos.z), BlockPos(middle.x + 1, middle.y, middle.z), childColor), // +--
+            genNode(BlockPos(minPos.x, maxPos.y, minPos.z), BlockPos(middle.x, middle.y + 1, middle.z), childColor), // -+-
+            genNode(BlockPos(maxPos.x, maxPos.y, minPos.z), BlockPos(middle.x + 1, middle.y + 1, middle.z), childColor), // ++-
+            genNode(BlockPos(minPos.x, minPos.y, maxPos.z), BlockPos(middle.x, middle.y, middle.z + 1), childColor), // --+
+            genNode(BlockPos(maxPos.x, minPos.y, maxPos.z), BlockPos(middle.x + 1, middle.y, middle.z + 1), childColor), // +-+
+            genNode(BlockPos(minPos.x, maxPos.y, maxPos.z), BlockPos(middle.x, middle.y + 1, middle.z + 1), childColor), // -++
+            genNode(BlockPos(maxPos.x, maxPos.y, maxPos.z), BlockPos(middle.x + 1, middle.y + 1, middle.z + 1), childColor) // +++
         )
-        fun findCorrespondingNode(block: Vec3iConst) = children.first { it.canContain(block) }
+        fun findCorrespondingNode(block: BlockPos) = children.first { it.canContain(block) }
     }
 
     companion object {
-        private val whiteIterator = object : MutableIterator<Vec3iConst> {
+        private val whiteIterator = object : MutableIterator<BlockPos> {
             override fun hasNext() = false
             override fun next() = throw IllegalStateException("White node iterator never has a next value")
             override fun remove() = throw IllegalStateException("White node iterator has no values to remove")

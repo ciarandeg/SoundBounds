@@ -1,12 +1,14 @@
 package com.ciarandg.soundbounds.client.regions.blocktree
 
-class BlockTree : MutableSet<Vec3iConst> {
+import net.minecraft.util.math.BlockPos
+
+class BlockTree : MutableSet<BlockPos> {
     private var rootNode: BlockTreeNodeMulti? = null
 
     override val size: Int
         get() = rootNode?.blockCount() ?: 0
 
-    override fun add(element: Vec3iConst): Boolean =
+    override fun add(element: BlockPos): Boolean =
         when (val root = rootNode) {
             null -> {
                 rootNode = BlockTreeNodeMulti(element) // single black node
@@ -21,7 +23,7 @@ class BlockTree : MutableSet<Vec3iConst> {
             }
         }
 
-    override fun addAll(elements: Collection<Vec3iConst>): Boolean {
+    override fun addAll(elements: Collection<BlockPos>): Boolean {
         var hasNewElement = false
         elements.forEach {
             val isNew = add(it)
@@ -34,8 +36,8 @@ class BlockTree : MutableSet<Vec3iConst> {
         rootNode = null
     }
 
-    override fun iterator(): MutableIterator<Vec3iConst> = when (val root = rootNode) {
-        null -> object : MutableIterator<Vec3iConst> {
+    override fun iterator(): MutableIterator<BlockPos> = when (val root = rootNode) {
+        null -> object : MutableIterator<BlockPos> {
             override fun hasNext() = false
             override fun next() = throw IllegalStateException("Can't get next item for empty tree")
             override fun remove() = throw java.lang.IllegalStateException("Can't remove item from empty tree")
@@ -43,15 +45,15 @@ class BlockTree : MutableSet<Vec3iConst> {
         else -> root.iterator()
     }
 
-    override fun remove(element: Vec3iConst): Boolean =
+    override fun remove(element: BlockPos): Boolean =
         when (val root = rootNode) {
             null -> false
             else -> if (root.canContain(element)) root.remove(element) else false
         }
 
-    override fun removeAll(elements: Collection<Vec3iConst>) = elements.any { remove(it) }
+    override fun removeAll(elements: Collection<BlockPos>) = elements.any { remove(it) }
 
-    override fun retainAll(elements: Collection<Vec3iConst>): Boolean {
+    override fun retainAll(elements: Collection<BlockPos>): Boolean {
         val it = iterator()
         var elementWasRemoved = false
         while (it.hasNext()) {
@@ -63,9 +65,9 @@ class BlockTree : MutableSet<Vec3iConst> {
         return elementWasRemoved
     }
 
-    override fun contains(element: Vec3iConst) = rootNode?.contains(element) ?: false
+    override fun contains(element: BlockPos) = rootNode?.contains(element) ?: false
 
-    override fun containsAll(elements: Collection<Vec3iConst>) = elements.all { contains(it) }
+    override fun containsAll(elements: Collection<BlockPos>) = elements.all { contains(it) }
 
     override fun isEmpty() = rootNode == null
 }
