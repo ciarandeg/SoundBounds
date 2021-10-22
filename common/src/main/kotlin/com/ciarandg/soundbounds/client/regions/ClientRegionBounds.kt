@@ -1,5 +1,6 @@
 package com.ciarandg.soundbounds.client.regions
 
+import com.ciarandg.soundbounds.client.regions.blocktree.BlockTree
 import com.ciarandg.soundbounds.client.render.RenderUtils.Companion.Z_INCREMENT
 import com.ciarandg.soundbounds.client.render.toBox
 import net.minecraft.client.util.math.Vector3f
@@ -8,7 +9,7 @@ import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3i
 import java.lang.IllegalStateException
 
-class ClientRegionBounds(var blockSet: Set<BlockPos>) {
+class ClientRegionBounds(var blockSet: BlockTree) {
     // The wireframes and face outline operate on the same principle: within a given selection,
     // any face/edge that ought to be shown as part of an outline will be unique to the block that
     // contains it.

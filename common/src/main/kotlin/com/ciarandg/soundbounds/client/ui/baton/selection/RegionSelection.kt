@@ -1,33 +1,34 @@
 package com.ciarandg.soundbounds.client.ui.baton.selection
 
 import com.ciarandg.soundbounds.client.regions.ClientRegionBounds
+import com.ciarandg.soundbounds.client.regions.blocktree.BlockTree
 import com.ciarandg.soundbounds.client.render.toBox
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3i
 
-class RegionSelection(bounds: ClientRegionBounds = ClientRegionBounds(setOf())) {
+class RegionSelection(bounds: ClientRegionBounds = ClientRegionBounds(BlockTree())) {
     var bounds = bounds
         private set
 
     fun reset() { bounds = emptyBounds() }
     fun add(bounds: ClientRegionBounds) {
         this.bounds = ClientRegionBounds(
-            this.bounds.blockSet.plus(bounds.blockSet),
+            BlockTree.of(this.bounds.blockSet.plus(bounds.blockSet)),
         )
     }
     fun subtract(bounds: ClientRegionBounds) {
         this.bounds = ClientRegionBounds(
-            this.bounds.blockSet.minus(bounds.blockSet),
+            BlockTree.of(this.bounds.blockSet.minus(bounds.blockSet)),
         )
     }
 
     companion object {
-        private fun emptyBounds() = ClientRegionBounds(setOf())
+        private fun emptyBounds() = ClientRegionBounds(BlockTree())
 
         fun fromBoxCorners(corner1: BlockPos?, corner2: BlockPos?): RegionSelection {
             fun getBounds(box: Box): ClientRegionBounds =
-                ClientRegionBounds(blockifyBox(box))
+                ClientRegionBounds(BlockTree.of(blockifyBox(box)))
 
             return RegionSelection(
                 when (corner1) {

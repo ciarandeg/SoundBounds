@@ -1,9 +1,10 @@
 package com.ciarandg.soundbounds.client.ui.baton.selection
 
 import com.ciarandg.soundbounds.client.regions.ClientRegionBounds
+import com.ciarandg.soundbounds.client.regions.blocktree.BlockTree
 import net.minecraft.util.math.BlockPos
 
 class ClientPositionMarker(position: BlockPos) {
-    val bounds = ClientRegionBounds(setOf(position))
+    val bounds = ClientRegionBounds(BlockTree.of(listOf(position)))
     fun getPos() = bounds.blockSet.first()
 }
