@@ -30,13 +30,13 @@ internal class BlockTreeNodeMulti private constructor (
         Color.BLACK -> {
             (maxPos.x - minPos.x + 1) * (maxPos.y - minPos.y + 1) * (maxPos.z - minPos.z + 1)
         }
-        Color.GREY -> greyData.children.sumOf { it.blockCount() }
+        Color.GREY -> greyData.children.value.sumOf { it.blockCount() }
     }
 
     override fun contains(element: BlockPos): Boolean = when (color) {
         Color.WHITE -> false
         Color.BLACK -> canContain(element)
-        Color.GREY -> greyData.children.any { it.contains(element) }
+        Color.GREY -> greyData.children.value.any { it.contains(element) }
     }
 
     override fun canContain(block: BlockPos) =
@@ -58,7 +58,7 @@ internal class BlockTreeNodeMulti private constructor (
             Color.BLACK -> false
             Color.GREY -> {
                 val result = greyData.findCorrespondingNode(element).add(element)
-                if (greyData.children.all { it.color == Color.BLACK }) becomeBlack()
+                if (greyData.children.value.all { it.color == Color.BLACK }) becomeBlack()
                 result
             }
         }
@@ -77,7 +77,7 @@ internal class BlockTreeNodeMulti private constructor (
         }
         Color.GREY -> {
             val result = greyData.findCorrespondingNode(element).remove(element)
-            if (greyData.children.all { it.color == Color.WHITE }) becomeWhite()
+            if (greyData.children.value.all { it.color == Color.WHITE }) becomeWhite()
             result
         }
     }
@@ -118,7 +118,7 @@ internal class BlockTreeNodeMulti private constructor (
             }
         }
         Color.GREY -> object : MutableIterator<BlockPos> {
-            val children = greyData.children.map { it.iterator() }
+            val children = greyData.children.value.map { it.iterator() }
             var current: BlockPos? = null
 
             override fun hasNext() = children.any { it.hasNext() }
@@ -171,17 +171,19 @@ internal class BlockTreeNodeMulti private constructor (
 
         // since we're dealing with discrete blocks, the area must be split with a bias toward one particular corner
         // otherwise, there would be overlaps or gaps between our children's areas
-        val children = listOf(
-            genNode(BlockPos(minPos.x, minPos.y, minPos.z), middle, childColor), // ---
-            genNode(BlockPos(maxPos.x, minPos.y, minPos.z), BlockPos(middle.x + 1, middle.y, middle.z), childColor), // +--
-            genNode(BlockPos(minPos.x, maxPos.y, minPos.z), BlockPos(middle.x, middle.y + 1, middle.z), childColor), // -+-
-            genNode(BlockPos(maxPos.x, maxPos.y, minPos.z), BlockPos(middle.x + 1, middle.y + 1, middle.z), childColor), // ++-
-            genNode(BlockPos(minPos.x, minPos.y, maxPos.z), BlockPos(middle.x, middle.y, middle.z + 1), childColor), // --+
-            genNode(BlockPos(maxPos.x, minPos.y, maxPos.z), BlockPos(middle.x + 1, middle.y, middle.z + 1), childColor), // +-+
-            genNode(BlockPos(minPos.x, maxPos.y, maxPos.z), BlockPos(middle.x, middle.y + 1, middle.z + 1), childColor), // -++
-            genNode(BlockPos(maxPos.x, maxPos.y, maxPos.z), BlockPos(middle.x + 1, middle.y + 1, middle.z + 1), childColor) // +++
-        )
-        fun findCorrespondingNode(block: BlockPos) = children.first { it.canContain(block) }
+        val children = lazy {
+            listOf(
+                genNode(BlockPos(minPos.x, minPos.y, minPos.z), middle, childColor), // ---
+                genNode(BlockPos(maxPos.x, minPos.y, minPos.z), BlockPos(middle.x + 1, middle.y, middle.z), childColor), // +--
+                genNode(BlockPos(minPos.x, maxPos.y, minPos.z), BlockPos(middle.x, middle.y + 1, middle.z), childColor), // -+-
+                genNode(BlockPos(maxPos.x, maxPos.y, minPos.z), BlockPos(middle.x + 1, middle.y + 1, middle.z), childColor), // ++-
+                genNode(BlockPos(minPos.x, minPos.y, maxPos.z), BlockPos(middle.x, middle.y, middle.z + 1), childColor), // --+
+                genNode(BlockPos(maxPos.x, minPos.y, maxPos.z), BlockPos(middle.x + 1, middle.y, middle.z + 1), childColor), // +-+
+                genNode(BlockPos(minPos.x, maxPos.y, maxPos.z), BlockPos(middle.x, middle.y + 1, middle.z + 1), childColor), // -++
+                genNode(BlockPos(maxPos.x, maxPos.y, maxPos.z), BlockPos(middle.x + 1, middle.y + 1, middle.z + 1), childColor) // +++
+            )
+        }
+        fun findCorrespondingNode(block: BlockPos) = children.value.first { it.canContain(block) }
     }
 
     companion object {
