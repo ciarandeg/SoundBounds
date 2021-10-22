@@ -8,17 +8,10 @@ import com.ciarandg.soundbounds.client.event.handlers.EditingSessionClientEventH
 import com.ciarandg.soundbounds.client.event.handlers.MetadataClientEventHandler
 import com.ciarandg.soundbounds.client.event.handlers.OptionsScreenClientEventHandler
 import com.ciarandg.soundbounds.client.event.handlers.RegionClientEventHandler
-import com.ciarandg.soundbounds.client.metadata.ClientMeta
 import com.ciarandg.soundbounds.client.options.SBClientOptions
-import com.ciarandg.soundbounds.client.options.SBOptionsScreen
-import com.ciarandg.soundbounds.common.network.MetaHashCheckMessage
-import com.ciarandg.soundbounds.common.network.MetadataSyncMessage
 import com.ciarandg.soundbounds.common.network.NowPlayingMessage
-import me.shedaniel.architectury.event.events.GuiEvent
 import me.shedaniel.architectury.event.events.TickEvent
 import me.shedaniel.architectury.networking.NetworkManager
-import me.shedaniel.architectury.registry.KeyBindings
-import net.minecraft.client.MinecraftClient
 
 object ClientEvents {
     fun register() {

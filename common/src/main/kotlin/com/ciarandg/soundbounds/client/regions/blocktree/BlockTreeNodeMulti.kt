@@ -11,7 +11,6 @@ internal class BlockTreeNodeMulti private constructor (
 ) : BlockTreeNode {
     private var greyData = GreyData(minPos, maxPos, Color.WHITE) // should only be used when node is grey
 
-    // constructor(minPos: Vec3iConst, maxPos: Vec3iConst) : this(minPos, maxPos, Color.WHITE)
     constructor(block: Vec3iConst) : this(block, block, Color.BLACK)
     constructor(node: BlockTreeNodeMulti, outsider: Vec3iConst) : this(
         Vec3iConst(min(node.minPos.x, outsider.x), min(node.minPos.y, outsider.y), min(node.minPos.z, outsider.z)),
@@ -50,8 +49,7 @@ internal class BlockTreeNodeMulti private constructor (
                 if (isAtomic()) {
                     becomeBlack()
                     true
-                }
-                else {
+                } else {
                     becomeGreyWhiteChildren()
                     add(element)
                 }
@@ -164,7 +162,7 @@ internal class BlockTreeNodeMulti private constructor (
 
         private val middle = Vec3iConst(midX, midY, midZ)
 
-        private fun genNode(corner1: Vec3iConst, corner2: Vec3iConst, childColor: Color) : BlockTreeNodeMulti {
+        private fun genNode(corner1: Vec3iConst, corner2: Vec3iConst, childColor: Color): BlockTreeNodeMulti {
             val cornerMin = Vec3iConst(min(corner1.x, corner2.x), min(corner1.y, corner2.y), min(corner1.z, corner2.z))
             val cornerMax = Vec3iConst(max(corner1.x, corner2.x), min(corner1.y, corner2.y), min(corner1.z, corner2.z))
             return BlockTreeNodeMulti(cornerMin, cornerMax, childColor)
@@ -180,7 +178,7 @@ internal class BlockTreeNodeMulti private constructor (
             genNode(Vec3iConst(minPos.x, minPos.y, maxPos.z), Vec3iConst(middle.x, middle.y, middle.z + 1), childColor), // --+
             genNode(Vec3iConst(maxPos.x, minPos.y, maxPos.z), Vec3iConst(middle.x + 1, middle.y, middle.z + 1), childColor), // +-+
             genNode(Vec3iConst(minPos.x, maxPos.y, maxPos.z), Vec3iConst(middle.x, middle.y + 1, middle.z + 1), childColor), // -++
-            genNode(Vec3iConst(maxPos.x, maxPos.y, maxPos.z), Vec3iConst(middle.x + 1, middle.y + 1, middle.z + 1), childColor)  // +++
+            genNode(Vec3iConst(maxPos.x, maxPos.y, maxPos.z), Vec3iConst(middle.x + 1, middle.y + 1, middle.z + 1), childColor) // +++
         )
         fun findCorrespondingNode(block: Vec3iConst) = children.first { it.canContain(block) }
     }
