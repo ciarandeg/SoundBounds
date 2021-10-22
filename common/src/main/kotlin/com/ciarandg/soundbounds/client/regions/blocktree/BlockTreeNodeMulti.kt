@@ -1,13 +1,13 @@
 package com.ciarandg.soundbounds.client.regions.blocktree
 
-import java.security.InvalidParameterException
-
-internal class BlockTreeNodeMulti (
+internal class BlockTreeNodeMulti private constructor (
     private val minPos: Vec3iConst,
-    private val maxPos: Vec3iConst
+    private val maxPos: Vec3iConst,
+    private var color: Color
 ) : BlockTreeNode {
-    private var color = Color.WHITE
-    private var greyData = GreyData()
+    private var greyData = GreyData(minPos, maxPos, Color.WHITE) // should only be used when node is grey
+
+    constructor(minPos: Vec3iConst, maxPos: Vec3iConst) : this(minPos, maxPos, Color.WHITE)
 
     override fun blockCount() = when (color) {
         Color.WHITE -> 0
@@ -31,9 +31,14 @@ internal class BlockTreeNodeMulti (
         assert(canContain(element))
         return when (color) {
             Color.WHITE -> {
-                // if node is already minimum size, become black
-                // else become grey with all white children, add to appropriate child node
-                TODO()
+                if (isAtomic()) {
+                    becomeBlack()
+                    true
+                }
+                else {
+                    becomeGreyWhiteChildren()
+                    add(element)
+                }
             }
             Color.BLACK -> false
             Color.GREY -> {
@@ -44,12 +49,16 @@ internal class BlockTreeNodeMulti (
         }
     }
 
-    override fun remove(element: Vec3iConst) = when (color) {
+    override fun remove(element: Vec3iConst): Boolean = when (color) {
         Color.WHITE -> false
         Color.BLACK -> {
-            // if node is already minimum size, become white
-            // else become grey with all black children, remove from appropriate child node
-            TODO()
+            if (isAtomic()) {
+                becomeWhite()
+                true
+            } else {
+                becomeGreyBlackChildren()
+                remove(element)
+            }
         }
         Color.GREY -> {
             // remove from appropriate child node
@@ -73,18 +82,35 @@ internal class BlockTreeNodeMulti (
         }
     }
 
+    private fun isAtomic() = minPos == maxPos
+
+    private fun becomeWhite() {
+        color = Color.WHITE
+    }
+    private fun becomeBlack() {
+        color = Color.BLACK
+    }
+    private fun becomeGreyWhiteChildren() {
+        color = Color.GREY
+        greyData = GreyData(minPos, maxPos, Color.WHITE)
+    }
+    private fun becomeGreyBlackChildren() {
+        color = Color.GREY
+        greyData = GreyData(minPos, maxPos, Color.BLACK)
+    }
+
     enum class Color { WHITE, BLACK, GREY }
 
-    class GreyData() {
+    class GreyData(minPos: Vec3iConst, maxPos: Vec3iConst, childColor: Color = Color.WHITE) {
         val children = listOf<BlockTreeNode>(
-            BlockTreeNodeWhite(), // ---
-            BlockTreeNodeWhite(), // +--
-            BlockTreeNodeWhite(), // -+-
-            BlockTreeNodeWhite(), // ++-
-            BlockTreeNodeWhite(), // --+
-            BlockTreeNodeWhite(), // +-+
-            BlockTreeNodeWhite(), // -++
-            BlockTreeNodeWhite()  // +++
+            BlockTreeNodeMulti(minPos, maxPos, childColor), // ---
+            BlockTreeNodeMulti(minPos, maxPos, childColor), // +--
+            BlockTreeNodeMulti(minPos, maxPos, childColor), // -+-
+            BlockTreeNodeMulti(minPos, maxPos, childColor), // ++-
+            BlockTreeNodeMulti(minPos, maxPos, childColor), // --+
+            BlockTreeNodeMulti(minPos, maxPos, childColor), // +-+
+            BlockTreeNodeMulti(minPos, maxPos, childColor), // -++
+            BlockTreeNodeMulti(minPos, maxPos, childColor)  // +++
         )
     }
 }
