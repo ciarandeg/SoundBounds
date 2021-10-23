@@ -1,5 +1,6 @@
 package com.ciarandg.soundbounds.client.regions.blocktree
 
+import com.ciarandg.soundbounds.SoundBounds
 import net.minecraft.util.math.BlockPos
 import java.lang.IllegalStateException
 import kotlin.math.max
@@ -18,6 +19,10 @@ internal class BlockTreeNodeMulti private constructor (
         BlockPos(max(node.maxPos.x, outsider.x), max(node.maxPos.y, outsider.y), max(node.maxPos.z, outsider.z)),
         Color.GREY
     ) {
+        SoundBounds.LOGGER.info("CONSTRUCTING SPLIT TREE")
+        SoundBounds.LOGGER.warn("Old node bounds: MIN ${node.minPos} MAX ${node.maxPos}")
+        SoundBounds.LOGGER.warn("Outsider: $outsider")
+        SoundBounds.LOGGER.warn("New bounds: MIN $minPos MAX $maxPos")
         val itr = node.iterator()
         while (itr.hasNext()) {
             add(itr.next())
@@ -40,11 +45,14 @@ internal class BlockTreeNodeMulti private constructor (
     }
 
     override fun canContain(block: BlockPos) =
-        block.x <= minPos.x && block.y <= minPos.y && block.z <= minPos.z &&
-            block.x >= maxPos.x && block.y >= maxPos.y && block.z >= maxPos.z
+        minPos.x <= block.x && minPos.y <= block.y && minPos.z <= block.z &&
+            maxPos.x >= block.x && maxPos.y >= block.y && maxPos.z >= block.z
 
     override fun add(element: BlockPos): Boolean {
         assert(canContain(element))
+        SoundBounds.LOGGER.info("ADDING ELEMENT $element")
+        SoundBounds.LOGGER.warn("CAN CONTAIN? ${canContain(element)}")
+        SoundBounds.LOGGER.warn("COLOR: $color")
         return when (color) {
             Color.WHITE -> {
                 if (isAtomic()) {
@@ -157,9 +165,9 @@ internal class BlockTreeNodeMulti private constructor (
     enum class Color { WHITE, BLACK, GREY }
 
     class GreyData(minPos: BlockPos, maxPos: BlockPos, childColor: Color = Color.WHITE) {
-        private val midX = (maxPos.x - minPos.x) / 2
-        private val midY = (maxPos.x - minPos.x) / 2
-        private val midZ = (maxPos.x - minPos.x) / 2
+        private val midX = (maxPos.x + minPos.x) / 2
+        private val midY = (maxPos.y + minPos.y) / 2
+        private val midZ = (maxPos.z + minPos.z) / 2
 
         private val middle = BlockPos(midX, midY, midZ)
 
@@ -169,10 +177,23 @@ internal class BlockTreeNodeMulti private constructor (
             return BlockTreeNodeMulti(cornerMin, cornerMax, childColor)
         }
 
+        private fun volume(minPos: BlockPos, maxPos: BlockPos) =
+            (maxPos.x - minPos.x) * (maxPos.y - minPos.y) * (maxPos.z - minPos.z)
+
         // since we're dealing with discrete blocks, the area must be split with a bias toward one particular corner
         // otherwise, there would be overlaps or gaps between our children's areas
         val children = lazy {
-            listOf(
+            if (volume(minPos, maxPos) <= 8) {
+                val everyBlock = ArrayList<BlockPos>()
+                for (x in minPos.x..maxPos.x)
+                    for (y in minPos.y..maxPos.y)
+                        for (z in minPos.z..maxPos.z) {
+                            val block = BlockPos(x, y, z)
+                            SoundBounds.LOGGER.info("ADDING ATOMIC: $block")
+                            everyBlock.add(block)
+                        }
+                everyBlock.map { genNode(it, it, childColor) }
+            } else listOf(
                 genNode(BlockPos(minPos.x, minPos.y, minPos.z), middle, childColor), // ---
                 genNode(BlockPos(maxPos.x, minPos.y, minPos.z), BlockPos(middle.x + 1, middle.y, middle.z), childColor), // +--
                 genNode(BlockPos(minPos.x, maxPos.y, minPos.z), BlockPos(middle.x, middle.y + 1, middle.z), childColor), // -+-
@@ -183,7 +204,7 @@ internal class BlockTreeNodeMulti private constructor (
                 genNode(BlockPos(maxPos.x, maxPos.y, maxPos.z), BlockPos(middle.x + 1, middle.y + 1, middle.z + 1), childColor) // +++
             )
         }
-        fun findCorrespondingNode(block: BlockPos) = children.value.first { it.canContain(block) }
+        fun findCorrespondingNode(block: BlockPos): BlockTreeNodeMulti = children.value.first { it.canContain(block) }
     }
 
     companion object {
