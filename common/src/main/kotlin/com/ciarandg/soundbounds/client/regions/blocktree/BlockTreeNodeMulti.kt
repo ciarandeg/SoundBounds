@@ -19,10 +19,6 @@ internal class BlockTreeNodeMulti private constructor (
         BlockPos(max(node.maxPos.x, outsider.x), max(node.maxPos.y, outsider.y), max(node.maxPos.z, outsider.z)),
         Color.GREY
     ) {
-        SoundBounds.LOGGER.info("CONSTRUCTING SPLIT TREE")
-        SoundBounds.LOGGER.warn("Old node bounds: MIN ${node.minPos} MAX ${node.maxPos}")
-        SoundBounds.LOGGER.warn("Outsider: $outsider")
-        SoundBounds.LOGGER.warn("New bounds: MIN $minPos MAX $maxPos")
         val itr = node.iterator()
         while (itr.hasNext()) {
             add(itr.next())
@@ -49,10 +45,6 @@ internal class BlockTreeNodeMulti private constructor (
             maxPos.x >= block.x && maxPos.y >= block.y && maxPos.z >= block.z
 
     override fun add(element: BlockPos): Boolean {
-        assert(canContain(element))
-        SoundBounds.LOGGER.info("ADDING ELEMENT $element")
-        SoundBounds.LOGGER.warn("CAN CONTAIN? ${canContain(element)}")
-        SoundBounds.LOGGER.warn("COLOR: $color")
         return when (color) {
             Color.WHITE -> {
                 if (isAtomic()) {
@@ -189,7 +181,6 @@ internal class BlockTreeNodeMulti private constructor (
                     for (y in minPos.y..maxPos.y)
                         for (z in minPos.z..maxPos.z) {
                             val block = BlockPos(x, y, z)
-                            SoundBounds.LOGGER.info("ADDING ATOMIC: $block")
                             everyBlock.add(block)
                         }
                 everyBlock.map { genNode(it, it, childColor) }
