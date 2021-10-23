@@ -69,7 +69,10 @@ class BlockTree : MutableSet<BlockPos> {
 
     override fun containsAll(elements: Collection<BlockPos>) = elements.all { contains(it) }
 
-    override fun isEmpty() = rootNode == null
+    override fun isEmpty() = when (val root = rootNode) {
+        null -> true
+        else -> root.blockCount() == 0
+    }
 
     companion object {
         fun of(elements: Collection<BlockPos>): BlockTree {

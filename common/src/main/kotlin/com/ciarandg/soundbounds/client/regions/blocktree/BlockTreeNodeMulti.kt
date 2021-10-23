@@ -1,6 +1,5 @@
 package com.ciarandg.soundbounds.client.regions.blocktree
 
-import com.ciarandg.soundbounds.SoundBounds
 import net.minecraft.util.math.BlockPos
 import java.lang.IllegalStateException
 import kotlin.math.max
@@ -165,17 +164,22 @@ internal class BlockTreeNodeMulti private constructor (
 
         private fun genNode(corner1: BlockPos, corner2: BlockPos, childColor: Color): BlockTreeNodeMulti {
             val cornerMin = BlockPos(min(corner1.x, corner2.x), min(corner1.y, corner2.y), min(corner1.z, corner2.z))
-            val cornerMax = BlockPos(max(corner1.x, corner2.x), min(corner1.y, corner2.y), min(corner1.z, corner2.z))
+            val cornerMax = BlockPos(max(corner1.x, corner2.x), max(corner1.y, corner2.y), max(corner1.z, corner2.z))
             return BlockTreeNodeMulti(cornerMin, cornerMax, childColor)
         }
 
-        private fun volume(minPos: BlockPos, maxPos: BlockPos) =
-            (maxPos.x - minPos.x) * (maxPos.y - minPos.y) * (maxPos.z - minPos.z)
+        private fun volume(minPos: BlockPos, maxPos: BlockPos): Long {
+            val width = maxPos.x - minPos.x
+            val height = maxPos.y - minPos.y
+            val depth = maxPos.z - minPos.z
+            return width.toLong() * height.toLong() * depth.toLong()
+        }
 
         // since we're dealing with discrete blocks, the area must be split with a bias toward one particular corner
         // otherwise, there would be overlaps or gaps between our children's areas
         val children = lazy {
-            if (volume(minPos, maxPos) <= 8) {
+            val volume = volume(minPos, maxPos)
+            if (volume <= 8) {
                 val everyBlock = ArrayList<BlockPos>()
                 for (x in minPos.x..maxPos.x)
                     for (y in minPos.y..maxPos.y)
@@ -184,16 +188,17 @@ internal class BlockTreeNodeMulti private constructor (
                             everyBlock.add(block)
                         }
                 everyBlock.map { genNode(it, it, childColor) }
-            } else listOf(
-                genNode(BlockPos(minPos.x, minPos.y, minPos.z), middle, childColor), // ---
-                genNode(BlockPos(maxPos.x, minPos.y, minPos.z), BlockPos(middle.x + 1, middle.y, middle.z), childColor), // +--
-                genNode(BlockPos(minPos.x, maxPos.y, minPos.z), BlockPos(middle.x, middle.y + 1, middle.z), childColor), // -+-
-                genNode(BlockPos(maxPos.x, maxPos.y, minPos.z), BlockPos(middle.x + 1, middle.y + 1, middle.z), childColor), // ++-
-                genNode(BlockPos(minPos.x, minPos.y, maxPos.z), BlockPos(middle.x, middle.y, middle.z + 1), childColor), // --+
-                genNode(BlockPos(maxPos.x, minPos.y, maxPos.z), BlockPos(middle.x + 1, middle.y, middle.z + 1), childColor), // +-+
-                genNode(BlockPos(minPos.x, maxPos.y, maxPos.z), BlockPos(middle.x, middle.y + 1, middle.z + 1), childColor), // -++
-                genNode(BlockPos(maxPos.x, maxPos.y, maxPos.z), BlockPos(middle.x + 1, middle.y + 1, middle.z + 1), childColor) // +++
-            )
+            } else {
+                val minMinMin = genNode(BlockPos(minPos.x, minPos.y, minPos.z), middle, childColor) // ---
+                val maxMinMin = genNode(BlockPos(maxPos.x, minPos.y, minPos.z), BlockPos(middle.x + 1, middle.y, middle.z), childColor) // +--
+                val minMaxMin = genNode(BlockPos(minPos.x, maxPos.y, minPos.z), BlockPos(middle.x, middle.y + 1, middle.z), childColor) // -+-
+                val maxMaxMin = genNode(BlockPos(maxPos.x, maxPos.y, minPos.z), BlockPos(middle.x + 1, middle.y + 1, middle.z), childColor) // ++-
+                val minMinMax = genNode(BlockPos(minPos.x, minPos.y, maxPos.z), BlockPos(middle.x, middle.y, middle.z + 1), childColor) // --+
+                val maxMinMax = genNode(BlockPos(maxPos.x, minPos.y, maxPos.z), BlockPos(middle.x + 1, middle.y, middle.z + 1), childColor) // +-+
+                val minMaxMax = genNode(BlockPos(minPos.x, maxPos.y, maxPos.z), BlockPos(middle.x, middle.y + 1, middle.z + 1), childColor) // -++
+                val maxMaxMax = genNode(BlockPos(maxPos.x, maxPos.y, maxPos.z), BlockPos(middle.x + 1, middle.y + 1, middle.z + 1), childColor) // +++
+                listOf(minMinMin, maxMinMin, minMaxMin, maxMaxMin, minMinMax, maxMinMax, minMaxMax, maxMaxMax)
+            }
         }
         fun findCorrespondingNode(block: BlockPos): BlockTreeNodeMulti = children.value.first { it.canContain(block) }
     }
