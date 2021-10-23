@@ -3,7 +3,7 @@ package com.ciarandg.soundbounds.client.regions.blocktree
 import net.minecraft.util.math.BlockPos
 
 class BlockTree : MutableSet<BlockPos> {
-    private var rootNode: BlockTreeNodeMulti? = null
+    private var rootNode: BlockTreeNode? = null
 
     override val size: Int
         get() = rootNode?.blockCount() ?: 0
@@ -11,13 +11,13 @@ class BlockTree : MutableSet<BlockPos> {
     override fun add(element: BlockPos): Boolean =
         when (val root = rootNode) {
             null -> {
-                rootNode = BlockTreeNodeMulti(element) // single black node
+                rootNode = BlockTreeNode(element) // single black node
                 true
             }
             else -> {
                 if (root.canContain(element)) root.add(element)
                 else {
-                    rootNode = BlockTreeNodeMulti(root, element) // grey node encapsulating old root and element
+                    rootNode = BlockTreeNode(root, element) // grey node encapsulating old root and element
                     true
                 }
             }

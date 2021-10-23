@@ -221,8 +221,12 @@ internal class BlockTreeTest {
         assertTrue(tree.isEmpty())
     }
 
-    private fun tripleBlockTest(testLogic: (
-        tree: BlockTree, pos1: () -> BlockPos, pos2: () -> BlockPos, pos3: () -> BlockPos
+    private fun tripleBlockTest(
+        testLogic: (
+            tree: BlockTree,
+            pos1: () -> BlockPos,
+            pos2: () -> BlockPos,
+            pos3: () -> BlockPos
         ) -> Unit
     ) {
         val tries = 1
