@@ -1,8 +1,8 @@
 package com.ciarandg.soundbounds.client.regions
 
-import com.ciarandg.soundbounds.client.regions.blocktree.BlockTree
 import com.ciarandg.soundbounds.client.render.RenderUtils.Companion.Z_INCREMENT
 import com.ciarandg.soundbounds.client.render.toBox
+import com.ciarandg.soundbounds.common.regions.blocktree.BlockTree
 import net.minecraft.client.util.math.Vector3f
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction

@@ -1,4 +1,4 @@
-package com.ciarandg.soundbounds.client.regions.blocktree
+package com.ciarandg.soundbounds.common.regions.blocktree
 
 import net.minecraft.util.math.BlockPos
 

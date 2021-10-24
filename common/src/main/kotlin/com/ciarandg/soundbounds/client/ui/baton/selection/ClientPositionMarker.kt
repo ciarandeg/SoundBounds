@@ -1,7 +1,7 @@
 package com.ciarandg.soundbounds.client.ui.baton.selection
 
 import com.ciarandg.soundbounds.client.regions.ClientRegionBounds
-import com.ciarandg.soundbounds.client.regions.blocktree.BlockTree
+import com.ciarandg.soundbounds.common.regions.blocktree.BlockTree
 import net.minecraft.util.math.BlockPos
 
 class ClientPositionMarker(position: BlockPos) {
