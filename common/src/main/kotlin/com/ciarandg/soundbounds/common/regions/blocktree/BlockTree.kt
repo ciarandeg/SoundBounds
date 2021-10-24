@@ -78,7 +78,7 @@ class BlockTree private constructor(
         else -> root.blockCount() == 0
     }
 
-    fun serialize() = gson.toJson(rootNode ?: JsonObject())
+    fun serialize(): String = gson.toJson(rootNode ?: JsonObject())
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
