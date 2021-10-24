@@ -175,30 +175,34 @@ internal class BlockTreeNode private constructor (
             return width.toLong() * height.toLong() * depth.toLong()
         }
 
+        private fun partitionIntoAtomic(minPos: BlockPos, maxPos: BlockPos, childColor: Color): List<BlockTreeNode> {
+            val everyBlock = ArrayList<BlockPos>()
+            for (x in minPos.x..maxPos.x)
+                for (y in minPos.y..maxPos.y)
+                    for (z in minPos.z..maxPos.z) {
+                        val block = BlockPos(x, y, z)
+                        everyBlock.add(block)
+                    }
+            return everyBlock.map { genNode(it, it, childColor) }
+        }
+
         // since we're dealing with discrete blocks, the area must be split with a bias toward one particular corner
         // otherwise, there would be overlaps or gaps between our children's areas
+        private fun partitionIntoNonAtomic(minPos: BlockPos, maxPos: BlockPos, childColor: Color): List<BlockTreeNode> {
+            val westDownNorth = genNode(BlockPos(minPos.x, minPos.y, minPos.z), middle, childColor)
+            val eastDownNorth = genNode(BlockPos(maxPos.x, minPos.y, minPos.z), middle.east(), childColor)
+            val westUpNorth = genNode(BlockPos(minPos.x, maxPos.y, minPos.z), middle.up(), childColor)
+            val eastUpNorth = genNode(BlockPos(maxPos.x, maxPos.y, minPos.z), middle.east().up(), childColor)
+            val westDownSouth = genNode(BlockPos(minPos.x, minPos.y, maxPos.z), middle.south(), childColor)
+            val eastDownSouth = genNode(BlockPos(maxPos.x, minPos.y, maxPos.z), middle.east().south(), childColor)
+            val westUpSouth = genNode(BlockPos(minPos.x, maxPos.y, maxPos.z), middle.up().south(), childColor)
+            val eastUpSouth = genNode(BlockPos(maxPos.x, maxPos.y, maxPos.z), middle.east().up().south(), childColor)
+            return listOf(westDownNorth, eastDownNorth, westUpNorth, eastUpNorth, westDownSouth, eastDownSouth, westUpSouth, eastUpSouth)
+        }
+
         val children = lazy {
-            val volume = volume(minPos, maxPos)
-            if (volume <= 8) {
-                val everyBlock = ArrayList<BlockPos>()
-                for (x in minPos.x..maxPos.x)
-                    for (y in minPos.y..maxPos.y)
-                        for (z in minPos.z..maxPos.z) {
-                            val block = BlockPos(x, y, z)
-                            everyBlock.add(block)
-                        }
-                everyBlock.map { genNode(it, it, childColor) }
-            } else {
-                val minMinMin = genNode(BlockPos(minPos.x, minPos.y, minPos.z), middle, childColor) // ---
-                val maxMinMin = genNode(BlockPos(maxPos.x, minPos.y, minPos.z), BlockPos(middle.x + 1, middle.y, middle.z), childColor) // +--
-                val minMaxMin = genNode(BlockPos(minPos.x, maxPos.y, minPos.z), BlockPos(middle.x, middle.y + 1, middle.z), childColor) // -+-
-                val maxMaxMin = genNode(BlockPos(maxPos.x, maxPos.y, minPos.z), BlockPos(middle.x + 1, middle.y + 1, middle.z), childColor) // ++-
-                val minMinMax = genNode(BlockPos(minPos.x, minPos.y, maxPos.z), BlockPos(middle.x, middle.y, middle.z + 1), childColor) // --+
-                val maxMinMax = genNode(BlockPos(maxPos.x, minPos.y, maxPos.z), BlockPos(middle.x + 1, middle.y, middle.z + 1), childColor) // +-+
-                val minMaxMax = genNode(BlockPos(minPos.x, maxPos.y, maxPos.z), BlockPos(middle.x, middle.y + 1, middle.z + 1), childColor) // -++
-                val maxMaxMax = genNode(BlockPos(maxPos.x, maxPos.y, maxPos.z), BlockPos(middle.x + 1, middle.y + 1, middle.z + 1), childColor) // +++
-                listOf(minMinMin, maxMinMin, minMaxMin, maxMaxMin, minMinMax, maxMinMax, minMaxMax, maxMaxMax)
-            }
+            if (volume(minPos, maxPos) <= 8) partitionIntoAtomic(minPos, maxPos, childColor)
+            else partitionIntoNonAtomic(minPos, maxPos, childColor)
         }
         fun findCorrespondingNode(block: BlockPos): BlockTreeNode = children.value.first { it.canContain(block) }
     }
