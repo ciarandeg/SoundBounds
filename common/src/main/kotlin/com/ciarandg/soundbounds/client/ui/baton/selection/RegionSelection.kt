@@ -7,21 +7,13 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3i
 
-class RegionSelection(bounds: ClientRegionBounds = ClientRegionBounds(BlockTree())) {
-    var bounds = bounds
-        private set
-
-    fun reset() { bounds = emptyBounds() }
-    fun add(bounds: ClientRegionBounds) {
-        this.bounds = ClientRegionBounds(
-            BlockTree.of(this.bounds.blockTree.plus(bounds.blockTree)),
-        )
-    }
-    fun subtract(bounds: ClientRegionBounds) {
-        this.bounds = ClientRegionBounds(
-            BlockTree.of(this.bounds.blockTree.minus(bounds.blockTree)),
-        )
-    }
+// Wrapper class for sculpting a ClientRegionBounds
+class RegionSelection(val bounds: ClientRegionBounds = ClientRegionBounds(BlockTree())) {
+    fun reset() = bounds.blockTree.clear()
+    fun add(bounds: ClientRegionBounds) =
+        this.bounds.blockTree.addAll(bounds.blockTree)
+    fun subtract(bounds: ClientRegionBounds) =
+        this.bounds.blockTree.removeAll(bounds.blockTree)
 
     companion object {
         private fun emptyBounds() = ClientRegionBounds(BlockTree())
