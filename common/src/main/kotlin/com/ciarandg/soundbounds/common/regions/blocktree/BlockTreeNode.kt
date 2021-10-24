@@ -11,12 +11,6 @@ internal class BlockTreeNode private constructor (
     private var color: Color
 ) {
     private var greyData = GreyData() // should only be accessed when node is grey
-    private val capacity = run {
-        val width = maxPos.x - minPos.x + 1
-        val height = maxPos.y - minPos.y + 1
-        val depth = maxPos.z - minPos.z + 1
-        width.toLong() * height.toLong() * depth.toLong()
-    }
     private val isAtomic = minPos == maxPos
 
     constructor(block: BlockPos) : this(block, block, Color.BLACK)
@@ -34,14 +28,21 @@ internal class BlockTreeNode private constructor (
 
     fun blockCount(): Int = when (color) {
         Color.WHITE -> 0
-        Color.BLACK -> capacity.toInt()
-        Color.GREY -> greyData.children.value.sumOf { it.blockCount() }
+        Color.BLACK -> capacity().toInt()
+        Color.GREY -> greyData.children.sumOf { it.blockCount() }
+    }
+
+    private fun capacity(): Long {
+        val width = maxPos.x - minPos.x + 1
+        val height = maxPos.y - minPos.y + 1
+        val depth = maxPos.z - minPos.z + 1
+        return width.toLong() * height.toLong() * depth.toLong()
     }
 
     fun contains(element: BlockPos): Boolean = when (color) {
         Color.WHITE -> false
         Color.BLACK -> canContain(element)
-        Color.GREY -> greyData.children.value.any { it.contains(element) }
+        Color.GREY -> greyData.children.any { it.contains(element) }
     }
 
     fun canContain(block: BlockPos) =
@@ -53,7 +54,7 @@ internal class BlockTreeNode private constructor (
         Color.BLACK -> false
         Color.GREY -> {
             val result = greyData.findCorrespondingNode(element).add(element)
-            if (greyData.children.value.all { it.color == Color.BLACK }) becomeBlack()
+            if (greyData.children.all { it.color == Color.BLACK }) becomeBlack()
             result
         }
     }
@@ -63,7 +64,7 @@ internal class BlockTreeNode private constructor (
         Color.BLACK -> if (isAtomic) { becomeWhite(); true } else { becomeGreyBlackChildren(); remove(element) }
         Color.GREY -> {
             val result = greyData.findCorrespondingNode(element).remove(element)
-            if (greyData.children.value.all { it.color == Color.WHITE }) becomeWhite()
+            if (greyData.children.all { it.color == Color.WHITE }) becomeWhite()
             result
         }
     }
@@ -104,7 +105,7 @@ internal class BlockTreeNode private constructor (
             }
         }
         Color.GREY -> object : MutableIterator<BlockPos> {
-            val children = greyData.children.value.map { it.iterator() }
+            val children = greyData.children.map { it.iterator() }
             var current: BlockPos? = null
 
             override fun hasNext() = children.any { it.hasNext() }
@@ -148,9 +149,12 @@ internal class BlockTreeNode private constructor (
             (maxPos.y + minPos.y) / 2,
             (maxPos.z + minPos.z) / 2
         )
-        val children = lazy { if (capacity > 8) partitionIntoNonAtomic(childColor) else partitionIntoAtomic(childColor) }
+        val children = when (color) {
+            Color.GREY -> if (capacity() > 8) partitionIntoNonAtomic(childColor) else partitionIntoAtomic(childColor)
+            else -> listOf()
+        }
 
-        fun findCorrespondingNode(block: BlockPos): BlockTreeNode = children.value.first { it.canContain(block) }
+        fun findCorrespondingNode(block: BlockPos): BlockTreeNode = children.first { it.canContain(block) }
 
         // since we're dealing with discrete blocks, the area must be split with a bias toward one particular corner
         // otherwise, there would be overlaps or gaps between our children's areas
