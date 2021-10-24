@@ -10,7 +10,7 @@ internal class BlockTreeNode private constructor (
     private val maxPos: BlockPos,
     private var color: Color
 ) {
-    private var greyData = GreyData(minPos, maxPos, Color.WHITE) // should only be used when node is grey
+    private var greyData = GreyData(minPos, maxPos, Color.WHITE) // should only be accessed when node is grey
 
     constructor(block: BlockPos) : this(block, block, Color.BLACK)
     constructor(node: BlockTreeNode, outsider: BlockPos) : this(
@@ -140,9 +140,11 @@ internal class BlockTreeNode private constructor (
 
     private fun becomeWhite() {
         color = Color.WHITE
+        greyData = GreyData(minPos, maxPos) // reset so GC to pick up old children
     }
     private fun becomeBlack() {
         color = Color.BLACK
+        greyData = GreyData(minPos, maxPos) // reset so GC can pick up old children
     }
     private fun becomeGreyWhiteChildren() {
         color = Color.GREY
