@@ -1,7 +1,5 @@
 package com.ciarandg.soundbounds.common.regions.blocktree
 
-import com.ciarandg.soundbounds.SoundBounds
-import com.google.gson.Gson
 import net.minecraft.util.math.BlockPos
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -225,7 +223,7 @@ internal class BlockTreeTest {
     }
 
     @Test
-    fun serialization() = tripleBlockTest{tree, pos1, pos2, pos3 ->
+    fun serialization() = tripleBlockTest { tree, pos1, pos2, pos3 ->
         tree.addAll(listOf(pos1(), pos2(), pos3()))
         val serialized = tree.serialize()
         val deserialized = BlockTree.deserialize(serialized)
