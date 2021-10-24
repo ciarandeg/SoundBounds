@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test
 import kotlin.random.Random
 
 internal class BlockTreeTest {
+    private val tries = 100
 
     @Test
     fun getSize() = tripleBlockTest { tree, pos1, pos2, pos3 ->
@@ -222,23 +223,16 @@ internal class BlockTreeTest {
     }
 
     private fun tripleBlockTest(
-        testLogic: (
-            tree: BlockTree,
-            pos1: () -> BlockPos,
-            pos2: () -> BlockPos,
-            pos3: () -> BlockPos
-        ) -> Unit
+        testLogic: (tree: BlockTree, pos1: () -> BlockPos, pos2: () -> BlockPos, pos3: () -> BlockPos) -> Unit
     ) {
-        val tries = 1
         val rng = Random(System.currentTimeMillis())
-        testLogic(
+        val positions = ArrayList<Int>()
+        for (i in 1..9) positions.add(rng.nextInt(-9999, 9999))
+        for (i in 1..tries) testLogic(
             BlockTree(),
-            // { BlockPos(rng.nextInt(), rng.nextInt(), rng.nextInt()) },
-            // { BlockPos(rng.nextInt(), rng.nextInt(), rng.nextInt()) },
-            // { BlockPos(rng.nextInt(), rng.nextInt(), rng.nextInt()) }
-            { BlockPos(12, -124, 9238) },
-            { BlockPos(2131, 2, -148) },
-            { BlockPos(-2147, -167, -543) }
+            { BlockPos(positions[0], positions[1], positions[2]) },
+            { BlockPos(positions[3], positions[4], positions[5]) },
+            { BlockPos(positions[6], positions[7], positions[8]) }
         )
     }
 }
