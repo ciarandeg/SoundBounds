@@ -10,7 +10,7 @@ import me.shedaniel.architectury.utils.GameInstance
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.network.PacketByteBuf
-import java.lang.IllegalStateException
+import kotlin.IllegalStateException
 
 // Two-way message for creating a region
 class CreateRegionMessage : NetworkManager.NetworkReceiver {
@@ -23,7 +23,7 @@ class CreateRegionMessage : NetworkManager.NetworkReceiver {
 
             val regionName = buf.readString(STR_LIMIT)
             val regionPriority = buf.readInt()
-            val bounds = buf.readString(STR_LIMIT)
+            val bounds = buf.readCompoundTag() ?: throw IllegalStateException("Must have a compound tag here")
 
             controller.createRegion(regionName, regionPriority, BlockTree.deserialize(bounds))
         }
@@ -47,7 +47,7 @@ class CreateRegionMessage : NetworkManager.NetworkReceiver {
             buf.writeInt(regionPriority)
 
             val bounds = ClientPlayerModel.committedSelection.bounds.blockTree.serialize()
-            buf.writeString(bounds)
+            buf.writeCompoundTag(bounds)
 
             return buf
         }

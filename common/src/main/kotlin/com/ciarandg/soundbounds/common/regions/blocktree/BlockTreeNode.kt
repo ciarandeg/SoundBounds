@@ -1,15 +1,22 @@
 package com.ciarandg.soundbounds.common.regions.blocktree
 
+import com.ciarandg.soundbounds.common.regions.RegionData
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.ListTag
 import net.minecraft.util.math.BlockPos
 import kotlin.math.max
 import kotlin.math.min
 
-internal class BlockTreeNode private constructor (
-    private val minPos: BlockPos,
-    private val maxPos: BlockPos,
-    private var color: Color
+internal class BlockTreeNode(
+    val minPos: BlockPos,
+    val maxPos: BlockPos,
+    private var color: Color,
+    private var greyData: GreyNodeData? = when (color) {
+        Color.WHITE -> null
+        Color.BLACK -> null
+        Color.GREY -> GreyNodeData(minPos, maxPos)
+    },
 ) {
-    private var greyData = GreyData() // should only be accessed when node is grey
     private val isAtomic = minPos == maxPos
 
     constructor(block: BlockPos) : this(block, block, Color.BLACK)
@@ -27,21 +34,14 @@ internal class BlockTreeNode private constructor (
 
     fun blockCount(): Int = when (color) {
         Color.WHITE -> 0
-        Color.BLACK -> capacity().toInt()
-        Color.GREY -> greyData.children.sumOf { it.blockCount() }
-    }
-
-    private fun capacity(): Long {
-        val width = maxPos.x - minPos.x + 1
-        val height = maxPos.y - minPos.y + 1
-        val depth = maxPos.z - minPos.z + 1
-        return width.toLong() * height.toLong() * depth.toLong()
+        Color.BLACK -> capacity(minPos, maxPos).toInt()
+        Color.GREY -> greyData?.children?.sumOf { it.blockCount() } ?: throw GreyMustHaveDataException()
     }
 
     fun contains(element: BlockPos): Boolean = when (color) {
         Color.WHITE -> false
         Color.BLACK -> canContain(element)
-        Color.GREY -> greyData.children.any { it.contains(element) }
+        Color.GREY -> greyData?.children?.any { it.contains(element) } ?: throw GreyMustHaveDataException()
     }
 
     fun canContain(block: BlockPos) =
@@ -52,8 +52,9 @@ internal class BlockTreeNode private constructor (
         Color.WHITE -> if (isAtomic) { becomeBlack(); true } else { becomeGreyWhiteChildren(); add(element) }
         Color.BLACK -> false
         Color.GREY -> {
-            val result = greyData.findCorrespondingNode(element).add(element)
-            if (greyData.children.all { it.color == Color.BLACK }) becomeBlack()
+            val data = greyData ?: throw GreyMustHaveDataException()
+            val result = data.findCorrespondingNode(element).add(element)
+            if (data.children.all { it.color == Color.BLACK }) becomeBlack()
             result
         }
     }
@@ -62,8 +63,9 @@ internal class BlockTreeNode private constructor (
         Color.WHITE -> false
         Color.BLACK -> if (isAtomic) { becomeWhite(); true } else { becomeGreyBlackChildren(); remove(element) }
         Color.GREY -> {
-            val result = greyData.findCorrespondingNode(element).remove(element)
-            if (greyData.children.all { it.color == Color.WHITE }) becomeWhite()
+            val data = greyData ?: throw GreyMustHaveDataException()
+            val result = data.findCorrespondingNode(element).remove(element)
+            if (data.children.all { it.color == Color.WHITE }) becomeWhite()
             result
         }
     }
@@ -104,13 +106,13 @@ internal class BlockTreeNode private constructor (
             }
         }
         Color.GREY -> object : MutableIterator<BlockPos> {
-            val children = greyData.children.map { it.iterator() }
+            val children = greyData?.children?.map { it.iterator() }
             var current: BlockPos? = null
 
-            override fun hasNext() = children.any { it.hasNext() }
+            override fun hasNext() = children?.any { it.hasNext() } ?: throw GreyMustHaveDataException()
 
             override fun next(): BlockPos {
-                val result = children.first { it.hasNext() }.next()
+                val result = children?.first { it.hasNext() }?.next() ?: throw GreyMustHaveDataException()
                 current = result
                 return result
             }
@@ -125,19 +127,19 @@ internal class BlockTreeNode private constructor (
 
     private fun becomeWhite() {
         color = Color.WHITE
-        greyData = GreyData() // reset so GC to pick up old children
+        greyData = null
     }
     private fun becomeBlack() {
         color = Color.BLACK
-        greyData = GreyData() // reset so GC can pick up old children
+        greyData = null
     }
     private fun becomeGreyWhiteChildren() {
         color = Color.GREY
-        greyData = GreyData(Color.WHITE)
+        greyData = GreyNodeData(minPos, maxPos, Color.WHITE)
     }
     private fun becomeGreyBlackChildren() {
         color = Color.GREY
-        greyData = GreyData(Color.BLACK)
+        greyData = GreyNodeData(minPos, maxPos, Color.BLACK)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -164,73 +166,48 @@ internal class BlockTreeNode private constructor (
 
     internal enum class Color { WHITE, BLACK, GREY }
 
-    inner class GreyData(childColor: Color = Color.WHITE) {
-        private val middle = BlockPos(
-            (maxPos.x + minPos.x) / 2,
-            (maxPos.y + minPos.y) / 2,
-            (maxPos.z + minPos.z) / 2
-        )
-        val children = when (color) {
-            Color.GREY -> if (capacity() > 8) partitionIntoNonAtomic(childColor) else partitionIntoAtomic(childColor)
-            else -> listOf()
+    internal fun serialize(): CompoundTag {
+        val tag = CompoundTag()
+        tag.put("minPos", RegionData.blockPosToTag(minPos))
+        tag.put("maxPos", RegionData.blockPosToTag(maxPos))
+        tag.putString("color", color.name)
+        if (color == Color.GREY) {
+            val childrenTag = ListTag()
+            childrenTag.addAll(greyData?.children?.map { it.serialize() } ?: throw GreyMustHaveDataException())
+            tag.put("children", childrenTag)
         }
-
-        fun findCorrespondingNode(block: BlockPos): BlockTreeNode = children.first { it.canContain(block) }
-
-        // since we're dealing with discrete blocks, the area must be split with a bias toward one particular corner
-        // otherwise, there would be overlaps or gaps between our children's areas
-        private fun partitionIntoNonAtomic(childColor: Color): List<BlockTreeNode> {
-            val westDownNorth = genNode(BlockPos(minPos.x, minPos.y, minPos.z), middle, childColor)
-            val eastDownNorth = genNode(BlockPos(maxPos.x, minPos.y, minPos.z), middle.east(), childColor)
-            val westUpNorth = genNode(BlockPos(minPos.x, maxPos.y, minPos.z), middle.up(), childColor)
-            val eastUpNorth = genNode(BlockPos(maxPos.x, maxPos.y, minPos.z), middle.east().up(), childColor)
-            val westDownSouth = genNode(BlockPos(minPos.x, minPos.y, maxPos.z), middle.south(), childColor)
-            val eastDownSouth = genNode(BlockPos(maxPos.x, minPos.y, maxPos.z), middle.east().south(), childColor)
-            val westUpSouth = genNode(BlockPos(minPos.x, maxPos.y, maxPos.z), middle.up().south(), childColor)
-            val eastUpSouth = genNode(BlockPos(maxPos.x, maxPos.y, maxPos.z), middle.east().up().south(), childColor)
-            return listOf(westDownNorth, eastDownNorth, westUpNorth, eastUpNorth, westDownSouth, eastDownSouth, westUpSouth, eastUpSouth)
-        }
-
-        private fun partitionIntoAtomic(childColor: Color): List<BlockTreeNode> {
-            val everyBlock = ArrayList<BlockPos>()
-            for (x in minPos.x..maxPos.x)
-                for (y in minPos.y..maxPos.y)
-                    for (z in minPos.z..maxPos.z) {
-                        val block = BlockPos(x, y, z)
-                        everyBlock.add(block)
-                    }
-            return everyBlock.map { genNode(it, it, childColor) }
-        }
-
-        private fun genNode(corner1: BlockPos, corner2: BlockPos, childColor: Color): BlockTreeNode =
-            with(justifiedCornerPair(corner1, corner2)) { BlockTreeNode(min, max, childColor) }
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as GreyData
-
-            if (children != other.children) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            return children.hashCode()
-        }
+        return tag
     }
 
     companion object {
+        private class GreyMustHaveDataException : IllegalStateException()
+
         private val whiteIterator = object : MutableIterator<BlockPos> {
             override fun hasNext() = false
             override fun next() = throw IllegalStateException("White node iterator never has a next value")
             override fun remove() = throw IllegalStateException("White node iterator has no values to remove")
         }
 
-        private fun justifiedCornerPair(corner1: BlockPos, corner2: BlockPos) = object {
-            val min = BlockPos(min(corner1.x, corner2.x), min(corner1.y, corner2.y), min(corner1.z, corner2.z))
-            val max = BlockPos(max(corner1.x, corner2.x), max(corner1.y, corner2.y), max(corner1.z, corner2.z))
+        fun capacity(minPos: BlockPos, maxPos: BlockPos): Long {
+            val width = maxPos.x - minPos.x + 1
+            val height = maxPos.y - minPos.y + 1
+            val depth = maxPos.z - minPos.z + 1
+            return width.toLong() * height.toLong() * depth.toLong()
+        }
+
+        fun deserialize(tag: CompoundTag): BlockTreeNode {
+            val minPos = RegionData.tagToBlockPos(tag.getCompound("minPos"))
+            val maxPos = RegionData.tagToBlockPos(tag.getCompound("maxPos"))
+            val color = Color.valueOf(tag.getString("color"))
+
+            var greyData: GreyNodeData? = null
+            if (color == Color.GREY) {
+                val childrenListTag = tag.getList("children", 10)
+                val children = childrenListTag.map { deserialize(it as CompoundTag) }
+                greyData = GreyNodeData(children)
+            }
+
+            return BlockTreeNode(minPos, maxPos, color, greyData)
         }
     }
 }

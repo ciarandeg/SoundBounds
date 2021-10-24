@@ -1,7 +1,6 @@
 package com.ciarandg.soundbounds.common.regions.blocktree
 
-import com.google.gson.Gson
-import com.google.gson.JsonObject
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.util.math.BlockPos
 
 class BlockTree private constructor(
@@ -78,7 +77,7 @@ class BlockTree private constructor(
         else -> root.blockCount() == 0
     }
 
-    fun serialize(): String = gson.toJson(rootNode ?: JsonObject())
+    fun serialize(): CompoundTag = rootNode?.serialize() ?: CompoundTag()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -96,14 +95,14 @@ class BlockTree private constructor(
     }
 
     companion object {
-        private val gson = Gson()
-
         fun of(elements: Collection<BlockPos>): BlockTree {
             val tree = BlockTree()
             tree.addAll(elements)
             return tree
         }
 
-        fun deserialize(serialized: String) = BlockTree(gson.fromJson(serialized, BlockTreeNode::class.java))
+        fun deserialize(serialized: CompoundTag) =
+            if (serialized.isEmpty) BlockTree()
+            else BlockTree(BlockTreeNode.deserialize(serialized))
     }
 }

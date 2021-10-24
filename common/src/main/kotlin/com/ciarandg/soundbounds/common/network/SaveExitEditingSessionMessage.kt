@@ -7,7 +7,7 @@ import com.ciarandg.soundbounds.server.ui.controller.WorldControllers
 import io.netty.buffer.Unpooled
 import me.shedaniel.architectury.networking.NetworkManager
 import net.minecraft.network.PacketByteBuf
-import java.lang.IllegalStateException
+import kotlin.IllegalStateException
 
 class SaveExitEditingSessionMessage : NetworkManager.NetworkReceiver {
     override fun receive(buf: PacketByteBuf, ctx: NetworkManager.PacketContext) {
@@ -16,7 +16,7 @@ class SaveExitEditingSessionMessage : NetworkManager.NetworkReceiver {
             NetworkManager.sendToServer(SoundBounds.SAVE_EXIT_EDITING_SESSION_CHANNEL_C2S, buildBufferC2S(regionName))
         } else {
             val regionName = buf.readString(STR_LIMIT)
-            val bounds = BlockTree.deserialize(buf.readString(STR_LIMIT))
+            val bounds = BlockTree.deserialize(buf.readCompoundTag() ?: throw IllegalStateException("Must have a compound tag here"))
 
             WorldControllers[ctx.player.world]?.saveExitEditingSession(regionName, bounds, listOf())
         }
@@ -28,7 +28,7 @@ class SaveExitEditingSessionMessage : NetworkManager.NetworkReceiver {
         fun buildBufferC2S(regionName: String): PacketByteBuf {
             val buf = PacketByteBuf(Unpooled.buffer())
             buf.writeString(regionName)
-            buf.writeString(ClientPlayerModel.committedSelection.bounds.blockTree.serialize())
+            buf.writeCompoundTag(ClientPlayerModel.committedSelection.bounds.blockTree.serialize())
             return buf
         }
     }
