@@ -141,6 +141,28 @@ internal class BlockTreeNode private constructor (
         greyData = GreyData(Color.BLACK)
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as BlockTreeNode
+
+        if (minPos != other.minPos) return false
+        if (maxPos != other.maxPos) return false
+        if (color != other.color) return false
+        if (greyData != other.greyData) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = minPos.hashCode()
+        result = 31 * result + maxPos.hashCode()
+        result = 31 * result + color.hashCode()
+        result = 31 * result + greyData.hashCode()
+        return result
+    }
+
     internal enum class Color { WHITE, BLACK, GREY }
 
     inner class GreyData(childColor: Color = Color.WHITE) {
@@ -183,6 +205,21 @@ internal class BlockTreeNode private constructor (
 
         private fun genNode(corner1: BlockPos, corner2: BlockPos, childColor: Color): BlockTreeNode =
             with(justifiedCornerPair(corner1, corner2)) { BlockTreeNode(min, max, childColor) }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as GreyData
+
+            if (children != other.children) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            return children.hashCode()
+        }
     }
 
     companion object {

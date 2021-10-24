@@ -1,9 +1,13 @@
 package com.ciarandg.soundbounds.common.regions.blocktree
 
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import net.minecraft.util.math.BlockPos
 
-class BlockTree : MutableSet<BlockPos> {
-    private var rootNode: BlockTreeNode? = null
+class BlockTree private constructor(
+    private var rootNode: BlockTreeNode?
+) : MutableSet<BlockPos> {
+    constructor() : this(null)
 
     override val size: Int
         get() = rootNode?.blockCount() ?: 0
@@ -74,11 +78,32 @@ class BlockTree : MutableSet<BlockPos> {
         else -> root.blockCount() == 0
     }
 
+    fun serialize() = gson.toJson(rootNode ?: JsonObject())
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as BlockTree
+
+        if (rootNode != other.rootNode) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return rootNode?.hashCode() ?: 0
+    }
+
     companion object {
+        private val gson = Gson()
+
         fun of(elements: Collection<BlockPos>): BlockTree {
             val tree = BlockTree()
             tree.addAll(elements)
             return tree
         }
+
+        fun deserialize(serialized: String) = BlockTree(gson.fromJson(serialized, BlockTreeNode::class.java))
     }
 }
