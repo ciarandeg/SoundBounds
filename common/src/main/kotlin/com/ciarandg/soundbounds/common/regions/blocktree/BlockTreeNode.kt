@@ -10,7 +10,14 @@ internal class BlockTreeNode private constructor (
     private val maxPos: BlockPos,
     private var color: Color
 ) {
-    private var greyData = GreyData(minPos, maxPos, Color.WHITE) // should only be accessed when node is grey
+    private var greyData = GreyData() // should only be accessed when node is grey
+    private val capacity = run {
+        val width = maxPos.x - minPos.x + 1
+        val height = maxPos.y - minPos.y + 1
+        val depth = maxPos.z - minPos.z + 1
+        width.toLong() * height.toLong() * depth.toLong()
+    }
+    private val isAtomic = minPos == maxPos
 
     constructor(block: BlockPos) : this(block, block, Color.BLACK)
     constructor(node: BlockTreeNode, outsider: BlockPos) : this(
@@ -27,9 +34,7 @@ internal class BlockTreeNode private constructor (
 
     fun blockCount(): Int = when (color) {
         Color.WHITE -> 0
-        Color.BLACK -> {
-            (maxPos.x - minPos.x + 1) * (maxPos.y - minPos.y + 1) * (maxPos.z - minPos.z + 1)
-        }
+        Color.BLACK -> capacity.toInt()
         Color.GREY -> greyData.children.value.sumOf { it.blockCount() }
     }
 
@@ -43,17 +48,8 @@ internal class BlockTreeNode private constructor (
         minPos.x <= block.x && minPos.y <= block.y && minPos.z <= block.z &&
             maxPos.x >= block.x && maxPos.y >= block.y && maxPos.z >= block.z
 
-    fun add(element: BlockPos): Boolean {
-        return when (color) {
-            Color.WHITE -> {
-                if (isAtomic()) {
-                    becomeBlack()
-                    true
-                } else {
-                    becomeGreyWhiteChildren()
-                    add(element)
-                }
-            }
+    fun add(element: BlockPos): Boolean = when (color) {
+            Color.WHITE -> if (isAtomic) { becomeBlack(); true } else { becomeGreyWhiteChildren(); add(element) }
             Color.BLACK -> false
             Color.GREY -> {
                 val result = greyData.findCorrespondingNode(element).add(element)
@@ -61,19 +57,10 @@ internal class BlockTreeNode private constructor (
                 result
             }
         }
-    }
 
     fun remove(element: BlockPos): Boolean = when (color) {
         Color.WHITE -> false
-        Color.BLACK -> {
-            if (isAtomic()) {
-                becomeWhite()
-                true
-            } else {
-                becomeGreyBlackChildren()
-                remove(element)
-            }
-        }
+        Color.BLACK -> if (isAtomic) { becomeWhite(); true } else { becomeGreyBlackChildren(); remove(element) }
         Color.GREY -> {
             val result = greyData.findCorrespondingNode(element).remove(element)
             if (greyData.children.value.all { it.color == Color.WHITE }) becomeWhite()
@@ -136,61 +123,38 @@ internal class BlockTreeNode private constructor (
         }
     }
 
-    private fun isAtomic() = minPos == maxPos
-
     private fun becomeWhite() {
         color = Color.WHITE
-        greyData = GreyData(minPos, maxPos) // reset so GC to pick up old children
+        greyData = GreyData() // reset so GC to pick up old children
     }
     private fun becomeBlack() {
         color = Color.BLACK
-        greyData = GreyData(minPos, maxPos) // reset so GC can pick up old children
+        greyData = GreyData() // reset so GC can pick up old children
     }
     private fun becomeGreyWhiteChildren() {
         color = Color.GREY
-        greyData = GreyData(minPos, maxPos, Color.WHITE)
+        greyData = GreyData(Color.WHITE)
     }
     private fun becomeGreyBlackChildren() {
         color = Color.GREY
-        greyData = GreyData(minPos, maxPos, Color.BLACK)
+        greyData = GreyData(Color.BLACK)
     }
 
     enum class Color { WHITE, BLACK, GREY }
 
-    class GreyData(minPos: BlockPos, maxPos: BlockPos, childColor: Color = Color.WHITE) {
-        private val midX = (maxPos.x + minPos.x) / 2
-        private val midY = (maxPos.y + minPos.y) / 2
-        private val midZ = (maxPos.z + minPos.z) / 2
+    inner class GreyData(childColor: Color = Color.WHITE) {
+        private val middle = BlockPos(
+            (maxPos.x + minPos.x) / 2,
+            (maxPos.y + minPos.y) / 2,
+            (maxPos.z + minPos.z) / 2
+        )
+        val children = lazy { if (capacity > 8) partitionIntoNonAtomic(childColor) else partitionIntoAtomic(childColor) }
 
-        private val middle = BlockPos(midX, midY, midZ)
-
-        private fun genNode(corner1: BlockPos, corner2: BlockPos, childColor: Color): BlockTreeNode {
-            val cornerMin = BlockPos(min(corner1.x, corner2.x), min(corner1.y, corner2.y), min(corner1.z, corner2.z))
-            val cornerMax = BlockPos(max(corner1.x, corner2.x), max(corner1.y, corner2.y), max(corner1.z, corner2.z))
-            return BlockTreeNode(cornerMin, cornerMax, childColor)
-        }
-
-        private fun volume(minPos: BlockPos, maxPos: BlockPos): Long {
-            val width = maxPos.x - minPos.x
-            val height = maxPos.y - minPos.y
-            val depth = maxPos.z - minPos.z
-            return width.toLong() * height.toLong() * depth.toLong()
-        }
-
-        private fun partitionIntoAtomic(minPos: BlockPos, maxPos: BlockPos, childColor: Color): List<BlockTreeNode> {
-            val everyBlock = ArrayList<BlockPos>()
-            for (x in minPos.x..maxPos.x)
-                for (y in minPos.y..maxPos.y)
-                    for (z in minPos.z..maxPos.z) {
-                        val block = BlockPos(x, y, z)
-                        everyBlock.add(block)
-                    }
-            return everyBlock.map { genNode(it, it, childColor) }
-        }
+        fun findCorrespondingNode(block: BlockPos): BlockTreeNode = children.value.first { it.canContain(block) }
 
         // since we're dealing with discrete blocks, the area must be split with a bias toward one particular corner
         // otherwise, there would be overlaps or gaps between our children's areas
-        private fun partitionIntoNonAtomic(minPos: BlockPos, maxPos: BlockPos, childColor: Color): List<BlockTreeNode> {
+        private fun partitionIntoNonAtomic(childColor: Color): List<BlockTreeNode> {
             val westDownNorth = genNode(BlockPos(minPos.x, minPos.y, minPos.z), middle, childColor)
             val eastDownNorth = genNode(BlockPos(maxPos.x, minPos.y, minPos.z), middle.east(), childColor)
             val westUpNorth = genNode(BlockPos(minPos.x, maxPos.y, minPos.z), middle.up(), childColor)
@@ -202,11 +166,19 @@ internal class BlockTreeNode private constructor (
             return listOf(westDownNorth, eastDownNorth, westUpNorth, eastUpNorth, westDownSouth, eastDownSouth, westUpSouth, eastUpSouth)
         }
 
-        val children = lazy {
-            if (volume(minPos, maxPos) <= 8) partitionIntoAtomic(minPos, maxPos, childColor)
-            else partitionIntoNonAtomic(minPos, maxPos, childColor)
+        private fun partitionIntoAtomic(childColor: Color): List<BlockTreeNode> {
+            val everyBlock = ArrayList<BlockPos>()
+            for (x in minPos.x..maxPos.x)
+                for (y in minPos.y..maxPos.y)
+                    for (z in minPos.z..maxPos.z) {
+                        val block = BlockPos(x, y, z)
+                        everyBlock.add(block)
+                    }
+            return everyBlock.map { genNode(it, it, childColor) }
         }
-        fun findCorrespondingNode(block: BlockPos): BlockTreeNode = children.value.first { it.canContain(block) }
+
+        private fun genNode(corner1: BlockPos, corner2: BlockPos, childColor: Color): BlockTreeNode =
+            with(justifiedCornerPair(corner1, corner2)) { BlockTreeNode(min, max, childColor) }
     }
 
     companion object {
@@ -214,6 +186,11 @@ internal class BlockTreeNode private constructor (
             override fun hasNext() = false
             override fun next() = throw IllegalStateException("White node iterator never has a next value")
             override fun remove() = throw IllegalStateException("White node iterator has no values to remove")
+        }
+
+        private fun justifiedCornerPair(corner1: BlockPos, corner2: BlockPos) = object {
+            val min = BlockPos(min(corner1.x, corner2.x), min(corner1.y, corner2.y), min(corner1.z, corner2.z))
+            val max = BlockPos(max(corner1.x, corner2.x), max(corner1.y, corner2.y), max(corner1.z, corner2.z))
         }
     }
 }
