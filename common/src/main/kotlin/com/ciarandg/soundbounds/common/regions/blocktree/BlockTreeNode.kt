@@ -1,7 +1,6 @@
 package com.ciarandg.soundbounds.common.regions.blocktree
 
 import net.minecraft.util.math.BlockPos
-import java.lang.IllegalStateException
 import kotlin.math.max
 import kotlin.math.min
 
