@@ -60,7 +60,7 @@ object RegionSwitcher {
         val player = getPlayer()
         var match: ClientRegionEntry? = null
         ClientWorldRegions.entries.forEach { mapEntry ->
-            val containsPlayer = mapEntry.value.bounds.blockSet.contains(player.blockPos)
+            val containsPlayer = mapEntry.value.bounds.blockTree.contains(player.blockPos)
             val previousBest = match?.second?.priority
             val hasPriority = previousBest == null || mapEntry.value.priority > previousBest
             if (containsPlayer && hasPriority) match = mapEntry.toPair()

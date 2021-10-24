@@ -3,6 +3,7 @@ package com.ciarandg.soundbounds.common.regions
 import com.ciarandg.soundbounds.client.render.toBox
 import com.ciarandg.soundbounds.common.PlaylistType
 import com.ciarandg.soundbounds.common.PlaylistType.SEQUENTIAL
+import com.ciarandg.soundbounds.common.regions.blocktree.BlockTree
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.IntTag
 import net.minecraft.nbt.ListTag
@@ -18,7 +19,7 @@ data class RegionData(
     var priority: Int = 0,
     var playlistType: PlaylistType = SEQUENTIAL,
     val playlist: MutableList<String> = ArrayList(),
-    val bounds: MutableSet<BlockPos> = HashSet(),
+    val bounds: BlockTree = BlockTree(),
     var queuePersistence: Boolean = false
 ) {
     fun toTag(): CompoundTag {
@@ -71,10 +72,12 @@ data class RegionData(
             it.asString()
         }.toMutableList()
 
-        private fun tagToBounds(tag: ListTag) = tag.map {
-            if (it !is CompoundTag) throw InvalidParameterException("BlockPos tag must be compound")
-            tagToBlockPos(it)
-        }.toMutableSet()
+        private fun tagToBounds(tag: ListTag) = BlockTree.of(
+            tag.map {
+                if (it !is CompoundTag) throw InvalidParameterException("BlockPos tag must be compound")
+                tagToBlockPos(it)
+            }
+        )
 
         fun tagToBlockPos(tag: CompoundTag) = BlockPos(
             tag.getInt(Tag.CORNER_X.key),
@@ -93,7 +96,7 @@ data class RegionData(
             return boundsTag
         }
 
-        fun blockPosToTag(pos: BlockPos): CompoundTag {
+        private fun blockPosToTag(pos: BlockPos): CompoundTag {
             val t = CompoundTag()
             t.put(Tag.CORNER_X.key, IntTag.of(pos.x))
             t.put(Tag.CORNER_Y.key, IntTag.of(pos.y))

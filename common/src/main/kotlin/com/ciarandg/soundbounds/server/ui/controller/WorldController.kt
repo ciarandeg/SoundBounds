@@ -10,6 +10,7 @@ import com.ciarandg.soundbounds.common.network.RegionUpdateMessageS2C
 import com.ciarandg.soundbounds.common.regions.RegionAuditor
 import com.ciarandg.soundbounds.common.regions.RegionData
 import com.ciarandg.soundbounds.common.regions.WorldRegionState
+import com.ciarandg.soundbounds.common.regions.blocktree.BlockTree
 import com.ciarandg.soundbounds.server.metadata.ServerMetaState
 import com.ciarandg.soundbounds.server.ui.PlayerView
 import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason.NO_SUCH_REGION
@@ -45,7 +46,7 @@ class WorldController(
     fun createRegion(regionName: String, priority: Int, bounds: Set<BlockPos>, views: List<PlayerView>) =
         editWorldState { state ->
             if (!state.regionExists(regionName)) {
-                val region = RegionEntry(regionName, RegionData(priority, bounds = HashSet(bounds)))
+                val region = RegionEntry(regionName, RegionData(priority, bounds = BlockTree.of(bounds)))
                 state.putRegion(region.first, region.second)
                 pushRegionToClients(owner, region)
                 views.forEach { it.notifyRegionCreated(regionName, priority) }

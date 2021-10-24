@@ -2,15 +2,13 @@ package com.ciarandg.soundbounds.common.network
 
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
-import com.ciarandg.soundbounds.common.regions.RegionData
+import com.ciarandg.soundbounds.common.regions.blocktree.BlockTree
 import com.ciarandg.soundbounds.server.ui.controller.PlayerControllers
 import io.netty.buffer.Unpooled
 import me.shedaniel.architectury.networking.NetworkManager
 import me.shedaniel.architectury.utils.GameInstance
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.nbt.CompoundTag
-import net.minecraft.nbt.ListTag
 import net.minecraft.network.PacketByteBuf
 import java.lang.IllegalStateException
 
@@ -25,20 +23,14 @@ class CreateRegionMessage : NetworkManager.NetworkReceiver {
 
             val regionName = buf.readString(STR_LIMIT)
             val regionPriority = buf.readInt()
+            val bounds = buf.readString(STR_LIMIT)
 
-            val compound = buf.readCompoundTag() ?: throw IllegalStateException("There must be a compound tag here")
-            val blockListTag = compound.getList(BLOCK_LIST_KEY, 10)
-            val bounds = blockListTag.map { tag ->
-                if (tag !is CompoundTag) throw IllegalStateException("Block list must consist solely of compound tags")
-                RegionData.tagToBlockPos(tag)
-            }.toSet()
-            controller.createRegion(regionName, regionPriority, bounds)
+            controller.createRegion(regionName, regionPriority, BlockTree.deserialize(bounds))
         }
     }
 
     companion object {
         private const val STR_LIMIT = 32767 // magic character limit to get around mapping issues
-        private const val BLOCK_LIST_KEY = "block-list"
 
         fun buildBufferS2C(regionName: String, regionPriority: Int): PacketByteBuf {
             val buf = PacketByteBuf(Unpooled.buffer())
@@ -54,14 +46,8 @@ class CreateRegionMessage : NetworkManager.NetworkReceiver {
             buf.writeString(regionName)
             buf.writeInt(regionPriority)
 
-            val compound = CompoundTag()
-            val blockList = ListTag()
-            with(ClientPlayerModel) {
-                blockList.addAll(committedSelection.bounds.blockSet.map { RegionData.blockPosToTag(it) })
-                committedSelection.reset()
-            }
-            compound.put(BLOCK_LIST_KEY, blockList)
-            buf.writeCompoundTag(compound)
+            val bounds = ClientPlayerModel.committedSelection.bounds.blockTree.serialize()
+            buf.writeString(bounds)
 
             return buf
         }
