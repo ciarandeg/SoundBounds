@@ -49,14 +49,14 @@ internal class BlockTreeNode private constructor (
             maxPos.x >= block.x && maxPos.y >= block.y && maxPos.z >= block.z
 
     fun add(element: BlockPos): Boolean = when (color) {
-            Color.WHITE -> if (isAtomic) { becomeBlack(); true } else { becomeGreyWhiteChildren(); add(element) }
-            Color.BLACK -> false
-            Color.GREY -> {
-                val result = greyData.findCorrespondingNode(element).add(element)
-                if (greyData.children.value.all { it.color == Color.BLACK }) becomeBlack()
-                result
-            }
+        Color.WHITE -> if (isAtomic) { becomeBlack(); true } else { becomeGreyWhiteChildren(); add(element) }
+        Color.BLACK -> false
+        Color.GREY -> {
+            val result = greyData.findCorrespondingNode(element).add(element)
+            if (greyData.children.value.all { it.color == Color.BLACK }) becomeBlack()
+            result
         }
+    }
 
     fun remove(element: BlockPos): Boolean = when (color) {
         Color.WHITE -> false
@@ -140,7 +140,7 @@ internal class BlockTreeNode private constructor (
         greyData = GreyData(Color.BLACK)
     }
 
-    enum class Color { WHITE, BLACK, GREY }
+    internal enum class Color { WHITE, BLACK, GREY }
 
     inner class GreyData(childColor: Color = Color.WHITE) {
         private val middle = BlockPos(
