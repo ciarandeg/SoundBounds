@@ -41,7 +41,7 @@ class SaveExitEditingSessionMessage : NetworkManager.NetworkReceiver {
             val compound = CompoundTag()
             val blockList = ListTag()
             with(ClientPlayerModel) {
-                blockList.addAll(committedSelection.bounds.blockSet.map { RegionData.blockPosToTag(it) })
+                blockList.addAll(committedSelection.bounds.blockTree.map { RegionData.blockPosToTag(it) })
                 committedSelection.reset()
             }
             compound.put(BLOCK_LIST_KEY, blockList)

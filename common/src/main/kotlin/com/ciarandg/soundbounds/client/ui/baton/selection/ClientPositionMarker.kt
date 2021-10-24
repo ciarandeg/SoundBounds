@@ -6,5 +6,5 @@ import net.minecraft.util.math.BlockPos
 
 class ClientPositionMarker(position: BlockPos) {
     val bounds = ClientRegionBounds(BlockTree.of(listOf(position)))
-    fun getPos() = bounds.blockSet.first()
+    fun getPos() = bounds.blockTree.first()
 }

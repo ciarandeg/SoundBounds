@@ -14,12 +14,12 @@ class RegionSelection(bounds: ClientRegionBounds = ClientRegionBounds(BlockTree(
     fun reset() { bounds = emptyBounds() }
     fun add(bounds: ClientRegionBounds) {
         this.bounds = ClientRegionBounds(
-            BlockTree.of(this.bounds.blockSet.plus(bounds.blockSet)),
+            BlockTree.of(this.bounds.blockTree.plus(bounds.blockTree)),
         )
     }
     fun subtract(bounds: ClientRegionBounds) {
         this.bounds = ClientRegionBounds(
-            BlockTree.of(this.bounds.blockSet.minus(bounds.blockSet)),
+            BlockTree.of(this.bounds.blockTree.minus(bounds.blockTree)),
         )
     }
 
