@@ -172,8 +172,9 @@ internal class BlockTreeNode(
         tag.put("maxPos", RegionData.blockPosToTag(maxPos))
         tag.putString("color", color.name)
         if (color == Color.GREY) {
+            val data = greyData ?: throw GreyMustHaveDataException()
             val childrenTag = ListTag()
-            childrenTag.addAll(greyData?.children?.map { it.serialize() } ?: throw GreyMustHaveDataException())
+            childrenTag.addAll(data.children.map { it.serialize() })
             tag.put("children", childrenTag)
         }
         return tag
