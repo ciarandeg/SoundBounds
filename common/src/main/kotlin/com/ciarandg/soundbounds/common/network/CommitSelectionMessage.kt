@@ -18,10 +18,10 @@ class CommitSelectionMessage : NetworkManager.NetworkReceiver {
         if (ctx.player.world.isClient) {
             with(ClientPlayerModel) {
                 when (batonState.commitMode) {
-                    CommitMode.ADDITIVE -> committedSelection.add(uncommittedSelection.bounds)
-                    CommitMode.SUBTRACTIVE -> committedSelection.subtract(uncommittedSelection.bounds)
+                    CommitMode.ADDITIVE -> committedSelection.blockTree.addAll(uncommittedSelection.blockTree)
+                    CommitMode.SUBTRACTIVE -> committedSelection.blockTree.removeAll(uncommittedSelection.blockTree)
                 }
-                uncommittedSelection.reset()
+                uncommittedSelection.blockTree.clear()
                 batonState.marker1 = null
                 batonState.marker2 = null
             }

@@ -28,7 +28,7 @@ class SaveExitEditingSessionMessage : NetworkManager.NetworkReceiver {
         fun buildBufferC2S(regionName: String): PacketByteBuf {
             val buf = PacketByteBuf(Unpooled.buffer())
             buf.writeString(regionName)
-            buf.writeCompoundTag(ClientPlayerModel.committedSelection.bounds.blockTree.serialize())
+            buf.writeCompoundTag(ClientPlayerModel.committedSelection.blockTree.serialize())
             return buf
         }
     }

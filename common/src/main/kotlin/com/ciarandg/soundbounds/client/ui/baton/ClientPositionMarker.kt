@@ -1,4 +1,4 @@
-package com.ciarandg.soundbounds.client.ui.baton.selection
+package com.ciarandg.soundbounds.client.ui.baton
 
 import com.ciarandg.soundbounds.client.regions.ClientRegionBounds
 import com.ciarandg.soundbounds.common.regions.blocktree.BlockTree

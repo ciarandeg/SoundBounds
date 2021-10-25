@@ -5,11 +5,12 @@ import com.ciarandg.soundbounds.client.render.toBox
 import com.ciarandg.soundbounds.common.regions.blocktree.BlockTree
 import net.minecraft.client.util.math.Vector3f
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Box
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3i
 import java.lang.IllegalStateException
 
-class ClientRegionBounds(var blockTree: BlockTree) {
+class ClientRegionBounds(val blockTree: BlockTree = BlockTree()) {
     // The wireframes and face outline operate on the same principle: within a given selection,
     // any face/edge that ought to be shown as part of an outline will be unique to the block that
     // contains it.
@@ -122,5 +123,37 @@ class ClientRegionBounds(var blockTree: BlockTree) {
             return cornerSet() == other.cornerSet()
         }
         override fun hashCode() = cornerSet().hashCode()
+    }
+
+    companion object {
+        fun fromBoxCorners(corner1: BlockPos?, corner2: BlockPos?): ClientRegionBounds {
+            fun getBounds(box: Box): ClientRegionBounds =
+                ClientRegionBounds(BlockTree.of(blockifyBox(box)))
+
+            return when (corner1) {
+                null -> when (corner2) {
+                    null -> ClientRegionBounds()
+                    else -> getBounds(corner2.toBox())
+                }
+                else -> when (corner2) {
+                    null -> getBounds(corner1.toBox())
+                    else -> getBounds(corner1.toBox().union(corner2.toBox()))
+                }
+            }
+        }
+
+        private fun blockifyBox(box: Box): Set<BlockPos> {
+            val set: MutableSet<BlockPos> = HashSet()
+            val minVec = Vec3i(box.minX, box.minY, box.minZ)
+            val maxVec = Vec3i(box.maxX - 1, box.maxY - 1, box.maxZ - 1)
+            for (x in minVec.x..maxVec.x) {
+                for (y in minVec.y..maxVec.y) {
+                    for (z in minVec.z..maxVec.z) {
+                        set.add(BlockPos(x, y, z))
+                    }
+                }
+            }
+            return set
+        }
     }
 }

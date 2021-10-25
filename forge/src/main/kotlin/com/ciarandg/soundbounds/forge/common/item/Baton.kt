@@ -1,8 +1,8 @@
 package com.ciarandg.soundbounds.forge.common.item
 
 import com.ciarandg.soundbounds.SoundBounds
-import com.ciarandg.soundbounds.client.ui.baton.selection.RegionSelection
-import com.ciarandg.soundbounds.client.ui.baton.selection.ClientPositionMarker
+import com.ciarandg.soundbounds.client.regions.ClientRegionBounds
+import com.ciarandg.soundbounds.client.ui.baton.ClientPositionMarker
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
 import com.ciarandg.soundbounds.common.item.IBaton
 import me.shedaniel.architectury.platform.Platform
@@ -77,7 +77,7 @@ class Baton(settings: Settings?) : IBaton, NetherStarItem(settings) {
                     Corner.SECOND -> ClientPlayerModel.batonState.marker2 = ClientPositionMarker(corner.pos)
                 }
                 with (ClientPlayerModel) {
-                    uncommittedSelection = RegionSelection.fromBoxCorners(batonState.marker1?.getPos(), batonState.marker2?.getPos())
+                    uncommittedSelection = ClientRegionBounds.fromBoxCorners(batonState.marker1?.getPos(), batonState.marker2?.getPos())
                 }
             }
         }

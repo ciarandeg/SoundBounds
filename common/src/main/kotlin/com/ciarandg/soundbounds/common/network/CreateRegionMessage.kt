@@ -46,7 +46,7 @@ class CreateRegionMessage : NetworkManager.NetworkReceiver {
             buf.writeString(regionName)
             buf.writeInt(regionPriority)
 
-            val bounds = ClientPlayerModel.committedSelection.bounds.blockTree.serialize()
+            val bounds = ClientPlayerModel.committedSelection.blockTree.serialize()
             buf.writeCompoundTag(bounds)
 
             return buf

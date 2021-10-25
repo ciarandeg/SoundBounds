@@ -13,7 +13,7 @@ class CancelEditingSessionMessage : NetworkManager.NetworkReceiver {
         if (ctx.player.world.isClient) {
             val wasEditing = ClientPlayerModel.editingRegion ?: throw IllegalStateException("Attempted to cancel a nonexistent session")
             ClientPlayerModel.editingRegion = null
-            ClientPlayerModel.committedSelection.reset()
+            ClientPlayerModel.committedSelection.blockTree.clear()
             NetworkManager.sendToServer(SoundBounds.CANCEL_EDITING_SESSION_CHANNEL_C2S, buildBufferC2S(wasEditing))
         } else {
             val wasEditing = buf.readString(STR_LIMIT)
