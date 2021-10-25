@@ -1,6 +1,8 @@
 package com.ciarandg.soundbounds.client.event.handlers
 
 import com.ciarandg.soundbounds.SoundBounds
+import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
+import com.ciarandg.soundbounds.client.ui.baton.ClientPositionMarker
 import com.ciarandg.soundbounds.client.ui.radial.baton.BatonMenuScreen
 import com.ciarandg.soundbounds.common.item.IBaton
 import com.ciarandg.soundbounds.common.network.CommitSelectionMessage
@@ -31,6 +33,15 @@ object BatonClientEventHandler {
         TickEvent.PLAYER_POST.register {
             with(MinecraftClient.getInstance()) {
                 if (shouldOpenMenu() && currentScreen == null) openScreen(BatonMenuScreen())
+            }
+        }
+
+        TickEvent.PLAYER_POST.register { player ->
+            with(MinecraftClient.getInstance()) {
+                ClientPlayerModel.batonState.cursor =
+                    if (player.isHolding { it is IBaton })
+                        ClientPositionMarker.fromPlayerRaytrace(player, tickDelta)
+                    else null
             }
         }
     }

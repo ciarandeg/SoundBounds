@@ -13,8 +13,11 @@ object SelectionRenderer {
         with(ClientPlayerModel) {
             renderSelection(matrixStack, committedSelection, committedHighlightTexture, RenderColor(64, 160, 85))
             renderSelection(matrixStack, uncommittedSelection, batonState.commitMode.texture, batonState.commitMode.wireframeColor)
-            batonState.marker1?.let { renderMarker(it, matrixStack, RenderColor.BLUE) }
-            batonState.marker2?.let { renderMarker(it, matrixStack, RenderColor.RED) }
+            with(batonState) {
+                cursor?.let { renderMarker(it, matrixStack, RenderColor.WHITE) }
+                marker1?.let { renderMarker(it, matrixStack, RenderColor.BLUE) }
+                marker2?.let { renderMarker(it, matrixStack, RenderColor.RED) }
+            }
         }
     }
 
