@@ -5,4 +5,8 @@ class PlayerBatonState {
     var cursor: ClientPositionMarker? = null
     var marker1: ClientPositionMarker? = null
     var marker2: ClientPositionMarker? = null
+
+    companion object {
+        const val CURSOR_RANGE = 100.0
+    }
 }

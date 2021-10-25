@@ -14,12 +14,10 @@ class ClientPositionMarker(position: BlockPos) {
     fun getPos() = bounds.blockTree.first()
 
     companion object {
-        private const val RAYCAST_RANGE = 1000.0
-
-        fun fromPlayerRaycast(player: PlayerEntity, tickDelta: Float): ClientPositionMarker? {
+        fun fromPlayerRaycast(player: PlayerEntity, tickDelta: Float, range: Double = PlayerBatonState.CURSOR_RANGE): ClientPositionMarker? {
             val cameraPos = player.getCameraPosVec(tickDelta)
             val rotation = player.getRotationVec(tickDelta)
-            val endPoint = cameraPos.add(rotation.x * RAYCAST_RANGE, rotation.y * RAYCAST_RANGE, rotation.z * RAYCAST_RANGE)
+            val endPoint = cameraPos.add(rotation.x * range, rotation.y * range, rotation.z * range)
             val hit = raycast(player, cameraPos, endPoint)
             // because the raycast will return a result that's right at the block face, we need to scale the vector
             // by a tiny bit to avoid rounding errors
