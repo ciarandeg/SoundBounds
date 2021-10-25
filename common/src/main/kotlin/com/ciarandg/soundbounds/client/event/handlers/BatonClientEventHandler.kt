@@ -40,7 +40,7 @@ object BatonClientEventHandler {
             with(MinecraftClient.getInstance()) {
                 ClientPlayerModel.batonState.cursor =
                     if (player.isHolding { it is IBaton })
-                        ClientPositionMarker.fromPlayerRaytrace(player, tickDelta)
+                        ClientPositionMarker.fromPlayerRaycast(player, tickDelta)
                     else null
             }
         }
