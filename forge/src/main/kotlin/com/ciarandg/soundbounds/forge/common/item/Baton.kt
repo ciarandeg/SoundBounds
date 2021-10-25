@@ -6,9 +6,6 @@ import com.ciarandg.soundbounds.client.ui.baton.ClientPositionMarker
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
 import com.ciarandg.soundbounds.common.item.IBaton
 import com.ciarandg.soundbounds.common.regions.blocktree.BlockTree
-import me.shedaniel.architectury.platform.Platform
-import me.shedaniel.architectury.utils.Env.CLIENT
-import me.shedaniel.architectury.utils.Env.SERVER
 import me.shedaniel.architectury.utils.GameInstance
 import net.minecraft.block.BlockState
 import net.minecraft.client.MinecraftClient
@@ -17,13 +14,11 @@ import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
-import net.minecraft.item.ItemUsageContext
 import net.minecraft.item.NetherStarItem
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
-import net.minecraft.util.ActionResult
-import net.minecraft.util.hit.BlockHitResult
-import net.minecraft.util.hit.HitResult
+import net.minecraft.util.Hand
+import net.minecraft.util.TypedActionResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 
@@ -50,32 +45,28 @@ class Baton(settings: Settings?) : IBaton, NetherStarItem(settings) {
         return super.onEntitySwing(stack, entity)
     }
 
-    override fun useOnBlock(context: ItemUsageContext?): ActionResult {
-        if (context?.player?.itemsHand?.first()?.item is Baton) // only use when in right hand
-            setCorner(Corner.SECOND)
-        return super.useOnBlock(context)
+    override fun use(world: World, player: PlayerEntity, hand: Hand): TypedActionResult<ItemStack> {
+        if (world.isClient && hand == Hand.MAIN_HAND) setCorner(Corner.SECOND)
+        return super.use(world, player, hand)
     }
 
     private fun setCorner(corner: Corner) {
-        val trace: HitResult? = when (Platform.getEnvironment()) {
-            CLIENT -> MinecraftClient.getInstance().crosshairTarget
-            SERVER -> null
-            null -> null
-        }
-        if (trace !is BlockHitResult) return
-
-        // useOnBlock (the right-click handler) gets called from several threads at once
+        val newMarker = with(MinecraftClient.getInstance()) { ClientPositionMarker.fromPlayerRaycast(
+            player ?: throw IllegalStateException(),
+            tickDelta
+        ) } ?: return
         synchronized(this) {
             val currentTime = System.currentTimeMillis()
             val isCoolingDown = currentTime - corner.timestamp < cooldown
-            val isNewBlock = !trace.blockPos.equals(corner.pos)
+            val markerPos = newMarker.getPos()
+            val isNewBlock = markerPos != corner.pos
             if (!isCoolingDown || isNewBlock) {
-                SoundBounds.LOGGER.info("Set corner $corner to ${trace.blockPos.toImmutable()}")
-                corner.pos = trace.blockPos
+                SoundBounds.LOGGER.info("Set corner $corner to ${newMarker.getPos()}")
+                corner.pos = markerPos
                 corner.timestamp = currentTime
                 when (corner) {
-                    Corner.FIRST -> ClientPlayerModel.batonState.marker1 = ClientPositionMarker(corner.pos)
-                    Corner.SECOND -> ClientPlayerModel.batonState.marker2 = ClientPositionMarker(corner.pos)
+                    Corner.FIRST -> ClientPlayerModel.batonState.marker1 = newMarker
+                    Corner.SECOND -> ClientPlayerModel.batonState.marker2 = newMarker
                 }
                 with (ClientPlayerModel) {
                     uncommittedSelection = when (val marker1 = batonState.marker1) {
