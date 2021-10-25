@@ -16,9 +16,12 @@ class SaveExitEditingSessionMessage : NetworkManager.NetworkReceiver {
             NetworkManager.sendToServer(SoundBounds.SAVE_EXIT_EDITING_SESSION_CHANNEL_C2S, buildBufferC2S(regionName))
         } else {
             val regionName = buf.readString(STR_LIMIT)
-            val bounds = BlockTree.deserialize(buf.readCompoundTag() ?: throw IllegalStateException("Must have a compound tag here"))
 
-            WorldControllers[ctx.player.world]?.saveExitEditingSession(regionName, bounds, listOf())
+            val boundsListSize = buf.readInt()
+            val bounds = mutableListOf<Int>()
+            for (i in 1..boundsListSize) { bounds.add(buf.readInt()) }
+
+            WorldControllers[ctx.player.world]?.saveExitEditingSession(regionName, BlockTree.deserialize(bounds), listOf())
         }
     }
 
@@ -28,7 +31,10 @@ class SaveExitEditingSessionMessage : NetworkManager.NetworkReceiver {
         fun buildBufferC2S(regionName: String): PacketByteBuf {
             val buf = PacketByteBuf(Unpooled.buffer())
             buf.writeString(regionName)
-            buf.writeCompoundTag(ClientPlayerModel.committedSelection.blockTree.serialize())
+
+            val bounds = ClientPlayerModel.committedSelection.blockTree.serialize()
+            buf.writeInt(bounds.size)
+            bounds.forEach { buf.writeInt(it) }
             return buf
         }
     }

@@ -23,8 +23,10 @@ class CreateRegionMessage : NetworkManager.NetworkReceiver {
 
             val regionName = buf.readString(STR_LIMIT)
             val regionPriority = buf.readInt()
-            val bounds = buf.readCompoundTag() ?: throw IllegalStateException("Must have a compound tag here")
 
+            val boundsListSize = buf.readInt()
+            val bounds = mutableListOf<Int>()
+            for (i in 1..boundsListSize) { bounds.add(buf.readInt()) }
             controller.createRegion(regionName, regionPriority, BlockTree.deserialize(bounds))
         }
     }
@@ -47,7 +49,8 @@ class CreateRegionMessage : NetworkManager.NetworkReceiver {
             buf.writeInt(regionPriority)
 
             val bounds = ClientPlayerModel.committedSelection.blockTree.serialize()
-            buf.writeCompoundTag(bounds)
+            buf.writeInt(bounds.size)
+            bounds.forEach { buf.writeInt(it) }
 
             return buf
         }

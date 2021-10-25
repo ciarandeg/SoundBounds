@@ -1,7 +1,8 @@
 package com.ciarandg.soundbounds.common.regions.blocktree
 
-import net.minecraft.nbt.CompoundTag
 import net.minecraft.util.math.BlockPos
+import kotlin.math.max
+import kotlin.math.min
 
 class BlockTree private constructor(
     private var rootNode: BlockTreeNode?
@@ -84,7 +85,7 @@ class BlockTree private constructor(
         else -> root.blockCount() == 0
     }
 
-    fun serialize(): CompoundTag = rootNode?.serialize() ?: CompoundTag()
+    fun serialize(): List<Int> = rootNode?.serialize() ?: listOf()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -108,8 +109,25 @@ class BlockTree private constructor(
             return tree
         }
 
-        fun deserialize(serialized: CompoundTag) =
-            if (serialized.isEmpty) BlockTree()
-            else BlockTree(BlockTreeNode.deserialize(serialized))
+        fun fromBoxCorners(corner1: BlockPos, corner2: BlockPos): BlockTree {
+            val tree = BlockTree()
+            val minPos = BlockPos(min(corner1.x, corner2.x), min(corner1.y, corner2.y), min(corner1.z, corner2.z))
+            val maxPos = BlockPos(max(corner1.x, corner2.x), max(corner1.y, corner2.y), max(corner1.z, corner2.z))
+            for (x in minPos.x..maxPos.x) {
+                for (y in minPos.y..maxPos.y) {
+                    for (z in minPos.z..maxPos.z) {
+                        tree.add(BlockPos(x, y, z))
+                    }
+                }
+            }
+            return tree
+        }
+
+        fun deserialize(serialized: List<Int>): BlockTree {
+            val tree = BlockTree()
+            val cornerList = BlockTreeNode.deserialize(serialized)
+            cornerList.forEach { tree.addAll(fromBoxCorners(it.first, it.second)) }
+            return tree
+        }
     }
 }

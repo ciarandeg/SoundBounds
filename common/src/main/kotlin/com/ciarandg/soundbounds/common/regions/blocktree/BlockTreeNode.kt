@@ -1,8 +1,5 @@
 package com.ciarandg.soundbounds.common.regions.blocktree
 
-import com.ciarandg.soundbounds.common.regions.RegionData
-import net.minecraft.nbt.CompoundTag
-import net.minecraft.nbt.ListTag
 import net.minecraft.util.math.BlockPos
 import kotlin.math.max
 import kotlin.math.min
@@ -175,18 +172,25 @@ internal class BlockTreeNode(
 
     internal enum class Color { WHITE, BLACK, GREY }
 
-    internal fun serialize(): CompoundTag {
-        val tag = CompoundTag()
-        tag.put("minPos", RegionData.blockPosToTag(minPos))
-        tag.put("maxPos", RegionData.blockPosToTag(maxPos))
-        tag.putString("color", color.name)
-        if (color == Color.GREY) {
-            val data = greyData ?: throw GreyMustHaveDataException()
-            val childrenTag = ListTag()
-            childrenTag.addAll(data.children.map { it.serialize() })
-            tag.put("children", childrenTag)
+    internal fun serialize(): List<Int> {
+        val list = mutableListOf<Int>()
+        return when (color) {
+            Color.WHITE -> list
+            Color.BLACK -> {
+                list.add(minPos.x)
+                list.add(minPos.y)
+                list.add(minPos.z)
+                list.add(maxPos.x)
+                list.add(maxPos.y)
+                list.add(maxPos.z)
+                list
+            }
+            Color.GREY -> {
+                val data = greyData ?: throw GreyMustHaveDataException()
+                data.children.forEach { list.addAll(it.serialize()) }
+                list
+            }
         }
-        return tag
     }
 
     companion object {
@@ -205,19 +209,17 @@ internal class BlockTreeNode(
             return width.toLong() * height.toLong() * depth.toLong()
         }
 
-        fun deserialize(tag: CompoundTag): BlockTreeNode {
-            val minPos = RegionData.tagToBlockPos(tag.getCompound("minPos"))
-            val maxPos = RegionData.tagToBlockPos(tag.getCompound("maxPos"))
-            val color = Color.valueOf(tag.getString("color"))
+        fun deserialize(positions: List<Int>): List<Pair<BlockPos, BlockPos>> {
+            val cornerList = mutableListOf<Pair<BlockPos, BlockPos>>()
+            deserializeListHelper(positions.iterator(), cornerList)
+            return cornerList
+        }
 
-            var greyData: GreyNodeData? = null
-            if (color == Color.GREY) {
-                val childrenListTag = tag.getList("children", 10)
-                val children = childrenListTag.map { deserialize(it as CompoundTag) }
-                greyData = GreyNodeData(children)
-            }
-
-            return BlockTreeNode(minPos, maxPos, color, greyData)
+        private fun deserializeListHelper(iter: Iterator<Int>, outputList: MutableList<Pair<BlockPos, BlockPos>>) {
+            val minPos = BlockPos(iter.next(), iter.next(), iter.next())
+            val maxPos = BlockPos(iter.next(), iter.next(), iter.next())
+            outputList.add(Pair(minPos, maxPos))
+            if (iter.hasNext()) deserializeListHelper(iter, outputList)
         }
     }
 }

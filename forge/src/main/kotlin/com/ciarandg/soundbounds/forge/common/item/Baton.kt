@@ -5,6 +5,7 @@ import com.ciarandg.soundbounds.client.regions.ClientRegionBounds
 import com.ciarandg.soundbounds.client.ui.baton.ClientPositionMarker
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
 import com.ciarandg.soundbounds.common.item.IBaton
+import com.ciarandg.soundbounds.common.regions.blocktree.BlockTree
 import me.shedaniel.architectury.platform.Platform
 import me.shedaniel.architectury.utils.Env.CLIENT
 import me.shedaniel.architectury.utils.Env.SERVER
@@ -77,7 +78,16 @@ class Baton(settings: Settings?) : IBaton, NetherStarItem(settings) {
                     Corner.SECOND -> ClientPlayerModel.batonState.marker2 = ClientPositionMarker(corner.pos)
                 }
                 with (ClientPlayerModel) {
-                    uncommittedSelection = ClientRegionBounds.fromBoxCorners(batonState.marker1?.getPos(), batonState.marker2?.getPos())
+                    uncommittedSelection = when (val marker1 = batonState.marker1) {
+                        null -> when (val marker2 = batonState.marker2) {
+                            null -> ClientRegionBounds()
+                            else -> ClientRegionBounds(BlockTree.of(listOf(marker2.getPos())))
+                        }
+                        else -> when (val marker2 = batonState.marker2) {
+                            null -> ClientRegionBounds(BlockTree.of(listOf(marker1.getPos())))
+                            else -> ClientRegionBounds(BlockTree.fromBoxCorners(marker1.getPos(), marker2.getPos()))
+                        }
+                    }
                 }
             }
         }
