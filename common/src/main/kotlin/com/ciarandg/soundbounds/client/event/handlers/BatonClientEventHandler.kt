@@ -11,6 +11,7 @@ import me.shedaniel.architectury.event.events.TickEvent
 import me.shedaniel.architectury.networking.NetworkManager
 import me.shedaniel.architectury.registry.KeyBindings
 import net.minecraft.client.MinecraftClient
+import net.minecraft.util.Hand
 
 object BatonClientEventHandler {
     fun register() {
@@ -36,10 +37,11 @@ object BatonClientEventHandler {
             }
         }
 
+        // register cursor update on tick
         TickEvent.PLAYER_POST.register { player ->
             with(MinecraftClient.getInstance()) {
                 ClientPlayerModel.batonState.cursor =
-                    if (player.isHolding { it is IBaton })
+                    if (player.getStackInHand(Hand.MAIN_HAND).item is IBaton)
                         ClientPositionMarker.fromPlayerRaycast(player, tickDelta)
                     else null
             }
