@@ -1,6 +1,7 @@
 package com.ciarandg.soundbounds.common.network
 
 import com.ciarandg.soundbounds.SoundBounds
+import com.ciarandg.soundbounds.client.regions.ClientRegionBounds
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
 import com.ciarandg.soundbounds.common.regions.blocktree.BlockTree
 import com.ciarandg.soundbounds.server.ui.controller.PlayerControllers
@@ -15,9 +16,13 @@ import kotlin.IllegalStateException
 // Two-way message for creating a region
 class CreateRegionMessage : NetworkManager.NetworkReceiver {
     override fun receive(buf: PacketByteBuf, ctx: NetworkManager.PacketContext) {
-        if (ctx.player.world.isClient)
-            NetworkManager.sendToServer(SoundBounds.CREATE_REGION_CHANNEL_C2S, buildBufferC2S(buf.readString(), buf.readInt()))
-        else {
+        if (ctx.player.world.isClient) {
+            ClientPlayerModel.committedSelection = ClientRegionBounds()
+            NetworkManager.sendToServer(
+                SoundBounds.CREATE_REGION_CHANNEL_C2S,
+                buildBufferC2S(buf.readString(), buf.readInt())
+            )
+        } else {
             val player: PlayerEntity = GameInstance.getServer()?.playerManager?.getPlayer(buf.readUuid()) ?: throw IllegalStateException("There must be a valid player id here")
             val controller = PlayerControllers[player] ?: throw IllegalStateException("There should already be a controller for this player")
 
