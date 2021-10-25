@@ -10,19 +10,34 @@ import net.minecraft.util.math.Vec3i
 import java.lang.IllegalStateException
 
 class ClientRegionBounds(val blockTree: BlockTree = BlockTree()) {
+    private val wireframeCache = WireframeCache()
+    private val faceOutlineCache = FaceOutlineCache()
+
     // The wireframes and face outline operate on the same principle: within a given selection,
     // any face/edge that ought to be shown as part of an outline will be unique to the block that
     // contains it.
     fun getWireframe(): Set<Pair<Vec3i, Vec3i>> {
-        val unique = keepUnique(blockTree.map { getBlockEdges(it) })
-        val pairs = unique.map { Pair(it.vertex1, it.vertex2) }
-        return pairs.toSet()
+        val newHash = blockTree.hashCode()
+        val wireframe = if (newHash != wireframeCache.lastTreeHash) {
+            val unique = keepUnique(blockTree.map { getBlockEdges(it) })
+            val pairs = unique.map { Pair(it.vertex1, it.vertex2) }
+            pairs.toSet()
+        } else wireframeCache.lastWireframe
+        wireframeCache.lastTreeHash = newHash
+        wireframeCache.lastWireframe = wireframe
+        return wireframe
     }
 
     fun getFaceOutline(): Set<Pair<List<Vector3f>, Direction>> {
-        val unique = keepUnique(blockTree.map { getBlockFaces(it) })
-        val pairs = unique.map { Pair(nudgeFace(it), it.facing) }
-        return pairs.toSet()
+        val newHash = blockTree.hashCode()
+        val outline = if (newHash != faceOutlineCache.lastTreeHash) {
+            val unique = keepUnique(blockTree.map { getBlockFaces(it) })
+            val pairs = unique.map { Pair(nudgeFace(it), it.facing) }
+            pairs.toSet()
+        } else faceOutlineCache.lastFaceOutline
+        faceOutlineCache.lastTreeHash = newHash
+        faceOutlineCache.lastFaceOutline = outline
+        return outline
     }
 
     private fun <T> keepUnique(setList: List<Set<T>>): Set<T> {
@@ -123,4 +138,14 @@ class ClientRegionBounds(val blockTree: BlockTree = BlockTree()) {
         }
         override fun hashCode() = cornerSet().hashCode()
     }
+
+    private data class WireframeCache(
+        var lastTreeHash: Int = -1,
+        var lastWireframe: Set<Pair<Vec3i, Vec3i>> = setOf()
+    )
+
+    private data class FaceOutlineCache(
+        var lastTreeHash: Int = -1,
+        var lastFaceOutline: Set<Pair<List<Vector3f>, Direction>> = setOf()
+    )
 }
