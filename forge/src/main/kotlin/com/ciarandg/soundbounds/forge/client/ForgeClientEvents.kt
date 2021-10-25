@@ -8,11 +8,13 @@ import com.ciarandg.soundbounds.client.render.RegionVisualizationRenderer.existi
 import com.ciarandg.soundbounds.client.render.RenderColor
 import com.ciarandg.soundbounds.client.render.SBRenderLayer
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
+import com.ciarandg.soundbounds.common.item.IBaton
 import com.ciarandg.soundbounds.forge.common.item.Baton
 import me.shedaniel.architectury.utils.GameInstance
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.options.SoundOptionsScreen
 import net.minecraft.sound.SoundCategory
+import net.minecraft.util.Hand
 import net.minecraftforge.client.event.GuiScreenEvent
 import net.minecraftforge.client.event.RenderWorldLastEvent
 import net.minecraftforge.client.event.sound.PlaySoundEvent
@@ -43,7 +45,8 @@ class ForgeClientEvents {
         matrixStack.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z)
 
         // Render player's bounds selection
-        SelectionRenderer.render(matrixStack)
+        val isInMainHand = player.getStackInHand(Hand.MAIN_HAND).item is IBaton
+        SelectionRenderer.render(matrixStack, isInMainHand)
 
         // Render region visualization
         val visualizationRegion = ClientWorldRegions[ClientPlayerModel.visualizationRegion]

@@ -9,12 +9,12 @@ import net.minecraft.util.Identifier
 
 object SelectionRenderer {
     // PRECONDITION: matrixStack is aligned to World's [0, 0, 0]
-    fun render(matrixStack: MatrixStack) {
+    fun render(matrixStack: MatrixStack, renderCursor: Boolean) {
         with(ClientPlayerModel) {
             renderSelection(matrixStack, committedSelection, committedHighlightTexture, RenderColor(64, 160, 85))
             renderSelection(matrixStack, uncommittedSelection, batonState.commitMode.texture, batonState.commitMode.wireframeColor)
             with(batonState) {
-                cursor?.let { renderMarker(it, matrixStack, RenderColor.WHITE) }
+                if (renderCursor) cursor?.let { renderMarker(it, matrixStack, RenderColor.WHITE) }
                 marker1?.let { renderMarker(it, matrixStack, RenderColor.BLUE) }
                 marker2?.let { renderMarker(it, matrixStack, RenderColor.RED) }
             }
