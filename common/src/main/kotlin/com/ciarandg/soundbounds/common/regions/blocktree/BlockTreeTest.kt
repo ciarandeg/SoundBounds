@@ -152,6 +152,10 @@ internal class BlockTreeTest {
         assertEquals(tree.size, 1)
         assertTrue(tree.removeAll(listOf(pos1(), pos2())))
         assertTrue(tree.isEmpty())
+
+        tree.addAll(listOf(pos1(), pos2()))
+        assertTrue(tree.removeAll(listOf(pos1(), pos2(), pos3())))
+        assertTrue(tree.isEmpty())
     }
 
     @Test

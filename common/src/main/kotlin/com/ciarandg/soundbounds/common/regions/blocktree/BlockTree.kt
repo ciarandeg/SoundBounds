@@ -54,7 +54,14 @@ class BlockTree private constructor(
             else -> if (root.canContain(element)) root.remove(element) else false
         }
 
-    override fun removeAll(elements: Collection<BlockPos>) = elements.any { remove(it) }
+    override fun removeAll(elements: Collection<BlockPos>): Boolean {
+        var removedAnElement = false
+        elements.forEach {
+            val wasRemoved = remove(it)
+            if (wasRemoved) removedAnElement = true
+        }
+        return removedAnElement
+    }
 
     override fun retainAll(elements: Collection<BlockPos>): Boolean {
         val it = iterator()
