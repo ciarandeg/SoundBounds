@@ -125,6 +125,15 @@ internal class BlockTreeNode(
         }
     }
 
+    fun height(): Int = when (color) {
+        Color.WHITE -> 0
+        Color.BLACK -> 0
+        Color.GREY -> {
+            val data = greyData ?: throw GreyMustHaveDataException()
+            data.children.maxOf { it.height() } + 1
+        }
+    }
+
     private fun becomeWhite() {
         color = Color.WHITE
         greyData = null
