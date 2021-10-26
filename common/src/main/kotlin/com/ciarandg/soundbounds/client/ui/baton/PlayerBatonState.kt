@@ -1,10 +1,8 @@
 package com.ciarandg.soundbounds.client.ui.baton
 
 import com.ciarandg.soundbounds.SoundBounds
+import com.ciarandg.soundbounds.client.ui.baton.cursor.CursorState
 import com.ciarandg.soundbounds.client.ui.baton.modes.commit.CommitMode
-import com.ciarandg.soundbounds.client.ui.baton.modes.cursor.BoundedCursorMode
-import com.ciarandg.soundbounds.client.ui.baton.modes.cursor.ICursorMode
-import com.ciarandg.soundbounds.client.ui.baton.modes.cursor.UnboundedCursorMode
 import net.minecraft.client.options.KeyBinding
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.Vec3d
@@ -13,37 +11,27 @@ import org.lwjgl.glfw.GLFW
 class PlayerBatonState {
     var commitMode = CommitMode.ADDITIVE
     var cursor: ClientPositionMarker? = null
-    internal var cursorMode: ICursorMode = UnboundedCursorMode()
+    internal val cursorState = CursorState()
     var marker1: ClientPositionMarker? = null
     var marker2: ClientPositionMarker? = null
 
-    fun isCursorBounded() = cursorMode is BoundedCursorMode
+    fun isCursorBounded() = cursorState.isBounded
 
-    fun unbindCursor() {
-        if (cursorMode !is UnboundedCursorMode)
-            cursorMode = UnboundedCursorMode()
-    }
+    fun unbindCursor() = cursorState.unbind()
 
     fun bindCursorToCurrentRadius(player: PlayerEntity, tickDelta: Float) {
         val currentRadius = cursor?.getPos()?.let {
             Vec3d.of(it).distanceTo(player.getCameraPosVec(tickDelta))
-        } ?: BoundedCursorMode.DEFAULT_RANGE
+        } ?: CursorState.DEFAULT_RANGE_BOUNDED
         bindCursorToRadius(currentRadius)
     }
 
-    fun incrementCursorRadius(increment: Double) {
-        val mode = cursorMode
-        if (mode !is BoundedCursorMode) return
-        mode.range += increment
-        cursorMode = mode
-    }
+    fun incrementCursorRadius(increment: Double) =
+        cursorState.incrementBoundedRadius(increment)
 
     private fun bindCursorToRadius(radius: Double) {
-        val currentMode = cursorMode
-        val boundedMode: BoundedCursorMode =
-            if (currentMode is BoundedCursorMode) currentMode else BoundedCursorMode()
-        boundedMode.range = radius
-        cursorMode = boundedMode
+        cursorState.setBoundedRadius(radius)
+        cursorState.bind()
     }
 
     companion object {

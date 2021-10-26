@@ -2,8 +2,6 @@ package com.ciarandg.soundbounds.client.ui.baton
 
 import com.ciarandg.soundbounds.client.regions.ClientRegionBounds
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
-import com.ciarandg.soundbounds.client.ui.baton.modes.cursor.BoundedCursorMode
-import com.ciarandg.soundbounds.client.ui.baton.modes.cursor.UnboundedCursorMode
 import com.ciarandg.soundbounds.common.regions.blocktree.BlockTree
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.PlayerEntity
@@ -18,15 +16,15 @@ class ClientPositionMarker(position: BlockPos) {
 
     companion object {
         fun fromPlayerRaycast(player: PlayerEntity, tickDelta: Float): ClientPositionMarker? {
-            val cursorMode = ClientPlayerModel.batonState.cursorMode
+            val cursorMode = ClientPlayerModel.batonState.cursorState
             val cameraPos = player.getCameraPosVec(tickDelta)
             val rotation = player.getRotationVec(tickDelta)
             val range = cursorMode.range
             val endPoint = cameraPos.add(rotation.x * range, rotation.y * range, rotation.z * range)
             val hit = raycast(player, cameraPos, endPoint)
-            return when (cursorMode) {
-                is BoundedCursorMode -> ClientPositionMarker(BlockPos(endPoint))
-                is UnboundedCursorMode -> with(hit) {
+            return when (cursorMode.isBounded) {
+                true -> ClientPositionMarker(BlockPos(endPoint))
+                false -> with(hit) {
                     if (type == HitResult.Type.BLOCK) {
                         // because the raycast will return a result that's right at the block face, we need to scale the vector
                         // by a tiny bit to avoid rounding errors
@@ -37,7 +35,6 @@ class ClientPositionMarker(position: BlockPos) {
                         ClientPositionMarker(hitBlock)
                     } else null
                 }
-                else -> throw IllegalStateException("There are only two cursor modes")
             }
         }
 
