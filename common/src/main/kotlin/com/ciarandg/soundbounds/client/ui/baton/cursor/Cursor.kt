@@ -1,23 +1,40 @@
 package com.ciarandg.soundbounds.client.ui.baton.cursor
 
+import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.ui.baton.ClientPositionMarker
+import net.minecraft.client.options.KeyBinding
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.hit.HitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.RaycastContext
+import org.lwjgl.glfw.GLFW
 
 class Cursor {
     private var marker: ClientPositionMarker? = null
-    internal val state = CursorState()
+    private val state = CursorState()
 
-    fun getPos() = marker?.getPos()
+    fun isBounded() = state.isBounded
+    fun unbind() = state.unbind()
+    fun bindToCurrentRadius(player: PlayerEntity, tickDelta: Float) {
+        if (!isBounded()) return
+        val currentRadius = marker?.getPos()?.let {
+            Vec3d.of(it).distanceTo(player.getCameraPosVec(tickDelta))
+        } ?: CursorState.DEFAULT_RANGE_BOUNDED
+        bindToRadius(currentRadius)
+    }
+    fun incrementRadius(increment: Double) =
+        state.incrementBoundedRadius(increment)
+    private fun bindToRadius(radius: Double) {
+        state.setBoundedRadius(radius)
+        state.bind()
+    }
+
     fun getMarker() = marker
     fun clearMarker() {
         marker = null
     }
-
     fun setMarkerFromRaycast(player: PlayerEntity, tickDelta: Float) {
         val cameraPos = player.getCameraPosVec(tickDelta)
         val rotation = player.getRotationVec(tickDelta)
@@ -41,6 +58,8 @@ class Cursor {
     }
 
     companion object {
+        val unbindBinding = KeyBinding("Baton Range Modifier", GLFW.GLFW_KEY_LEFT_CONTROL, SoundBounds.KEYBIND_CATEGORY)
+
         private fun raycast(entity: Entity, startPoint: Vec3d, endPoint: Vec3d) =
             entity.world.raycast(
                 RaycastContext(

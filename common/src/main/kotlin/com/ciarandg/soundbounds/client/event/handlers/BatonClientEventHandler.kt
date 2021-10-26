@@ -2,7 +2,7 @@ package com.ciarandg.soundbounds.client.event.handlers
 
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
-import com.ciarandg.soundbounds.client.ui.baton.PlayerBatonState
+import com.ciarandg.soundbounds.client.ui.baton.cursor.Cursor
 import com.ciarandg.soundbounds.client.ui.radial.baton.BatonMenuScreen
 import com.ciarandg.soundbounds.common.item.IBaton
 import com.ciarandg.soundbounds.common.network.CommitSelectionMessage
@@ -49,22 +49,22 @@ object BatonClientEventHandler {
             }
         }
 
-        KeyBindings.registerKeyBinding(PlayerBatonState.cursorModeBinding)
+        KeyBindings.registerKeyBinding(Cursor.unbindBinding)
         TickEvent.PLAYER_POST.register { player ->
             if (player.getStackInHand(Hand.MAIN_HAND).item is IBaton) {
-                with(ClientPlayerModel.batonState) {
-                    when (PlayerBatonState.cursorModeBinding.isPressed) {
-                        true -> if (!isCursorBounded())
-                            bindCursorToCurrentRadius(player, MinecraftClient.getInstance().tickDelta)
-                        false -> unbindCursor()
+                with(ClientPlayerModel.batonState.cursor) {
+                    when (Cursor.unbindBinding.isPressed) {
+                        true -> if (!isBounded())
+                            bindToCurrentRadius(player, MinecraftClient.getInstance().tickDelta)
+                        false -> unbind()
                     }
                 }
             }
         }
         ClientRawInputEvent.MOUSE_SCROLLED.register { client, delta ->
-            with(ClientPlayerModel.batonState) {
-                if (client.currentScreen == null && isCursorBounded()) {
-                    incrementCursorRadius(delta)
+            with(ClientPlayerModel.batonState.cursor) {
+                if (client.currentScreen == null && isBounded()) {
+                    incrementRadius(delta)
                     ActionResult.CONSUME
                 } else ActionResult.PASS
             }
