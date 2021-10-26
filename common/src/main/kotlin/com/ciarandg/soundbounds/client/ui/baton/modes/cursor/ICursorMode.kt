@@ -1,5 +1,5 @@
 package com.ciarandg.soundbounds.client.ui.baton.modes.cursor
 
-interface ICursorMode {
+internal interface ICursorMode {
     val range: Double
 }

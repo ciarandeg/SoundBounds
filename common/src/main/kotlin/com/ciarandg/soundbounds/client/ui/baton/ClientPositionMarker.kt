@@ -2,8 +2,7 @@ package com.ciarandg.soundbounds.client.ui.baton
 
 import com.ciarandg.soundbounds.client.regions.ClientRegionBounds
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
-import com.ciarandg.soundbounds.client.ui.baton.modes.cursor.ICursorMode
-import com.ciarandg.soundbounds.client.ui.baton.modes.cursor.RadiusCursorMode
+import com.ciarandg.soundbounds.client.ui.baton.modes.cursor.BoundedCursorMode
 import com.ciarandg.soundbounds.client.ui.baton.modes.cursor.UnboundedCursorMode
 import com.ciarandg.soundbounds.common.regions.blocktree.BlockTree
 import net.minecraft.entity.Entity
@@ -18,14 +17,15 @@ class ClientPositionMarker(position: BlockPos) {
     fun getPos() = bounds.blockTree.first()
 
     companion object {
-        fun fromPlayerRaycast(player: PlayerEntity, tickDelta: Float, cursorMode: ICursorMode = ClientPlayerModel.batonState.cursorMode): ClientPositionMarker? {
+        fun fromPlayerRaycast(player: PlayerEntity, tickDelta: Float): ClientPositionMarker? {
+            val cursorMode = ClientPlayerModel.batonState.cursorMode
             val cameraPos = player.getCameraPosVec(tickDelta)
             val rotation = player.getRotationVec(tickDelta)
             val range = cursorMode.range
             val endPoint = cameraPos.add(rotation.x * range, rotation.y * range, rotation.z * range)
             val hit = raycast(player, cameraPos, endPoint)
             return when (cursorMode) {
-                is RadiusCursorMode -> ClientPositionMarker(BlockPos(endPoint))
+                is BoundedCursorMode -> ClientPositionMarker(BlockPos(endPoint))
                 is UnboundedCursorMode -> with(hit) {
                     if (type == HitResult.Type.BLOCK) {
                         // because the raycast will return a result that's right at the block face, we need to scale the vector

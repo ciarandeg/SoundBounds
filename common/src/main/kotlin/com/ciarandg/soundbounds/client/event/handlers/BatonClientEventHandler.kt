@@ -4,8 +4,6 @@ import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
 import com.ciarandg.soundbounds.client.ui.baton.ClientPositionMarker
 import com.ciarandg.soundbounds.client.ui.baton.PlayerBatonState
-import com.ciarandg.soundbounds.client.ui.baton.modes.cursor.RadiusCursorMode
-import com.ciarandg.soundbounds.client.ui.baton.modes.cursor.UnboundedCursorMode
 import com.ciarandg.soundbounds.client.ui.radial.baton.BatonMenuScreen
 import com.ciarandg.soundbounds.common.item.IBaton
 import com.ciarandg.soundbounds.common.network.CommitSelectionMessage
@@ -17,7 +15,6 @@ import me.shedaniel.architectury.registry.KeyBindings
 import net.minecraft.client.MinecraftClient
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
-import net.minecraft.util.math.Vec3d
 
 object BatonClientEventHandler {
     fun register() {
@@ -57,27 +54,21 @@ object BatonClientEventHandler {
         TickEvent.PLAYER_POST.register { player ->
             if (player.getStackInHand(Hand.MAIN_HAND).item is IBaton) {
                 with(ClientPlayerModel.batonState) {
-                    val oldMode = cursorMode
                     when (PlayerBatonState.cursorModeBinding.isPressed) {
-                        true -> if (oldMode !is RadiusCursorMode) {
-                            val oldPosition = cursor?.getPos()
-                            val newMode = RadiusCursorMode()
-                            newMode.range = oldPosition?.let {
-                                Vec3d.of(it).distanceTo(player.getCameraPosVec(MinecraftClient.getInstance().tickDelta))
-                            } ?: RadiusCursorMode.DEFAULT_RANGE
-                            cursorMode = newMode
-                        }
-                        false -> if (oldMode !is UnboundedCursorMode) { cursorMode = UnboundedCursorMode() }
+                        true -> if (!isCursorBounded())
+                            bindCursorToCurrentRadius(player, MinecraftClient.getInstance().tickDelta)
+                        false -> unbindCursor()
                     }
                 }
             }
         }
         ClientRawInputEvent.MOUSE_SCROLLED.register { client, delta ->
-            val cursorMode = ClientPlayerModel.batonState.cursorMode
-            if (client.currentScreen == null && cursorMode is RadiusCursorMode) {
-                cursorMode.range += delta
-                ActionResult.CONSUME
-            } else ActionResult.PASS
+            with(ClientPlayerModel.batonState) {
+                if (client.currentScreen == null && isCursorBounded()) {
+                    incrementCursorRadius(delta)
+                    ActionResult.CONSUME
+                } else ActionResult.PASS
+            }
         }
     }
 

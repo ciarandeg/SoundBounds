@@ -3,8 +3,8 @@ package com.ciarandg.soundbounds.client.ui.baton.modes.cursor
 import kotlin.math.max
 import kotlin.math.min
 
-class RadiusCursorMode : ICursorMode {
-    override var range: Double = DEFAULT_RANGE
+internal class BoundedCursorMode(range: Double = DEFAULT_RANGE) : ICursorMode {
+    override var range: Double = range
         set(value) {
             field = min(max(value, MIN_RANGE), MAX_RANGE)
         }
