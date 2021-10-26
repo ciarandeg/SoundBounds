@@ -12,7 +12,6 @@ class PlayerBatonState {
     var marker2: ClientPositionMarker? = null
 
     companion object {
-        const val UNBOUNDED_CURSOR_RANGE = 100.0
         val cursorModeBinding = KeyBinding("Baton Range Modifier", GLFW.GLFW_KEY_LEFT_CONTROL, SoundBounds.KEYBIND_CATEGORY)
     }
 }
