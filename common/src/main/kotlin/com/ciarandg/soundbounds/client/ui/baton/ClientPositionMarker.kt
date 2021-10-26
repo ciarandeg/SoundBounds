@@ -15,15 +15,15 @@ class ClientPositionMarker(position: BlockPos) {
     fun getPos() = bounds.blockTree.first()
 
     companion object {
-        fun fromPlayerRaycast(player: PlayerEntity, tickDelta: Float, cursorMode: CursorMode = ClientPlayerModel.batonState.cursorMode): ClientPositionMarker? {
+        fun fromPlayerRaycast(player: PlayerEntity, tickDelta: Float, cursorMode: ICursorMode = ClientPlayerModel.batonState.cursorMode): ClientPositionMarker? {
             val cameraPos = player.getCameraPosVec(tickDelta)
             val rotation = player.getRotationVec(tickDelta)
             val range = cursorMode.range
             val endPoint = cameraPos.add(rotation.x * range, rotation.y * range, rotation.z * range)
             val hit = raycast(player, cameraPos, endPoint)
             return when (cursorMode) {
-                CursorMode.RADIUS -> ClientPositionMarker(BlockPos(endPoint))
-                CursorMode.UNBOUNDED -> with(hit) {
+                is RadiusCursorMode -> ClientPositionMarker(BlockPos(endPoint))
+                is UnboundedCursorMode -> with(hit) {
                     if (type == HitResult.Type.BLOCK) {
                         // because the raycast will return a result that's right at the block face, we need to scale the vector
                         // by a tiny bit to avoid rounding errors
@@ -34,6 +34,7 @@ class ClientPositionMarker(position: BlockPos) {
                         ClientPositionMarker(hitBlock)
                     } else null
                 }
+                else -> throw IllegalStateException("There are only two cursor modes")
             }
         }
 
