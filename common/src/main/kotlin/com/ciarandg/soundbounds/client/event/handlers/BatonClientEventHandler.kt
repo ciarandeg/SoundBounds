@@ -4,8 +4,8 @@ import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
 import com.ciarandg.soundbounds.client.ui.baton.ClientPositionMarker
 import com.ciarandg.soundbounds.client.ui.baton.PlayerBatonState
-import com.ciarandg.soundbounds.client.ui.baton.RadiusCursorMode
-import com.ciarandg.soundbounds.client.ui.baton.UnboundedCursorMode
+import com.ciarandg.soundbounds.client.ui.baton.modes.cursor.RadiusCursorMode
+import com.ciarandg.soundbounds.client.ui.baton.modes.cursor.UnboundedCursorMode
 import com.ciarandg.soundbounds.client.ui.radial.baton.BatonMenuScreen
 import com.ciarandg.soundbounds.common.item.IBaton
 import com.ciarandg.soundbounds.common.network.CommitSelectionMessage

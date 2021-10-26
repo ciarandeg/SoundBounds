@@ -1,4 +1,4 @@
-package com.ciarandg.soundbounds.client.ui.baton
+package com.ciarandg.soundbounds.client.ui.baton.modes.cursor
 
 import kotlin.math.max
 import kotlin.math.min

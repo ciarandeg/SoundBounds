@@ -2,7 +2,7 @@ package com.ciarandg.soundbounds.client.ui.radial.baton
 
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
-import com.ciarandg.soundbounds.client.ui.baton.CommitMode
+import com.ciarandg.soundbounds.client.ui.baton.modes.commit.CommitMode
 import com.ciarandg.soundbounds.client.ui.radial.MenuButtonGroup
 import com.ciarandg.soundbounds.client.ui.radial.MenuButtonGroup.Angles.FULL
 import com.ciarandg.soundbounds.client.ui.radial.MenuButtonGroup.Angles.THIRD

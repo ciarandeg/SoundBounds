@@ -1,6 +1,6 @@
 package com.ciarandg.soundbounds.server.ui.cli
 
-import com.ciarandg.soundbounds.client.ui.baton.CommitMode
+import com.ciarandg.soundbounds.client.ui.baton.modes.commit.CommitMode
 import com.ciarandg.soundbounds.common.PlaylistType
 import com.ciarandg.soundbounds.common.metadata.JsonSongMeta
 import com.ciarandg.soundbounds.common.regions.RegionData

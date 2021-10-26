@@ -2,6 +2,9 @@ package com.ciarandg.soundbounds.client.ui.baton
 
 import com.ciarandg.soundbounds.client.regions.ClientRegionBounds
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
+import com.ciarandg.soundbounds.client.ui.baton.modes.cursor.ICursorMode
+import com.ciarandg.soundbounds.client.ui.baton.modes.cursor.RadiusCursorMode
+import com.ciarandg.soundbounds.client.ui.baton.modes.cursor.UnboundedCursorMode
 import com.ciarandg.soundbounds.common.regions.blocktree.BlockTree
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.PlayerEntity
