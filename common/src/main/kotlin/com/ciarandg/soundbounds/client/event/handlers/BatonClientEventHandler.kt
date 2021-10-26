@@ -43,10 +43,12 @@ object BatonClientEventHandler {
         // register cursor update on tick
         TickEvent.PLAYER_POST.register { player ->
             with(MinecraftClient.getInstance()) {
-                ClientPlayerModel.batonState.cursor =
-                    if (player.getStackInHand(Hand.MAIN_HAND).item is IBaton)
-                        ClientPositionMarker.fromPlayerRaycast(player, tickDelta)
-                    else null
+                with(ClientPlayerModel.batonState.cursor) {
+                    if (player.getStackInHand(Hand.MAIN_HAND).item is IBaton) {
+                        val raycast = ClientPositionMarker.fromPlayerRaycast(player, tickDelta)
+                        if (raycast != null) setMarker(raycast) else clearMarker()
+                    } else clearMarker()
+                }
             }
         }
 

@@ -1,6 +1,7 @@
 package com.ciarandg.soundbounds.client.ui.baton
 
 import com.ciarandg.soundbounds.SoundBounds
+import com.ciarandg.soundbounds.client.ui.baton.cursor.Cursor
 import com.ciarandg.soundbounds.client.ui.baton.cursor.CursorState
 import com.ciarandg.soundbounds.client.ui.baton.modes.commit.CommitMode
 import net.minecraft.client.options.KeyBinding
@@ -10,28 +11,27 @@ import org.lwjgl.glfw.GLFW
 
 class PlayerBatonState {
     var commitMode = CommitMode.ADDITIVE
-    var cursor: ClientPositionMarker? = null
-    internal val cursorState = CursorState()
+    val cursor = Cursor()
     var marker1: ClientPositionMarker? = null
     var marker2: ClientPositionMarker? = null
 
-    fun isCursorBounded() = cursorState.isBounded
+    fun isCursorBounded() = cursor.state.isBounded
 
-    fun unbindCursor() = cursorState.unbind()
+    fun unbindCursor() = cursor.state.unbind()
 
     fun bindCursorToCurrentRadius(player: PlayerEntity, tickDelta: Float) {
-        val currentRadius = cursor?.getPos()?.let {
+        val currentRadius = cursor.getPos()?.let {
             Vec3d.of(it).distanceTo(player.getCameraPosVec(tickDelta))
         } ?: CursorState.DEFAULT_RANGE_BOUNDED
         bindCursorToRadius(currentRadius)
     }
 
     fun incrementCursorRadius(increment: Double) =
-        cursorState.incrementBoundedRadius(increment)
+        cursor.state.incrementBoundedRadius(increment)
 
     private fun bindCursorToRadius(radius: Double) {
-        cursorState.setBoundedRadius(radius)
-        cursorState.bind()
+        cursor.state.setBoundedRadius(radius)
+        cursor.state.bind()
     }
 
     companion object {

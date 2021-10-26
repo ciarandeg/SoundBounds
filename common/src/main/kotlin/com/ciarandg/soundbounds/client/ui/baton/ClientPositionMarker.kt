@@ -16,13 +16,13 @@ class ClientPositionMarker(position: BlockPos) {
 
     companion object {
         fun fromPlayerRaycast(player: PlayerEntity, tickDelta: Float): ClientPositionMarker? {
-            val cursorMode = ClientPlayerModel.batonState.cursorState
+            val cursorState = ClientPlayerModel.batonState.cursor.state
             val cameraPos = player.getCameraPosVec(tickDelta)
             val rotation = player.getRotationVec(tickDelta)
-            val range = cursorMode.range
+            val range = cursorState.range
             val endPoint = cameraPos.add(rotation.x * range, rotation.y * range, rotation.z * range)
             val hit = raycast(player, cameraPos, endPoint)
-            return when (cursorMode.isBounded) {
+            return when (cursorState.isBounded) {
                 true -> ClientPositionMarker(BlockPos(endPoint))
                 false -> with(hit) {
                     if (type == HitResult.Type.BLOCK) {

@@ -17,7 +17,7 @@ object SelectionRenderer {
             renderSelection(matrixStack, committedSelection, committedHighlightTexture, RenderColor(64, 160, 85))
             renderSelection(matrixStack, uncommittedSelection, batonState.commitMode.texture, batonState.commitMode.wireframeColor)
             with(batonState) {
-                if (renderCursor) cursor?.let { renderMarkerWithQuads(it, matrixStack, RenderColor.WHITE, cursorTexture) }
+                if (renderCursor) cursor.getMarker()?.let { renderMarkerWithQuads(it, matrixStack, RenderColor.WHITE, cursorTexture) }
                 marker1?.let { renderMarker(it, matrixStack, RenderColor.BLUE) }
                 marker2?.let { renderMarker(it, matrixStack, RenderColor.RED) }
             }
