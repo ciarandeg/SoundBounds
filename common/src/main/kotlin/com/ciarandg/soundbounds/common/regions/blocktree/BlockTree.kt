@@ -110,17 +110,9 @@ class BlockTree private constructor(
         }
 
         fun fromBoxCorners(corner1: BlockPos, corner2: BlockPos): BlockTree {
-            val tree = BlockTree()
             val minPos = BlockPos(min(corner1.x, corner2.x), min(corner1.y, corner2.y), min(corner1.z, corner2.z))
             val maxPos = BlockPos(max(corner1.x, corner2.x), max(corner1.y, corner2.y), max(corner1.z, corner2.z))
-            for (x in minPos.x..maxPos.x) {
-                for (y in minPos.y..maxPos.y) {
-                    for (z in minPos.z..maxPos.z) {
-                        tree.add(BlockPos(x, y, z))
-                    }
-                }
-            }
-            return tree
+            return BlockTree(BlockTreeNode(minPos, maxPos, BlockTreeNode.Color.BLACK))
         }
 
         fun deserialize(serialized: List<Int>): BlockTree {
