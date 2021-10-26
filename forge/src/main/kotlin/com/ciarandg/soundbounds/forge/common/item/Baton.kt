@@ -51,10 +51,7 @@ class Baton(settings: Settings?) : IBaton, NetherStarItem(settings) {
     }
 
     private fun setCorner(corner: Corner) {
-        val newMarker = with(MinecraftClient.getInstance()) { ClientPositionMarker.fromPlayerRaycast(
-            player ?: throw IllegalStateException(),
-            tickDelta
-        ) } ?: return
+        val newMarker = ClientPlayerModel.batonState.cursor.getMarker() ?: return
         synchronized(this) {
             val currentTime = System.currentTimeMillis()
             val isCoolingDown = currentTime - corner.timestamp < cooldown

@@ -2,7 +2,6 @@ package com.ciarandg.soundbounds.client.event.handlers
 
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
-import com.ciarandg.soundbounds.client.ui.baton.ClientPositionMarker
 import com.ciarandg.soundbounds.client.ui.baton.PlayerBatonState
 import com.ciarandg.soundbounds.client.ui.radial.baton.BatonMenuScreen
 import com.ciarandg.soundbounds.common.item.IBaton
@@ -42,13 +41,11 @@ object BatonClientEventHandler {
 
         // register cursor update on tick
         TickEvent.PLAYER_POST.register { player ->
-            with(MinecraftClient.getInstance()) {
-                with(ClientPlayerModel.batonState.cursor) {
-                    if (player.getStackInHand(Hand.MAIN_HAND).item is IBaton) {
-                        val raycast = ClientPositionMarker.fromPlayerRaycast(player, tickDelta)
-                        if (raycast != null) setMarker(raycast) else clearMarker()
-                    } else clearMarker()
-                }
+            val tickDelta = MinecraftClient.getInstance().tickDelta
+            with(ClientPlayerModel.batonState.cursor) {
+                if (player.getStackInHand(Hand.MAIN_HAND).item is IBaton)
+                    setMarkerFromRaycast(player, tickDelta)
+                else clearMarker()
             }
         }
 
