@@ -21,9 +21,6 @@ class CommitSelectionMessage : NetworkManager.NetworkReceiver {
                     CommitMode.ADDITIVE -> committedSelection.blockTree.addAll(uncommittedSelection.blockTree)
                     CommitMode.SUBTRACTIVE -> committedSelection.blockTree.removeAll(uncommittedSelection.blockTree)
                 }
-                uncommittedSelection.blockTree.clear()
-                batonState.marker1 = null
-                batonState.marker2 = null
             }
             NetworkManager.sendToServer(SoundBounds.COMMIT_SELECTION_CHANNEL_C2S, buildBufferC2S())
         } else {
