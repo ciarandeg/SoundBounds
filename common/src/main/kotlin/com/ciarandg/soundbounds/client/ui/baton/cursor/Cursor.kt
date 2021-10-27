@@ -1,10 +1,15 @@
 package com.ciarandg.soundbounds.client.ui.baton.cursor
 
 import com.ciarandg.soundbounds.SoundBounds
+import com.ciarandg.soundbounds.client.render.RegionVisualizationRenderer
+import com.ciarandg.soundbounds.client.render.RenderColor
+import com.ciarandg.soundbounds.client.render.SBRenderLayer
 import com.ciarandg.soundbounds.client.ui.baton.ClientPositionMarker
 import net.minecraft.client.options.KeyBinding
+import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.util.Identifier
 import net.minecraft.util.hit.HitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
@@ -57,8 +62,19 @@ class Cursor {
         }
     }
 
+    fun render(matrixStack: MatrixStack) {
+        marker?.let {
+            RegionVisualizationRenderer.renderFilledWireframe(
+                matrixStack, it.bounds, cursorTexture,
+                SBRenderLayer.getThickLines(), wireframeColor
+            )
+        }
+    }
+
     companion object {
+        private val wireframeColor = RenderColor.WHITE
         val unbindBinding = KeyBinding("Baton Range Modifier", GLFW.GLFW_KEY_LEFT_CONTROL, SoundBounds.KEYBIND_CATEGORY)
+        private val cursorTexture = Identifier(SoundBounds.MOD_ID, "textures/entity/cursor.png")
 
         private fun raycast(entity: Entity, startPoint: Vec3d, endPoint: Vec3d) =
             entity.world.raycast(
