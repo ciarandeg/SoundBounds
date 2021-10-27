@@ -18,8 +18,7 @@ object SelectionRenderer {
             renderSelection(matrixStack, uncommittedSelection, batonState.commitMode.texture, batonState.commitMode.wireframeColor)
             with(batonState) {
                 if (renderCursor) cursor.getMarker()?.let { renderMarkerWithQuads(it, matrixStack, RenderColor.WHITE, cursorTexture) }
-                marker1?.let { renderMarker(it, matrixStack, RenderColor.BLUE) }
-                marker2?.let { renderMarker(it, matrixStack, RenderColor.RED) }
+                selectionMode.renderMarkers(matrixStack)
             }
         }
     }
@@ -35,13 +34,6 @@ object SelectionRenderer {
         RegionVisualizationRenderer.renderFilledWireframe(
             matrixStack, marker.bounds, quadTexture,
             SBRenderLayer.getThickLines(), wireframeColor
-        )
-    }
-
-    private fun renderMarker(marker: ClientPositionMarker, matrixStack: MatrixStack, color: RenderColor) {
-        RegionVisualizationRenderer.renderWireframe(
-            matrixStack, marker.bounds,
-            SBRenderLayer.getThickLines(), color
         )
     }
 }

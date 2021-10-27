@@ -62,21 +62,10 @@ class Baton(settings: Settings?) : IBaton, NetherStarItem(settings) {
                 corner.pos = markerPos
                 corner.timestamp = currentTime
                 when (corner) {
-                    Corner.FIRST -> ClientPlayerModel.batonState.marker1 = newMarker
-                    Corner.SECOND -> ClientPlayerModel.batonState.marker2 = newMarker
+                    Corner.FIRST -> ClientPlayerModel.batonState.selectionMode.setFirstMarker(newMarker.getPos())
+                    Corner.SECOND -> ClientPlayerModel.batonState.selectionMode.setSecondMarker(newMarker.getPos())
                 }
-                with (ClientPlayerModel) {
-                    uncommittedSelection = when (val marker1 = batonState.marker1) {
-                        null -> when (val marker2 = batonState.marker2) {
-                            null -> ClientRegionBounds()
-                            else -> ClientRegionBounds(BlockTree.of(listOf(marker2.getPos())))
-                        }
-                        else -> when (val marker2 = batonState.marker2) {
-                            null -> ClientRegionBounds(BlockTree.of(listOf(marker1.getPos())))
-                            else -> ClientRegionBounds(BlockTree.fromBoxCorners(marker1.getPos(), marker2.getPos()))
-                        }
-                    }
-                }
+                with (ClientPlayerModel) { uncommittedSelection = batonState.selectionMode.getSelection() }
             }
         }
     }
