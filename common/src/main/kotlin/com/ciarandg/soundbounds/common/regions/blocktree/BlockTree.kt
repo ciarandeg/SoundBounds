@@ -77,6 +77,10 @@ class BlockTree private constructor(
         return elementWasRemoved
     }
 
+    fun retainAllWithinBounds(minPos: BlockPos, maxPos: BlockPos) {
+        rootNode?.pruneToBounds(minPos, maxPos)
+    }
+
     override fun contains(element: BlockPos) = rootNode?.contains(element) ?: false
 
     override fun containsAll(elements: Collection<BlockPos>) = elements.all { contains(it) }
@@ -89,10 +93,6 @@ class BlockTree private constructor(
     fun serialize(): List<Int> = rootNode?.serialize() ?: listOf()
 
     fun copy(): BlockTree = BlockTree(rootNode?.copy())
-
-    fun pruneToBounds(minPos: BlockPos, maxPos: BlockPos) {
-        rootNode?.pruneToBounds(minPos, maxPos)
-    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

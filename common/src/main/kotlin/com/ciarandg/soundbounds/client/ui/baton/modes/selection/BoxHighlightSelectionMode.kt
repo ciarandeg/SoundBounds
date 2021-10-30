@@ -14,7 +14,7 @@ class BoxHighlightSelectionMode : AbstractSelectionMode() {
                 val minPos = BlockPos(min(m1.x, m2.x), min(m1.y, m2.y), min(m1.z, m2.z))
                 val maxPos = BlockPos(max(m1.x, m2.x), max(m1.y, m2.y), max(m1.z, m2.z))
                 val committedCopy = ClientPlayerModel.committedSelection.blockTree.copy()
-                committedCopy.pruneToBounds(minPos, maxPos)
+                committedCopy.retainAllWithinBounds(minPos, maxPos)
                 committedCopy
             }
         } ?: BlockTree()
