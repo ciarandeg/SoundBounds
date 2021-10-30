@@ -131,6 +131,40 @@ internal class BlockTreeNode(
         }
     }
 
+    fun copy(): BlockTreeNode = BlockTreeNode(minPos, maxPos, color, greyData?.copy())
+
+    fun pruneToBounds(minBoundPos: BlockPos, maxBoundPos: BlockPos) {
+        when (val color = color) {
+            Color.WHITE -> BlockTreeNode(minBoundPos, maxBoundPos, color)
+            Color.BLACK -> {
+                fun isAxisIntersecting(minPos: Int, maxPos: Int, minBound: Int, maxBound: Int) =
+                    minPos <= maxBound && maxPos >= minBound
+                val isIntersecting =
+                    isAxisIntersecting(minPos.x, maxPos.x, minBoundPos.x, maxBoundPos.x) &&
+                        isAxisIntersecting(minPos.y, maxPos.y, minBoundPos.y, maxBoundPos.y) &&
+                        isAxisIntersecting(minPos.z, maxPos.z, minBoundPos.z, maxBoundPos.z)
+
+                fun isAxisContained(minPos: Int, maxPos: Int, minBound: Int, maxBound: Int) =
+                    minPos >= minBound && maxPos <= maxBound
+                val isWhollyContained =
+                    isAxisContained(minPos.x, maxPos.x, minBoundPos.x, maxBoundPos.x) &&
+                        isAxisContained(minPos.y, maxPos.y, minBoundPos.y, maxBoundPos.y) &&
+                        isAxisContained(minPos.z, maxPos.z, minBoundPos.z, maxBoundPos.z)
+
+                if (!isIntersecting) becomeWhite()
+                else if (!isWhollyContained){
+                    becomeGreyBlackChildren()
+                    val data = greyData ?: throw GreyMustHaveDataException()
+                    data.children.forEach { it.pruneToBounds(minBoundPos, maxBoundPos) }
+                }
+            }
+            Color.GREY -> {
+                val data = greyData ?: throw GreyMustHaveDataException()
+                data.children.forEach { it.pruneToBounds(minBoundPos, maxBoundPos) }
+            }
+        }
+    }
+
     private fun becomeWhite() {
         color = Color.WHITE
         greyData = null

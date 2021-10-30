@@ -1,6 +1,7 @@
 package com.ciarandg.soundbounds.common.regions.blocktree
 
 import net.minecraft.util.math.BlockPos
+import sun.jvm.hotspot.opto.Block
 import kotlin.math.max
 import kotlin.math.min
 
@@ -87,12 +88,10 @@ class BlockTree private constructor(
 
     fun serialize(): List<Int> = rootNode?.serialize() ?: listOf()
 
-    fun union(otherTree: BlockTree): BlockTree {
-        TODO()
-    }
+    fun copy(): BlockTree = BlockTree(rootNode?.copy())
 
-    fun intersection(otherTree: BlockTree): BlockTree {
-        TODO()
+    fun pruneToBounds(minPos: BlockPos, maxPos: BlockPos) {
+        rootNode?.pruneToBounds(minPos, maxPos)
     }
 
     override fun equals(other: Any?): Boolean {
