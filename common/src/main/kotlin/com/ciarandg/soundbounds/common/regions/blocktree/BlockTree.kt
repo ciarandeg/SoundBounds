@@ -87,6 +87,14 @@ class BlockTree private constructor(
 
     fun serialize(): List<Int> = rootNode?.serialize() ?: listOf()
 
+    fun union(otherTree: BlockTree): BlockTree {
+        TODO()
+    }
+
+    fun intersection(otherTree: BlockTree): BlockTree {
+        TODO()
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
