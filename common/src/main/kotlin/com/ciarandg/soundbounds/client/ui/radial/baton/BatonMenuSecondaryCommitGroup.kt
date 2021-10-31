@@ -18,7 +18,7 @@ class BatonMenuSecondaryCommitGroup : MenuButtonGroup(
         object : RadialButton({ changeCommitMode(CommitMode.SUBTRACTIVE) }, ZERO.rad, THIRD.rad, subtractiveHoverTexture) {},
         object : RadialButton(
             {
-                with (ClientPlayerModel.batonState) {
+                with(ClientPlayerModel.batonState) {
                     selectionMode = when (selectionMode) {
                         is BoxSelectionMode -> {
                             SoundBounds.LOGGER.info("SWITCHING TO HIGHLIGHT SELECTION MODE")

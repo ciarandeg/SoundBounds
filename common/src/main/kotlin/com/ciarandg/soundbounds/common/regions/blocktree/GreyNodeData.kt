@@ -13,7 +13,7 @@ internal class GreyNodeData(
 
     fun findCorrespondingNode(block: BlockPos): BlockTreeNode = children.first { it.canContain(block) }
 
-    fun copy() = GreyNodeData(ArrayList(children))
+    fun copy() = GreyNodeData(children.map { it.copy() })
 
     companion object {
         // since we're dealing with discrete blocks, the area must be split with a bias toward one particular corner
