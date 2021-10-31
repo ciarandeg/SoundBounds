@@ -5,6 +5,7 @@ import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
 import com.ciarandg.soundbounds.client.ui.baton.modes.selection.AbstractSelectionMode
 import com.ciarandg.soundbounds.client.ui.baton.modes.selection.BoxHighlightSelectionMode
 import com.ciarandg.soundbounds.client.ui.baton.modes.selection.BoxSelectionMode
+import com.ciarandg.soundbounds.client.ui.baton.modes.selection.ExtruderSelectionMode
 import com.ciarandg.soundbounds.client.ui.baton.modes.selection.MoveSelectionMode
 import com.ciarandg.soundbounds.client.ui.radial.MenuButtonGroup
 import com.ciarandg.soundbounds.client.ui.radial.MenuButtonGroup.Angles.SIXTH
@@ -25,7 +26,7 @@ class BatonMenuSecondarySelectionGroup : MenuButtonGroup(buildButtons()) {
             return listOf(
                 Pair({ BoxSelectionMode() }, boxHoverTexture),
                 Pair({ BoxSelectionMode() }, sphereHoverTexture),
-                Pair({ BoxSelectionMode() }, extruderHoverTexture),
+                Pair({ ExtruderSelectionMode() }, extruderHoverTexture),
                 Pair({ MoveSelectionMode() }, moveHoverTexture),
                 Pair({ BoxHighlightSelectionMode() }, boxHighlightHoverTexture),
                 Pair({ BoxSelectionMode() }, wandHoverTexture)

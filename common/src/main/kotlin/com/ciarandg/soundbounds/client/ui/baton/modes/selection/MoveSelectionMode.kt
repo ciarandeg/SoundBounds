@@ -8,8 +8,8 @@ import net.minecraft.util.math.Vec3i
 class MoveSelectionMode : AbstractSelectionMode() {
     private val original = ClientPlayerModel.uncommittedSelection.blockTree
 
-    override fun getSelection(): ClientRegionBounds {
-        return ClientRegionBounds(
+    override fun getSelection() =
+        ClientRegionBounds(
             marker1?.getPos()?.let { m1 ->
                 marker2?.getPos()?.let { m2 ->
                     val delta = Vec3i(m2.x - m1.x, m2.y - m1.y, m2.z - m1.z)
@@ -17,5 +17,4 @@ class MoveSelectionMode : AbstractSelectionMode() {
                 } ?: original
             } ?: original
         )
-    }
 }
