@@ -8,6 +8,7 @@ abstract class MenuButtonGroup(private val buttons: List<RadialButton>) {
     enum class Angles(val rad: Double) {
         ZERO(0.0),
         EIGHTH(PI * 0.25),
+        SIXTH(PI * 2.0 / 6.0),
         QUARTER(PI * 0.5),
         THIRD(PI * 2.0 / 3.0),
         HALF(PI),

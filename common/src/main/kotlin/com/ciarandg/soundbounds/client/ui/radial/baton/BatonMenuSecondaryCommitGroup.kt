@@ -3,9 +3,6 @@ package com.ciarandg.soundbounds.client.ui.radial.baton
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
 import com.ciarandg.soundbounds.client.ui.baton.modes.commit.CommitMode
-import com.ciarandg.soundbounds.client.ui.baton.modes.selection.BoxHighlightSelectionMode
-import com.ciarandg.soundbounds.client.ui.baton.modes.selection.BoxSelectionMode
-import com.ciarandg.soundbounds.client.ui.baton.modes.selection.MoveSelectionMode
 import com.ciarandg.soundbounds.client.ui.radial.MenuButtonGroup
 import com.ciarandg.soundbounds.client.ui.radial.MenuButtonGroup.Angles.FULL
 import com.ciarandg.soundbounds.client.ui.radial.MenuButtonGroup.Angles.THIRD
@@ -17,28 +14,7 @@ class BatonMenuSecondaryCommitGroup : MenuButtonGroup(
     listOf(
         object : RadialButton({ changeCommitMode(CommitMode.ADDITIVE) }, THIRD.rad + THIRD.rad, FULL.rad, additiveHoverTexture) {},
         object : RadialButton({ changeCommitMode(CommitMode.SUBTRACTIVE) }, ZERO.rad, THIRD.rad, subtractiveHoverTexture) {},
-        object : RadialButton(
-            {
-                with(ClientPlayerModel.batonState) {
-                    selectionMode = when (selectionMode) {
-                        is BoxSelectionMode -> {
-                            SoundBounds.LOGGER.info("SWITCHING TO HIGHLIGHT SELECTION MODE")
-                            BoxHighlightSelectionMode()
-                        }
-                        is BoxHighlightSelectionMode -> {
-                            SoundBounds.LOGGER.info("SWITCHING TO MOVE SELECTION MODE")
-                            MoveSelectionMode()
-                        }
-                        is MoveSelectionMode -> {
-                            SoundBounds.LOGGER.info("SWITCHING TO REGULAR SELECTION MODE")
-                            BoxSelectionMode()
-                        }
-                        else -> throw IllegalStateException()
-                    }
-                }
-            },
-            THIRD.rad, THIRD.rad + THIRD.rad, highlightHoverTexture
-        ) {}
+        object : RadialButton({}, THIRD.rad, THIRD.rad + THIRD.rad, highlightHoverTexture) {}
     )
 ) {
     companion object {
