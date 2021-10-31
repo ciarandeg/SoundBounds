@@ -152,7 +152,7 @@ internal class BlockTreeNode(
                         isAxisContained(minPos.z, maxPos.z, minBoundPos.z, maxBoundPos.z)
 
                 if (!isIntersecting) becomeWhite()
-                else if (!isWhollyContained){
+                else if (!isWhollyContained) {
                     becomeGreyBlackChildren()
                     val data = greyData ?: throw GreyMustHaveDataException()
                     data.children.forEach { it.pruneToBounds(minBoundPos, maxBoundPos) }

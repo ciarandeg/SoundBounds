@@ -1,7 +1,6 @@
 package com.ciarandg.soundbounds.common.regions.blocktree
 
 import net.minecraft.util.math.BlockPos
-import sun.jvm.hotspot.opto.Block
 import kotlin.math.max
 import kotlin.math.min
 
