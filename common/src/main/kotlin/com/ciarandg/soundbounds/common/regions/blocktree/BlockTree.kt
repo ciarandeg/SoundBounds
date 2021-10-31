@@ -1,6 +1,7 @@
 package com.ciarandg.soundbounds.common.regions.blocktree
 
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Vec3i
 import kotlin.math.max
 import kotlin.math.min
 
@@ -114,6 +115,8 @@ class BlockTree private constructor(
             tree.addAll(elements)
             return tree
         }
+
+        fun translate(tree: BlockTree, delta: Vec3i) = BlockTree(tree.rootNode?.let { BlockTreeNode.translate(it, delta) })
 
         fun fromBoxCorners(corner1: BlockPos, corner2: BlockPos): BlockTree {
             val minPos = BlockPos(min(corner1.x, corner2.x), min(corner1.y, corner2.y), min(corner1.z, corner2.z))

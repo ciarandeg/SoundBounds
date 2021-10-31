@@ -1,6 +1,7 @@
 package com.ciarandg.soundbounds.common.regions.blocktree
 
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Vec3i
 import kotlin.math.max
 import kotlin.math.min
 
@@ -241,6 +242,21 @@ internal class BlockTreeNode(
             val height = maxPos.y - minPos.y + 1
             val depth = maxPos.z - minPos.z + 1
             return width.toLong() * height.toLong() * depth.toLong()
+        }
+
+        fun translate(node: BlockTreeNode, delta: Vec3i): BlockTreeNode {
+            val newMin = with(node.minPos) { BlockPos(x + delta.x, y + delta.y, z + delta.z) }
+            val newMax = with(node.maxPos) { BlockPos(x + delta.x, y + delta.y, z + delta.z) }
+
+            val newGreyData = when (node.color) {
+                Color.GREY -> {
+                    val data = node.greyData ?: throw GreyMustHaveDataException()
+                    GreyNodeData(data.children.map { translate(it, delta) })
+                }
+                else -> null
+            }
+
+            return BlockTreeNode(newMin, newMax, node.color, newGreyData)
         }
 
         fun deserialize(positions: List<Int>): List<Pair<BlockPos, BlockPos>> {

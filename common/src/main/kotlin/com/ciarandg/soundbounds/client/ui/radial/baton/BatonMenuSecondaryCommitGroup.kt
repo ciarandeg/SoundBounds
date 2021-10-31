@@ -5,6 +5,7 @@ import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
 import com.ciarandg.soundbounds.client.ui.baton.modes.commit.CommitMode
 import com.ciarandg.soundbounds.client.ui.baton.modes.selection.BoxHighlightSelectionMode
 import com.ciarandg.soundbounds.client.ui.baton.modes.selection.BoxSelectionMode
+import com.ciarandg.soundbounds.client.ui.baton.modes.selection.MoveSelectionMode
 import com.ciarandg.soundbounds.client.ui.radial.MenuButtonGroup
 import com.ciarandg.soundbounds.client.ui.radial.MenuButtonGroup.Angles.FULL
 import com.ciarandg.soundbounds.client.ui.radial.MenuButtonGroup.Angles.THIRD
@@ -25,6 +26,10 @@ class BatonMenuSecondaryCommitGroup : MenuButtonGroup(
                             BoxHighlightSelectionMode()
                         }
                         is BoxHighlightSelectionMode -> {
+                            SoundBounds.LOGGER.info("SWITCHING TO MOVE SELECTION MODE")
+                            MoveSelectionMode()
+                        }
+                        is MoveSelectionMode -> {
                             SoundBounds.LOGGER.info("SWITCHING TO REGULAR SELECTION MODE")
                             BoxSelectionMode()
                         }
