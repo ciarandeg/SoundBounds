@@ -12,6 +12,7 @@ import me.shedaniel.architectury.event.events.client.ClientRawInputEvent
 import me.shedaniel.architectury.networking.NetworkManager
 import me.shedaniel.architectury.registry.KeyBindings
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.options.KeyBinding
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
 import org.lwjgl.glfw.GLFW
@@ -75,6 +76,13 @@ object BatonClientEventHandler {
                     ActionResult.CONSUME
                 } else ActionResult.PASS
             }
+        }
+
+        // register commit selection with enter key
+        val commitBinding = KeyBinding("Commit Baton Selection", GLFW.GLFW_KEY_ENTER, SoundBounds.KEYBIND_CATEGORY)
+        KeyBindings.registerKeyBinding(commitBinding)
+        TickEvent.PLAYER_POST.register { player ->
+            if (commitBinding.isPressed && player.isHolding { it is IBaton }) { ClientPlayerModel.commitSelection() }
         }
     }
 }

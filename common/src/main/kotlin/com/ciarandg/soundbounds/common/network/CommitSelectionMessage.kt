@@ -2,7 +2,6 @@ package com.ciarandg.soundbounds.common.network
 
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
-import com.ciarandg.soundbounds.client.ui.baton.modes.commit.CommitMode
 import com.ciarandg.soundbounds.server.ui.controller.PlayerControllers
 import io.netty.buffer.Unpooled
 import me.shedaniel.architectury.networking.NetworkManager
@@ -16,12 +15,7 @@ import java.lang.IllegalStateException
 class CommitSelectionMessage : NetworkManager.NetworkReceiver {
     override fun receive(buf: PacketByteBuf, ctx: NetworkManager.PacketContext) {
         if (ctx.player.world.isClient) {
-            with(ClientPlayerModel) {
-                when (batonState.commitMode) {
-                    CommitMode.ADDITIVE -> committedSelection.blockTree.addAll(uncommittedSelection.blockTree)
-                    CommitMode.SUBTRACTIVE -> committedSelection.blockTree.removeAll(uncommittedSelection.blockTree)
-                }
-            }
+            ClientPlayerModel.commitSelection()
             NetworkManager.sendToServer(SoundBounds.COMMIT_SELECTION_CHANNEL_C2S, buildBufferC2S())
         } else {
             val player: PlayerEntity = GameInstance.getServer()?.playerManager?.getPlayer(buf.readUuid())
