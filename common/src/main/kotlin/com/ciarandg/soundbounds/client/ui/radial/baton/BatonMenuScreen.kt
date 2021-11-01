@@ -1,6 +1,5 @@
 package com.ciarandg.soundbounds.client.ui.radial.baton
 
-import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.render.RenderColor
 import com.ciarandg.soundbounds.client.render.SBRenderLayer
 import com.ciarandg.soundbounds.client.ui.radial.MenuButtonGroup
@@ -8,7 +7,6 @@ import com.ciarandg.soundbounds.client.ui.radial.PolarCoordinate
 import com.ciarandg.soundbounds.client.ui.radial.RadialFolder
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.options.KeyBinding
 import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.text.LiteralText
@@ -83,7 +81,6 @@ class BatonMenuScreen : Screen(LiteralText("Bounds Baton Menu")) {
 
     companion object {
         const val SHOW_DEBUG_LINE = true
-        val binding = KeyBinding("Baton Radial Menu", GLFW.GLFW_KEY_EQUAL, SoundBounds.KEYBIND_CATEGORY)
         val renderLineColor = RenderColor.GREEN
     }
 }

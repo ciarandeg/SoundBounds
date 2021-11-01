@@ -14,6 +14,7 @@ import me.shedaniel.architectury.registry.KeyBindings
 import net.minecraft.client.MinecraftClient
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
+import org.lwjgl.glfw.GLFW
 
 object BatonClientEventHandler {
     fun register() {
@@ -31,12 +32,15 @@ object BatonClientEventHandler {
             CommitSelectionMessage()
         )
 
-        // register binding for opening baton menu
-        KeyBindings.registerKeyBinding(BatonMenuScreen.binding)
-        TickEvent.PLAYER_POST.register {
-            with(MinecraftClient.getInstance()) {
-                if (shouldOpenMenu() && currentScreen == null) openScreen(BatonMenuScreen())
-            }
+        // register baton menu open
+        ClientRawInputEvent.MOUSE_CLICKED_POST.register { client, key, action, _ ->
+            if (
+                key == GLFW.GLFW_MOUSE_BUTTON_3 && action == GLFW.GLFW_PRESS &&
+                client.player?.isHolding { it is IBaton } == true && client.currentScreen == null
+            ) {
+                client.openScreen(BatonMenuScreen())
+                ActionResult.CONSUME
+            } else ActionResult.PASS
         }
 
         // register cursor update on tick
@@ -49,6 +53,7 @@ object BatonClientEventHandler {
             }
         }
 
+        // register baton cursor bind/unbind
         KeyBindings.registerKeyBinding(Cursor.unbindBinding)
         TickEvent.PLAYER_POST.register { player ->
             if (player.getStackInHand(Hand.MAIN_HAND).item is IBaton) {
@@ -61,6 +66,8 @@ object BatonClientEventHandler {
                 }
             }
         }
+
+        // register range adjustment with scroll wheel for bounded cursor
         ClientRawInputEvent.MOUSE_SCROLLED.register { client, delta ->
             with(ClientPlayerModel.batonState.cursor) {
                 if (client.currentScreen == null && isBounded()) {
@@ -69,11 +76,5 @@ object BatonClientEventHandler {
                 } else ActionResult.PASS
             }
         }
-    }
-
-    private fun shouldOpenMenu() = with(MinecraftClient.getInstance()) {
-        BatonMenuScreen.binding.isPressed &&
-            player?.isHolding { it is IBaton } == true &&
-            currentScreen == null
     }
 }
