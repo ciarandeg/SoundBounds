@@ -23,7 +23,7 @@ class Cursor {
     fun isBounded() = state.isBounded
     fun unbind() = state.unbind()
     fun bindToCurrentRadius(player: PlayerEntity, tickDelta: Float) {
-        if (!isBounded()) return
+        if (isBounded()) return
         val currentRadius = marker?.getPos()?.let {
             Vec3d.of(it).distanceTo(player.getCameraPosVec(tickDelta))
         } ?: CursorState.DEFAULT_RANGE_BOUNDED
