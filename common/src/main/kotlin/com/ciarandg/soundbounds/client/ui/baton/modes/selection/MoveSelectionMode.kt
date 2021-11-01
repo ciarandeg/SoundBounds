@@ -5,7 +5,7 @@ import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
 import com.ciarandg.soundbounds.common.regions.blocktree.BlockTree
 import net.minecraft.util.math.Vec3i
 
-class MoveSelectionMode : AbstractSelectionMode() {
+class MoveSelectionMode : SculptingSelectionMode() {
     private val original = ClientPlayerModel.uncommittedSelection.blockTree
 
     override fun getSelection() =

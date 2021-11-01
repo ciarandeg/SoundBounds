@@ -22,7 +22,7 @@ abstract class AbstractSelectionMode {
 
     abstract fun getSelection(): ClientRegionBounds
 
-    fun renderMarkers(matrixStack: MatrixStack) {
+    open fun renderMarkers(matrixStack: MatrixStack) {
         marker1?.let { renderMarker(it, matrixStack, RenderColor.BLUE) }
         marker2?.let { renderMarker(it, matrixStack, RenderColor.RED) }
     }

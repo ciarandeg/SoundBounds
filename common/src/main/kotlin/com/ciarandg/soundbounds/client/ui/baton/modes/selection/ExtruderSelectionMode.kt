@@ -7,7 +7,7 @@ import net.minecraft.util.math.Vec3i
 import kotlin.math.max
 import kotlin.math.min
 
-class ExtruderSelectionMode : AbstractSelectionMode() {
+class ExtruderSelectionMode : SculptingSelectionMode() {
     private val original = ClientPlayerModel.uncommittedSelection.blockTree
     override fun getSelection(): ClientRegionBounds {
         val base = original.copy()
@@ -24,10 +24,7 @@ class ExtruderSelectionMode : AbstractSelectionMode() {
                 for (x in minX..maxX) {
                     for (y in minY..maxY) {
                         for (z in minZ..maxZ) {
-                            base.addAll(BlockTree.translate(
-                                original,
-                                Vec3i(x - m1.x, y - m1.y, z - m1.z))
-                            )
+                            base.addAll(BlockTree.translate(original, Vec3i(x - m1.x, y - m1.y, z - m1.z)))
                         }
                     }
                 }
