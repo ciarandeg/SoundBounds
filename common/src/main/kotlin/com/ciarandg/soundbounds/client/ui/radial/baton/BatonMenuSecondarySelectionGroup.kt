@@ -1,12 +1,12 @@
 package com.ciarandg.soundbounds.client.ui.radial.baton
 
 import com.ciarandg.soundbounds.SoundBounds
-import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
 import com.ciarandg.soundbounds.client.ui.baton.modes.selection.AbstractSelectionMode
 import com.ciarandg.soundbounds.client.ui.baton.modes.selection.BoxHighlightSelectionMode
 import com.ciarandg.soundbounds.client.ui.baton.modes.selection.BoxSelectionMode
 import com.ciarandg.soundbounds.client.ui.baton.modes.selection.ExtruderSelectionMode
 import com.ciarandg.soundbounds.client.ui.baton.modes.selection.MoveSelectionMode
+import com.ciarandg.soundbounds.client.ui.baton.selection.ClientSelectionController
 import com.ciarandg.soundbounds.client.ui.radial.MenuButtonGroup
 import com.ciarandg.soundbounds.client.ui.radial.MenuButtonGroup.Angles.SIXTH
 import com.ciarandg.soundbounds.client.ui.radial.RadialButton
@@ -36,8 +36,8 @@ class BatonMenuSecondarySelectionGroup : MenuButtonGroup(buildButtons()) {
         }
     }
 
-    private class SelectionModeButton(mode: () -> AbstractSelectionMode, startAngle: Double, endAngle: Double, hoverTexture: Identifier) : RadialButton(
-        { ClientPlayerModel.batonState.selectionMode = mode.invoke() },
+    private class SelectionModeButton(getMode: () -> AbstractSelectionMode, startAngle: Double, endAngle: Double, hoverTexture: Identifier) : RadialButton(
+        { ClientSelectionController.setBatonSelectionMode(getMode()) },
         startAngle, endAngle, hoverTexture
     )
 }

@@ -1,9 +1,7 @@
 package com.ciarandg.soundbounds.server.ui.controller
 
 import com.ciarandg.soundbounds.SoundBounds
-import com.ciarandg.soundbounds.client.ui.baton.modes.commit.CommitMode
 import com.ciarandg.soundbounds.common.network.CreateRegionMessage
-import com.ciarandg.soundbounds.common.network.SetBatonModeMessageS2C
 import com.ciarandg.soundbounds.common.network.VisualizeRegionMessageS2C
 import com.ciarandg.soundbounds.common.regions.WorldRegionState
 import com.ciarandg.soundbounds.common.ui.cli.Paginator
@@ -51,11 +49,6 @@ class PlayerController(
             NetworkManager.sendToPlayer(owner, SoundBounds.VISUALIZE_REGION_CHANNEL_S2C, VisualizeRegionMessageS2C.buildBuffer(regionName))
             view.notifyVisualizationRegionChanged(regionName)
         } else view.notifyFailed(FailureReason.NO_SUCH_REGION)
-    }
-
-    fun setBatonMode(commitMode: CommitMode) {
-        NetworkManager.sendToPlayer(owner, SoundBounds.SET_BATON_MODE_CHANNEL_S2C, SetBatonModeMessageS2C.buildBuffer(commitMode))
-        view.notifyBatonModeSet(commitMode)
     }
 
     fun notifyMetaMismatch() = view.notifyMetaMismatch()
@@ -111,10 +104,6 @@ class PlayerController(
     fun notifyMetadataSynced(successful: Boolean) {
         if (successful) view.notifyMetadataSynced()
         else view.notifyMetadataSyncFailed()
-    }
-
-    fun commitToSelection() {
-        NetworkManager.sendToPlayer(owner, SoundBounds.COMMIT_SELECTION_CHANNEL_S2C, PacketByteBuf(Unpooled.buffer()))
     }
 
     fun notifyCommittedToSelection() {

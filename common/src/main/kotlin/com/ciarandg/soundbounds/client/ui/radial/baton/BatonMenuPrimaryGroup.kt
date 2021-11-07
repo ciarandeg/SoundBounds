@@ -1,6 +1,7 @@
 package com.ciarandg.soundbounds.client.ui.radial.baton
 
 import com.ciarandg.soundbounds.SoundBounds
+import com.ciarandg.soundbounds.client.ui.baton.selection.ClientSelectionController
 import com.ciarandg.soundbounds.client.ui.radial.MenuButtonGroup
 import com.ciarandg.soundbounds.client.ui.radial.MenuButtonGroup.Angles.EIGHTH
 import com.ciarandg.soundbounds.client.ui.radial.MenuButtonGroup.Angles.FULL
@@ -15,8 +16,8 @@ class BatonMenuPrimaryGroup : MenuButtonGroup(
     listOf(
         RadialFolder({ BatonMenuSecondaryCommitGroup() }, HALF.rad + EIGHTH.rad, FULL.rad, commitHoverTexture),
         RadialFolder({ BatonMenuSecondarySelectionGroup() }, ZERO.rad, QUARTER.rad + EIGHTH.rad, selectionHoverTexture),
-        object : RadialButton({}, QUARTER.rad + EIGHTH.rad, HALF.rad, redoHoverTexture) {},
-        object : RadialButton({}, HALF.rad, HALF.rad + EIGHTH.rad, undoHoverTexture) {}
+        object : RadialButton({ ClientSelectionController.redo() }, QUARTER.rad + EIGHTH.rad, HALF.rad, redoHoverTexture) {},
+        object : RadialButton({ ClientSelectionController.undo() }, HALF.rad, HALF.rad + EIGHTH.rad, undoHoverTexture) {}
     )
 ) {
     companion object {

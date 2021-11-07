@@ -1,12 +1,12 @@
 package com.ciarandg.soundbounds.client.ui.baton.modes.selection
 
 import com.ciarandg.soundbounds.client.regions.ClientRegionBounds
-import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
+import com.ciarandg.soundbounds.client.ui.baton.selection.ClientSelectionController
 import com.ciarandg.soundbounds.common.regions.blocktree.BlockTree
 import net.minecraft.util.math.Vec3i
 
 class MoveSelectionMode : SculptingSelectionMode() {
-    private val original = ClientPlayerModel.uncommittedSelection.blockTree
+    private val original = ClientSelectionController.getUncommitted().blockTree.copy()
 
     override fun getSelection() =
         ClientRegionBounds(

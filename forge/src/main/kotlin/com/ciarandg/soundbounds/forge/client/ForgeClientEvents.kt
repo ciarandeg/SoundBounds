@@ -1,13 +1,7 @@
 package com.ciarandg.soundbounds.forge.client
 
 import com.ciarandg.soundbounds.client.audio.GameMusicVolume
-import com.ciarandg.soundbounds.client.regions.ClientWorldRegions
-import com.ciarandg.soundbounds.client.render.SelectionRenderer
-import com.ciarandg.soundbounds.client.render.RegionVisualizationRenderer
-import com.ciarandg.soundbounds.client.render.RegionVisualizationRenderer.existingRegionTexture
-import com.ciarandg.soundbounds.client.render.RenderColor
-import com.ciarandg.soundbounds.client.render.SBRenderLayer
-import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
+import com.ciarandg.soundbounds.client.ui.baton.selection.ClientSelectionController
 import com.ciarandg.soundbounds.common.item.IBaton
 import com.ciarandg.soundbounds.forge.common.item.Baton
 import me.shedaniel.architectury.utils.GameInstance
@@ -46,13 +40,17 @@ class ForgeClientEvents {
 
         // Render player's bounds selection
         val isInMainHand = player.getStackInHand(Hand.MAIN_HAND).item is IBaton
-        SelectionRenderer.render(matrixStack, isInMainHand)
+        with (ClientSelectionController) {
+            renderUncommitted(matrixStack)
+            renderCommitted(matrixStack)
+            if (isInMainHand) renderCursor(matrixStack)
+        }
 
         // Render region visualization
-        val visualizationRegion = ClientWorldRegions[ClientPlayerModel.visualizationRegion]
-        if (visualizationRegion == null) ClientPlayerModel.visualizationRegion = null
-        else RegionVisualizationRenderer.renderFilledWireframe(
-            matrixStack, visualizationRegion.bounds, existingRegionTexture, SBRenderLayer.getThinLines(), RenderColor(116, 64, 160)
-        )
+        // val visualizationRegion = ClientWorldRegions[ClientPlayerModel.visualizationRegion]
+        // if (visualizationRegion == null) ClientPlayerModel.visualizationRegion = null
+        // else RegionVisualizationRenderer.renderFilledWireframe(
+        //     matrixStack, visualizationRegion.bounds, existingRegionTexture, SBRenderLayer.getThinLines(), RenderColor(116, 64, 160)
+        // )
     }
 }

@@ -1,6 +1,5 @@
 package com.ciarandg.soundbounds.common.ui.cli.command.nodes
 
-import com.ciarandg.soundbounds.client.ui.baton.modes.commit.CommitMode
 import com.ciarandg.soundbounds.common.ui.cli.Arguments
 import com.ciarandg.soundbounds.common.ui.cli.CommandNode
 import com.ciarandg.soundbounds.common.ui.cli.IntArgNodeData
@@ -94,38 +93,6 @@ object RootNode : CommandNode(
         CommandNode(
             LiteralNodeData("cancel", "cancel your editing session") { ctx, wctrl, pctrl ->
                 pctrl?.cancelEditingSession()
-            },
-            listOf()
-        ),
-        CommandNode(
-            LiteralNodeData("mode", null, null),
-            listOf(
-                CommandNode(
-                    LiteralNodeData("commit", null, null),
-                    listOf(
-                        CommandNode(
-                            LiteralNodeData(
-                                "additive", "set your commit mode to additive"
-                            ) { ctx, wctrl, pctrl ->
-                                pctrl?.setBatonMode(CommitMode.ADDITIVE)
-                            },
-                            listOf()
-                        ),
-                        CommandNode(
-                            LiteralNodeData(
-                                "subtractive", "set your commit mode to subtractive"
-                            ) { ctx, wctrl, pctrl ->
-                                pctrl?.setBatonMode(CommitMode.SUBTRACTIVE)
-                            },
-                            listOf()
-                        ),
-                    )
-                ),
-            )
-        ),
-        CommandNode(
-            LiteralNodeData("commit", "commit pending changes to selection") { ctx, wctrl, pctrl ->
-                pctrl?.commitToSelection()
             },
             listOf()
         ),

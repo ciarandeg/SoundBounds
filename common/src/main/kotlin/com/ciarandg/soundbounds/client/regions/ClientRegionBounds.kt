@@ -1,9 +1,14 @@
 package com.ciarandg.soundbounds.client.regions
 
+import com.ciarandg.soundbounds.client.render.RegionVisualizationRenderer
+import com.ciarandg.soundbounds.client.render.RenderColor
 import com.ciarandg.soundbounds.client.render.RenderUtils.Companion.Z_INCREMENT
+import com.ciarandg.soundbounds.client.render.SBRenderLayer
 import com.ciarandg.soundbounds.client.render.toBox
 import com.ciarandg.soundbounds.common.regions.blocktree.BlockTree
+import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.client.util.math.Vector3f
+import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3i
@@ -12,6 +17,13 @@ import java.lang.IllegalStateException
 class ClientRegionBounds(val blockTree: BlockTree = BlockTree()) {
     private val wireframeCache = WireframeCache()
     private val faceOutlineCache = FaceOutlineCache()
+
+    fun render(matrixStack: MatrixStack, texture: Identifier, color: RenderColor) {
+        RegionVisualizationRenderer.renderFilledWireframe(
+            matrixStack, this, texture,
+            SBRenderLayer.getThinLines(), color
+        )
+    }
 
     // The wireframes and face outline operate on the same principle: within a given selection,
     // any face/edge that ought to be shown as part of an outline will be unique to the block that

@@ -1,7 +1,7 @@
 package com.ciarandg.soundbounds.client.ui.baton.modes.selection
 
 import com.ciarandg.soundbounds.client.regions.ClientRegionBounds
-import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
+import com.ciarandg.soundbounds.client.ui.baton.selection.ClientSelectionController
 import com.ciarandg.soundbounds.common.regions.blocktree.BlockTree
 import net.minecraft.util.math.BlockPos
 import kotlin.math.max
@@ -14,7 +14,7 @@ class BoxHighlightSelectionMode : AbstractSelectionMode() {
                 val minPos = BlockPos(min(m1.x, m2.x), min(m1.y, m2.y), min(m1.z, m2.z))
                 val maxPos = BlockPos(max(m1.x, m2.x), max(m1.y, m2.y), max(m1.z, m2.z))
 
-                val committed = ClientPlayerModel.committedSelection.blockTree
+                val committed = ClientSelectionController.getCommitted().blockTree
                 val committedCopy = committed.copy()
                 committedCopy.retainAllWithinBounds(minPos, maxPos)
                 committedCopy

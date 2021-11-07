@@ -1,8 +1,7 @@
 package com.ciarandg.soundbounds.common.network
 
 import com.ciarandg.soundbounds.SoundBounds
-import com.ciarandg.soundbounds.client.regions.ClientRegionBounds
-import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
+import com.ciarandg.soundbounds.client.ui.baton.selection.ClientSelectionController
 import com.ciarandg.soundbounds.common.regions.blocktree.BlockTree
 import com.ciarandg.soundbounds.server.ui.controller.PlayerControllers
 import io.netty.buffer.Unpooled
@@ -11,13 +10,12 @@ import me.shedaniel.architectury.utils.GameInstance
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.network.PacketByteBuf
-import kotlin.IllegalStateException
 
 // Two-way message for creating a region
 class CreateRegionMessage : NetworkManager.NetworkReceiver {
     override fun receive(buf: PacketByteBuf, ctx: NetworkManager.PacketContext) {
         if (ctx.player.world.isClient) {
-            ClientPlayerModel.committedSelection = ClientRegionBounds()
+            ClientSelectionController.clearCommitted()
             NetworkManager.sendToServer(
                 SoundBounds.CREATE_REGION_CHANNEL_C2S,
                 buildBufferC2S(buf.readString(), buf.readInt())
@@ -53,7 +51,7 @@ class CreateRegionMessage : NetworkManager.NetworkReceiver {
             buf.writeString(regionName)
             buf.writeInt(regionPriority)
 
-            val bounds = ClientPlayerModel.committedSelection.blockTree.serialize()
+            val bounds = ClientSelectionController.getCommitted().blockTree.serialize()
             buf.writeInt(bounds.size)
             bounds.forEach { buf.writeInt(it) }
 
