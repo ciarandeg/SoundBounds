@@ -57,5 +57,18 @@ object BatonClientEventHandler {
         TickEvent.PLAYER_POST.register { player ->
             if (commitBinding.isPressed && player.isHolding { it is IBaton }) { ClientSelectionController.commit() }
         }
+
+        // register undo/redo with ctrl+z, ctrl+shift+z
+        ClientRawInputEvent.KEY_PRESSED.register { _, key, _, action, mods ->
+            if (action != GLFW.GLFW_PRESS || key != GLFW.GLFW_KEY_Z)
+                ActionResult.PASS
+            else if (mods == GLFW.GLFW_MOD_CONTROL && ClientSelectionController.canUndo()) {
+                ClientSelectionController.undo()
+                ActionResult.CONSUME
+            } else if (mods == GLFW.GLFW_MOD_CONTROL + GLFW.GLFW_MOD_SHIFT && ClientSelectionController.canRedo()) {
+                ClientSelectionController.redo()
+                ActionResult.CONSUME
+            } else ActionResult.PASS
+        }
     }
 }
