@@ -5,7 +5,8 @@ import com.ciarandg.soundbounds.client.ui.baton.selection.ClientSelectionControl
 import com.ciarandg.soundbounds.client.ui.radial.RadialButton
 import net.minecraft.util.Identifier
 
-class ClearUncommittedButton(
+class DoubleTextureButton(
+    onClick: () -> Unit,
     startAngle: Double,
     endAngle: Double,
     additiveDefaultTexture: Identifier,
@@ -13,7 +14,7 @@ class ClearUncommittedButton(
     subtractiveDefaultTexture: Identifier,
     subtractiveHoverTexture: Identifier
 ) : RadialButton(
-    { ClientSelectionController.clearUncommitted() }, startAngle, endAngle,
+    onClick, startAngle, endAngle,
     when (ClientSelectionController.getCommitMode()) {
         CommitMode.ADDITIVE -> additiveDefaultTexture
         CommitMode.SUBTRACTIVE -> subtractiveDefaultTexture

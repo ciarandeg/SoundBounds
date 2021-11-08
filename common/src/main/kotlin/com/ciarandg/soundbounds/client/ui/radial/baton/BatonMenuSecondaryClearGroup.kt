@@ -9,7 +9,7 @@ import com.ciarandg.soundbounds.client.ui.radial.MenuButtonGroup.Angles.HALF
 import com.ciarandg.soundbounds.client.ui.radial.MenuButtonGroup.Angles.QUARTER
 import com.ciarandg.soundbounds.client.ui.radial.MenuButtonGroup.Angles.ZERO
 import com.ciarandg.soundbounds.client.ui.radial.RadialButton
-import com.ciarandg.soundbounds.client.ui.radial.baton.buttons.ClearUncommittedButton
+import com.ciarandg.soundbounds.client.ui.radial.baton.buttons.DoubleTextureButton
 import net.minecraft.util.Identifier
 
 class BatonMenuSecondaryClearGroup : MenuButtonGroup(
@@ -22,7 +22,7 @@ class BatonMenuSecondaryClearGroup : MenuButtonGroup(
             },
             QUARTER.rad + EIGHTH.rad, HALF.rad + EIGHTH.rad, bothDefaultTexture, bothHoverTexture
         ) {},
-        ClearUncommittedButton(HALF.rad + EIGHTH.rad, FULL.rad, uncommittedAdditiveDefaultTexture, uncommittedAdditiveHoverTexture, uncommittedSubtractiveDefaultTexture, uncommittedSubtractiveHoverTexture)
+        DoubleTextureButton({ ClientSelectionController.clearUncommitted() }, HALF.rad + EIGHTH.rad, FULL.rad, uncommittedAdditiveDefaultTexture, uncommittedAdditiveHoverTexture, uncommittedSubtractiveDefaultTexture, uncommittedSubtractiveHoverTexture)
     )
 ) {
     companion object {
