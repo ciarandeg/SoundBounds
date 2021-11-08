@@ -7,7 +7,7 @@ import net.minecraft.util.math.BlockPos
 import kotlin.math.max
 import kotlin.math.min
 
-class BoxHighlightSelectionMode : AbstractSelectionMode() {
+class IntersectionSelectionMode : AbstractSelectionMode() {
     override fun getSelection() = ClientRegionBounds(
         marker1?.getPos()?.let { m1 ->
             marker2?.getPos()?.let { m2 ->

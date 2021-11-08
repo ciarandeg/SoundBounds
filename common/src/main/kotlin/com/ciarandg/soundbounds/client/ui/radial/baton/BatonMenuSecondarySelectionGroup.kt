@@ -2,9 +2,9 @@ package com.ciarandg.soundbounds.client.ui.radial.baton
 
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.ui.baton.modes.selection.AbstractSelectionMode
-import com.ciarandg.soundbounds.client.ui.baton.modes.selection.BoxHighlightSelectionMode
 import com.ciarandg.soundbounds.client.ui.baton.modes.selection.BoxSelectionMode
 import com.ciarandg.soundbounds.client.ui.baton.modes.selection.ExtruderSelectionMode
+import com.ciarandg.soundbounds.client.ui.baton.modes.selection.IntersectionSelectionMode
 import com.ciarandg.soundbounds.client.ui.baton.modes.selection.MoveSelectionMode
 import com.ciarandg.soundbounds.client.ui.baton.selection.ClientSelectionController
 import com.ciarandg.soundbounds.client.ui.radial.MenuButtonGroup
@@ -22,8 +22,8 @@ class BatonMenuSecondarySelectionGroup : MenuButtonGroup(buildButtons()) {
         private val extruderHoverTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/secondary_selection_extruder_hover.png")
         private val moveDefaultTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/secondary_selection_move_default.png")
         private val moveHoverTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/secondary_selection_move_hover.png")
-        private val boxHighlightDefaultTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/secondary_selection_box_highlight_default.png")
-        private val boxHighlightHoverTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/secondary_selection_box_highlight_hover.png")
+        private val intersectionDefaultTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/secondary_selection_intersection_default.png")
+        private val intersectionHoverTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/secondary_selection_intersection_hover.png")
         private val wandDefaultTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/secondary_selection_wand_highlight_default.png")
         private val wandHoverTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/secondary_selection_wand_highlight_hover.png")
 
@@ -34,7 +34,7 @@ class BatonMenuSecondarySelectionGroup : MenuButtonGroup(buildButtons()) {
                 Triple({ BoxSelectionMode() }, sphereDefaultTexture, sphereHoverTexture),
                 Triple({ ExtruderSelectionMode() }, extruderDefaultTexture, extruderHoverTexture),
                 Triple({ MoveSelectionMode() }, moveDefaultTexture, moveHoverTexture),
-                Triple({ BoxHighlightSelectionMode() }, boxHighlightDefaultTexture, boxHighlightHoverTexture),
+                Triple({ IntersectionSelectionMode() }, intersectionDefaultTexture, intersectionHoverTexture),
                 Triple({ BoxSelectionMode() }, wandDefaultTexture, wandHoverTexture)
             ).mapIndexed { index, data ->
                 SelectionModeButton(data.first, increment * index, increment * (index + 1), data.second, data.third)
