@@ -6,5 +6,6 @@ open class RadialFolder(
     val getSubGroup: () -> MenuButtonGroup,
     startAngle: Double,
     endAngle: Double,
+    defaultTexture: Identifier,
     hoverTexture: Identifier
-) : RadialButton({}, startAngle, endAngle, hoverTexture)
+) : RadialButton({}, startAngle, endAngle, defaultTexture, hoverTexture)

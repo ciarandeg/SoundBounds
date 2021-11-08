@@ -1,7 +1,7 @@
 package com.ciarandg.soundbounds.client.ui.radial.baton
 
 import com.ciarandg.soundbounds.client.render.RenderColor
-import com.ciarandg.soundbounds.client.render.SBRenderLayer
+import com.ciarandg.soundbounds.client.ui.radial.GreyableRadialButton
 import com.ciarandg.soundbounds.client.ui.radial.MenuButtonGroup
 import com.ciarandg.soundbounds.client.ui.radial.PolarCoordinate
 import com.ciarandg.soundbounds.client.ui.radial.RadialFolder
@@ -10,7 +10,6 @@ import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.text.LiteralText
-import net.minecraft.util.math.Vec2f
 import org.lwjgl.glfw.GLFW
 import java.util.Stack
 import kotlin.math.min
@@ -35,7 +34,8 @@ class BatonMenuScreen : Screen(LiteralText("Bounds Baton Menu")) {
                     is RadialFolder -> buttonGroups.push(hovered.getSubGroup())
                     else -> {
                         hovered.onClick()
-                        onClose()
+                        if (hovered !is GreyableRadialButton || !hovered.isGreyedOut())
+                            onClose()
                     }
                 }
             }
@@ -55,22 +55,7 @@ class BatonMenuScreen : Screen(LiteralText("Bounds Baton Menu")) {
         }
 
     private fun renderMenu(mousePos: PolarCoordinate, texWidth: Double, centerX: Double, centerY: Double) =
-        with(MinecraftClient.getInstance().bufferBuilders.entityVertexConsumers) {
-            val hoveredButton = buttonGroups.peek().getHoveredButton(mousePos)
-            val buffer = getBuffer(SBRenderLayer.getBatonRadialMenu(hoveredButton.hoverTexture))
-            val minX = centerX - texWidth / 2
-            val maxX = centerX + texWidth / 2
-            val minY = centerY - texWidth / 2
-            val maxY = centerY + texWidth / 2
-
-            fun drawVertex(x: Double, y: Double, uv: Vec2f) =
-                buffer.vertex(x, y, 0.0).texture(uv.x, uv.y).next()
-            drawVertex(minX, maxY, Vec2f(0.0f, 1.0f))
-            drawVertex(maxX, maxY, Vec2f(1.0f, 1.0f))
-            drawVertex(maxX, minY, Vec2f(1.0f, 0.0f))
-            drawVertex(minX, minY, Vec2f(0.0f, 0.0f))
-            draw()
-        }
+        buttonGroups.peek().render(mousePos, texWidth, centerX, centerY)
 
     private fun getMousePosPolar(mouseX: Int, mouseY: Int) = getMousePosPolar(mouseX.toDouble(), mouseY.toDouble())
     private fun getMousePosPolar(mouseX: Double, mouseY: Double): PolarCoordinate {
