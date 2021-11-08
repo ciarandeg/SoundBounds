@@ -33,9 +33,9 @@ class BatonMenuScreen : Screen(LiteralText("Bounds Baton Menu")) {
                 when (val hovered = buttonGroups.peek().getHoveredButton(getMousePosPolar(mouseX, mouseY))) {
                     is RadialFolder -> buttonGroups.push(hovered.getSubGroup())
                     else -> {
+                        val shouldClose = hovered !is GreyableRadialButton || !hovered.isGreyedOut()
                         hovered.onClick()
-                        if (hovered !is GreyableRadialButton || !hovered.isGreyedOut())
-                            onClose()
+                        if (shouldClose) onClose()
                     }
                 }
             }
