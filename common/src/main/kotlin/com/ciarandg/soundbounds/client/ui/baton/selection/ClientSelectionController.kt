@@ -95,6 +95,7 @@ object ClientSelectionController {
     )
     fun setCommitMode(mode: CommitMode) =
         executeCommand(SetCommitModeCommand(mode, model.batonState))
+    fun getCommitMode() = model.batonState.commitMode
     fun setBatonSelectionMode(mode: AbstractSelectionMode) =
         executeCommand(SetBatonSelectionModeCommand(mode, model.batonState))
     fun addToUncommitted(blockSet: Set<BlockPos>) =
