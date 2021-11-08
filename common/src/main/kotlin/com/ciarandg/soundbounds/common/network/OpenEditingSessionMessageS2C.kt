@@ -1,20 +1,20 @@
 package com.ciarandg.soundbounds.common.network
 
 import com.ciarandg.soundbounds.client.regions.ClientWorldRegions
-import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
+import com.ciarandg.soundbounds.client.ui.baton.editing.ClientEditingSessionModel
+import com.ciarandg.soundbounds.client.ui.baton.selection.ClientSelectionController
 import io.netty.buffer.Unpooled
 import me.shedaniel.architectury.networking.NetworkManager
 import net.minecraft.network.PacketByteBuf
-import java.lang.IllegalStateException
 
 class OpenEditingSessionMessageS2C : NetworkManager.NetworkReceiver {
     override fun receive(buf: PacketByteBuf, ctx: NetworkManager.PacketContext?) {
         val regionName = buf.readString()
-        with(ClientPlayerModel) {
-            editingRegion = regionName
-            committedSelection = ClientWorldRegions[editingRegion]?.bounds
+        ClientEditingSessionModel.editingRegion = regionName
+        ClientSelectionController.setCommitted(
+            ClientWorldRegions[regionName]?.bounds?.blockTree
                 ?: throw IllegalStateException("Region must exist in order for you to edit it")
-        }
+        )
     }
 
     companion object {

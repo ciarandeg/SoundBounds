@@ -27,10 +27,7 @@ class SoundBounds {
         const val KEYBIND_CATEGORY = "SoundBounds"
         val LOGGER: Logger = LogManager.getLogger(MOD_ID)
 
-        val SET_BATON_MODE_CHANNEL_S2C = Identifier(MOD_ID, "set_baton_mode_s2c")
         val VISUALIZE_REGION_CHANNEL_S2C = Identifier(MOD_ID, "visualize_region_s2c")
-        val COMMIT_SELECTION_CHANNEL_S2C = Identifier(MOD_ID, "commit_selection_s2c")
-        val COMMIT_SELECTION_CHANNEL_C2S = Identifier(MOD_ID, "commit_selection_c2s")
         val CREATE_REGION_CHANNEL_S2C = Identifier(MOD_ID, "create_region_s2c")
         val CREATE_REGION_CHANNEL_C2S = Identifier(MOD_ID, "create_region_c2s")
         val OPEN_EDITING_SESSION_CHANNEL_S2C = Identifier(MOD_ID, "open_editing_session_s2c")

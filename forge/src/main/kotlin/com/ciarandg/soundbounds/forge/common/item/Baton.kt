@@ -1,14 +1,9 @@
 package com.ciarandg.soundbounds.forge.common.item
 
-import com.ciarandg.soundbounds.SoundBounds
-import com.ciarandg.soundbounds.client.regions.ClientRegionBounds
-import com.ciarandg.soundbounds.client.ui.baton.ClientPositionMarker
-import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
+import com.ciarandg.soundbounds.client.ui.baton.selection.ClientSelectionController
 import com.ciarandg.soundbounds.common.item.IBaton
-import com.ciarandg.soundbounds.common.regions.blocktree.BlockTree
 import me.shedaniel.architectury.utils.GameInstance
 import net.minecraft.block.BlockState
-import net.minecraft.client.MinecraftClient
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.entity.LivingEntity
@@ -23,14 +18,7 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 
 class Baton(settings: Settings?) : IBaton, NetherStarItem(settings) {
-    companion object {
-        private const val cooldown = 1000
-    }
-
-    private enum class Corner(var pos: BlockPos = BlockPos(0, 0, 0), var timestamp: Long = 0) {
-        FIRST,
-        SECOND
-    }
+    private enum class Corner { FIRST, SECOND }
 
     override fun canMine(state: BlockState?, world: World?, pos: BlockPos?, miner: PlayerEntity?): Boolean {
         return false
@@ -50,25 +38,10 @@ class Baton(settings: Settings?) : IBaton, NetherStarItem(settings) {
         return super.use(world, player, hand)
     }
 
-    private fun setCorner(corner: Corner) {
-        val newMarker = ClientPlayerModel.batonState.cursor.getMarker() ?: return
-        synchronized(this) {
-            val currentTime = System.currentTimeMillis()
-            val isCoolingDown = currentTime - corner.timestamp < cooldown
-            val markerPos = newMarker.getPos()
-            val isNewBlock = markerPos != corner.pos
-            if (!isCoolingDown || isNewBlock) {
-                SoundBounds.LOGGER.info("Set corner $corner to ${newMarker.getPos()}")
-                corner.pos = markerPos
-                corner.timestamp = currentTime
-                when (corner) {
-                    Corner.FIRST -> ClientPlayerModel.batonState.selectionMode.setFirstMarker(newMarker.getPos())
-                    Corner.SECOND -> ClientPlayerModel.batonState.selectionMode.setSecondMarker(newMarker.getPos())
-                }
-                with (ClientPlayerModel) { uncommittedSelection = batonState.selectionMode.getSelection() }
-            }
-        }
-    }
+    private fun setCorner(corner: Corner) = synchronized(this) { when (corner) {
+            Corner.FIRST -> ClientSelectionController.setFirstBatonMarker()
+            Corner.SECOND -> ClientSelectionController.setSecondBatonMarker()
+        } }
 
     override fun appendTooltip(
         itemStack: ItemStack?,

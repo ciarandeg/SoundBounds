@@ -5,6 +5,10 @@ import kotlin.math.PI
 abstract class MenuButtonGroup(private val buttons: List<RadialButton>) {
     fun getHoveredButton(mousePos: PolarCoordinate) = buttons.first { it.isBisected(mousePos) }
 
+    fun render(mousePos: PolarCoordinate, texWidth: Double, centerX: Double, centerY: Double) {
+        buttons.forEach { it.render(mousePos, texWidth, centerX, centerY) }
+    }
+
     enum class Angles(val rad: Double) {
         ZERO(0.0),
         EIGHTH(PI * 0.25),

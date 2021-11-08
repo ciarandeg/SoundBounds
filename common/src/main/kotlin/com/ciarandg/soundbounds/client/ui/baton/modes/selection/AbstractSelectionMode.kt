@@ -12,13 +12,16 @@ abstract class AbstractSelectionMode {
     protected var marker1: ClientPositionMarker? = null
     protected var marker2: ClientPositionMarker? = null
 
-    fun setFirstMarker(pos: BlockPos) {
-        marker1 = ClientPositionMarker(pos)
+    fun setFirstMarker(pos: BlockPos?) {
+        marker1 = pos?.let { ClientPositionMarker(it) }
     }
 
-    fun setSecondMarker(pos: BlockPos) {
-        marker2 = ClientPositionMarker(pos)
+    fun setSecondMarker(pos: BlockPos?) {
+        marker2 = pos?.let { ClientPositionMarker(it) }
     }
+
+    fun getFirstMarkerPos() = marker1?.getPos()
+    fun getSecondMarkerPos() = marker2?.getPos()
 
     abstract fun getSelection(): ClientRegionBounds
 
