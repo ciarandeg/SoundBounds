@@ -17,10 +17,10 @@ class BatonMenuSecondaryCommitGroup : MenuButtonGroup(
     )
 ) {
     companion object {
-        private val additiveDefaultTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/secondary_commit_additive_default.png")
-        private val additiveHoverTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/secondary_commit_additive_hover.png")
-        private val subtractiveDefaultTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/secondary_commit_subtractive_default.png")
-        private val subtractiveHoverTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/secondary_commit_subtractive_hover.png")
+        private val additiveDefaultTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/secondary_commit_mode_additive_default.png")
+        private val additiveHoverTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/secondary_commit_mode_additive_hover.png")
+        private val subtractiveDefaultTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/secondary_commit_mode_subtractive_default.png")
+        private val subtractiveHoverTexture = Identifier(SoundBounds.MOD_ID, "textures/radial/secondary_commit_mode_subtractive_hover.png")
 
         private fun changeCommitMode(mode: CommitMode) = ClientSelectionController.setCommitMode(mode)
     }
