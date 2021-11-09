@@ -7,7 +7,7 @@ import net.minecraft.util.math.Vec3i
 import kotlin.math.max
 import kotlin.math.min
 
-class ExtruderSelectionMode : SculptingSelectionMode() {
+class ExtrudeSelectionMode : SculptingSelectionMode() {
     private val original = ClientSelectionController.getUncommitted().blockTree.copy()
     override fun getSelection(): ClientRegionBounds {
         val base = original.copy()
