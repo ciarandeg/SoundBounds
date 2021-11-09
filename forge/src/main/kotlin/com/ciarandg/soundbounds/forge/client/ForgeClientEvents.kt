@@ -1,7 +1,13 @@
 package com.ciarandg.soundbounds.forge.client
 
 import com.ciarandg.soundbounds.client.audio.GameMusicVolume
+import com.ciarandg.soundbounds.client.regions.ClientWorldRegions
+import com.ciarandg.soundbounds.client.render.RegionVisualizationRenderer
+import com.ciarandg.soundbounds.client.render.RegionVisualizationRenderer.existingRegionTexture
+import com.ciarandg.soundbounds.client.render.RenderColor
+import com.ciarandg.soundbounds.client.render.SBRenderLayer
 import com.ciarandg.soundbounds.client.ui.baton.selection.ClientSelectionController
+import com.ciarandg.soundbounds.client.ui.baton.visualization.ClientVisualizationModel
 import com.ciarandg.soundbounds.common.item.IBaton
 import com.ciarandg.soundbounds.forge.common.item.Baton
 import me.shedaniel.architectury.utils.GameInstance
@@ -47,10 +53,10 @@ class ForgeClientEvents {
         }
 
         // Render region visualization
-        // val visualizationRegion = ClientWorldRegions[ClientPlayerModel.visualizationRegion]
-        // if (visualizationRegion == null) ClientPlayerModel.visualizationRegion = null
-        // else RegionVisualizationRenderer.renderFilledWireframe(
-        //     matrixStack, visualizationRegion.bounds, existingRegionTexture, SBRenderLayer.getThinLines(), RenderColor(116, 64, 160)
-        // )
+        val visualizationRegion = ClientWorldRegions[ClientVisualizationModel.visualizationRegion]
+        if (visualizationRegion == null) ClientVisualizationModel.visualizationRegion = null
+        else RegionVisualizationRenderer.renderFilledWireframe(
+            matrixStack, visualizationRegion.bounds, existingRegionTexture, SBRenderLayer.getThinLines(), RenderColor(116, 64, 160)
+        )
     }
 }
