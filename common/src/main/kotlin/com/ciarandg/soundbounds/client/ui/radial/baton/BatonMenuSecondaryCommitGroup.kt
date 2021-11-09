@@ -12,8 +12,8 @@ import net.minecraft.util.Identifier
 
 class BatonMenuSecondaryCommitGroup : MenuButtonGroup(
     listOf(
-        object : RadialButton({ changeCommitMode(CommitMode.SUBTRACTIVE) }, ZERO.rad, HALF.rad, subtractiveDefaultTexture, subtractiveHoverTexture) {},
-        object : RadialButton({ changeCommitMode(CommitMode.ADDITIVE) }, HALF.rad, FULL.rad, additiveDefaultTexture, additiveHoverTexture) {},
+        object : RadialButton({ changeCommitMode(CommitMode.ADDITIVE) }, ZERO.rad, HALF.rad, additiveDefaultTexture, additiveHoverTexture) {},
+        object : RadialButton({ changeCommitMode(CommitMode.SUBTRACTIVE) }, HALF.rad, FULL.rad, subtractiveDefaultTexture, subtractiveHoverTexture) {}
     )
 ) {
     companion object {
