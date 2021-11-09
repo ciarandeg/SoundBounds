@@ -15,11 +15,11 @@ import net.minecraft.network.PacketByteBuf
 class CreateRegionMessage : NetworkManager.NetworkReceiver {
     override fun receive(buf: PacketByteBuf, ctx: NetworkManager.PacketContext) {
         if (ctx.player.world.isClient) {
-            ClientSelectionController.clearCommitted()
             NetworkManager.sendToServer(
                 SoundBounds.CREATE_REGION_CHANNEL_C2S,
                 buildBufferC2S(buf.readString(), buf.readInt())
             )
+            ClientSelectionController.clearCommitted()
         } else {
             val player: PlayerEntity = GameInstance.getServer()?.playerManager?.getPlayer(buf.readUuid()) ?: throw IllegalStateException("There must be a valid player id here")
             val controller = PlayerControllers[player] ?: throw IllegalStateException("There should already be a controller for this player")
