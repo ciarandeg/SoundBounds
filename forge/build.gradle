@@ -1,10 +1,6 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "5.0.0"
+    id "com.github.johnrengelman.shadow" version "7.1.2"
     id 'org.jetbrains.kotlin.jvm'
-}
-
-configurations {
-    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
 }
 
 architectury {
@@ -13,7 +9,14 @@ architectury {
 }
 
 loom {
-    // useFabricMixin = true TODO figure out if I lost functionality by commenting this out
+}
+
+configurations {
+    common
+    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentForge.extendsFrom common
 }
 
 dependencies {
@@ -21,15 +24,9 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
 
-    implementation(project(path: ":common")) {
-        transitive = false
-    }
-    developmentForge(project(path: ":common")) {
-        transitive = false
-    }
-    shadowCommon(project(path: ":common", configuration: "transformProductionForge")) {
-        transitive = false
-    }
+    common(project(path: ":common", configuration: "namedElements")) { transitive false }
+    shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
@@ -51,7 +48,7 @@ shadowJar {
 remapJar {
     input.set shadowJar.archiveFile
     dependsOn shadowJar
-    classifier "forge"
+    classifier null
 }
 
 jar {
@@ -72,13 +69,7 @@ publishing {
     publications {
         mavenForge(MavenPublication) {
             artifactId = rootProject.archives_base_name + "-" + project.name
-            // add all the jars that should be included when publishing to maven
-            artifact(remapJar) {
-                classifier null
-            }
-            artifact(sourcesJar) {
-                builtBy remapSourcesJar
-            }
+            from components.java
         }
     }
 
@@ -90,11 +81,13 @@ publishing {
 repositories {
     mavenCentral()
 }
+
 compileKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
     }
 }
+
 compileTestKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
