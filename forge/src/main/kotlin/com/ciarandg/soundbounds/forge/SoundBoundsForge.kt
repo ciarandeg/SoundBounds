@@ -4,10 +4,9 @@ import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.forge.client.ForgeClientEvents
 import com.ciarandg.soundbounds.forge.common.item.SoundBoundsForgeItems
 import com.ciarandg.soundbounds.common.network.PosMarkerUpdateMessage
-import me.shedaniel.architectury.event.events.client.ClientLifecycleEvent
-import me.shedaniel.architectury.networking.NetworkManager
-import me.shedaniel.architectury.platform.Platform
-import me.shedaniel.architectury.platform.forge.EventBuses
+import dev.architectury.event.events.client.ClientLifecycleEvent
+import dev.architectury.platform.Platform
+import dev.architectury.platform.forge.EventBuses
 import net.minecraft.util.Identifier
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.common.MinecraftForge

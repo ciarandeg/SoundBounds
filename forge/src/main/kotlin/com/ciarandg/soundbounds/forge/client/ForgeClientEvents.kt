@@ -6,9 +6,9 @@ import com.ciarandg.soundbounds.client.render.MarkerSelectionRenderer
 import com.ciarandg.soundbounds.client.render.RegionVisualizationRenderer
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
 import com.ciarandg.soundbounds.forge.common.item.Baton
-import me.shedaniel.architectury.utils.GameInstance
+import dev.architectury.utils.GameInstance
 import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.screen.options.SoundOptionsScreen
+import net.minecraft.client.gui.screen.option.SoundOptionsScreen
 import net.minecraft.sound.SoundCategory
 import net.minecraftforge.client.event.GuiScreenEvent
 import net.minecraftforge.client.event.RenderWorldLastEvent

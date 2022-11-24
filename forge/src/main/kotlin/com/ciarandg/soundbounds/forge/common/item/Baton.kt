@@ -1,14 +1,13 @@
 package com.ciarandg.soundbounds.forge.common.item
 
 import com.ciarandg.soundbounds.SoundBounds
-import com.ciarandg.soundbounds.forge.SoundBoundsForge
 import com.ciarandg.soundbounds.common.network.PosMarkerUpdateMessage
 import com.ciarandg.soundbounds.server.ui.cli.PosMarker
-import me.shedaniel.architectury.networking.NetworkManager
-import me.shedaniel.architectury.platform.Platform
-import me.shedaniel.architectury.utils.Env.CLIENT
-import me.shedaniel.architectury.utils.Env.SERVER
-import me.shedaniel.architectury.utils.GameInstance
+import dev.architectury.networking.NetworkManager
+import dev.architectury.platform.Platform
+import dev.architectury.utils.Env.CLIENT
+import dev.architectury.utils.Env.SERVER
+import dev.architectury.utils.GameInstance
 import net.minecraft.block.BlockState
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.item.TooltipContext
