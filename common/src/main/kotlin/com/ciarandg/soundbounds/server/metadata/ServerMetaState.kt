@@ -3,24 +3,26 @@ package com.ciarandg.soundbounds.server.metadata
 import com.ciarandg.soundbounds.common.metadata.JsonMeta
 import com.google.gson.Gson
 import me.shedaniel.architectury.utils.GameInstance
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.world.PersistentState
 import net.minecraft.world.PersistentStateManager
 
-class ServerMetaState(key: String?) : PersistentState(key) {
+class ServerMetaState(key: String?) : PersistentState(
+    // key
+) {
     var meta = JsonMeta()
         set(value) {
             field = value
             this.markDirty()
         }
 
-    override fun fromTag(tag: CompoundTag?) {
-        val metaTag = tag?.getString("meta") ?: return
-        meta = gson.fromJson(metaTag, JsonMeta::class.java)
-    }
+    // override fun fromTag(tag: NbtCompound?) {
+    //     val metaTag = tag?.getString("meta") ?: return
+    //     meta = gson.fromJson(metaTag, JsonMeta::class.java)
+    // }
 
-    override fun toTag(tag: CompoundTag?): CompoundTag {
-        val newTag = CompoundTag()
+    override fun writeNbt(tag: NbtCompound?): NbtCompound {
+        val newTag = NbtCompound()
         newTag.putString("meta", gson.toJson(meta))
         return newTag
     }
@@ -30,12 +32,12 @@ class ServerMetaState(key: String?) : PersistentState(key) {
         val gson = Gson()
 
         fun get(): ServerMetaState =
-            getStateManager().getOrCreate(
+            getStateManager().get(
                 { ServerMetaState(SERVER_METADATA_KEY) },
                 SERVER_METADATA_KEY
-            )
+            )!!
         fun set(state: ServerMetaState) =
-            getStateManager().set(state)
+            getStateManager().set(SERVER_METADATA_KEY, state)
 
         private fun getStateManager(): PersistentStateManager {
             val server = GameInstance.getServer() ?: throw RuntimeException("Must be run from server side")

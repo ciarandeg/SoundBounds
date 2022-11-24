@@ -26,7 +26,7 @@ class PlayerController(
 ) {
     val paginator = Paginator()
     private val world: ServerWorld
-        get() = owner.serverWorld
+        get() = owner.getWorld()
 
     fun showNowPlaying(player: ServerPlayerEntity) =
         NetworkManager.sendToPlayer(

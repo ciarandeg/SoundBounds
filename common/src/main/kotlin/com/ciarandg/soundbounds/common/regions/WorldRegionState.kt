@@ -1,18 +1,20 @@
 package com.ciarandg.soundbounds.common.regions
 
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.world.PersistentState
 
-class WorldRegionState(key: String?) : PersistentState(key) {
+class WorldRegionState(key: String?) : PersistentState(
+    // key
+) {
     private val regions: MutableMap<String, RegionData> = HashMap()
 
-    override fun fromTag(tag: CompoundTag) {
-        regions.putAll(tag.keys.associateWith { regionName -> RegionData.fromTag(tag.getCompound(regionName)) })
-    }
+    // override fun fromTag(tag: NbtCompound) {
+    //     regions.putAll(tag.keys.associateWith { regionName -> RegionData.fromTag(tag.getCompound(regionName)) })
+    // }
 
-    override fun toTag(tag: CompoundTag?): CompoundTag {
-        val newTag = CompoundTag()
+    override fun writeNbt(tag: NbtCompound?): NbtCompound {
+        val newTag = NbtCompound()
         for (regionName in regions.keys)
             newTag.put(regionName, regions[regionName]?.toTag())
         return newTag
@@ -41,8 +43,8 @@ class WorldRegionState(key: String?) : PersistentState(key) {
         private const val WORLD_REGIONS_KEY = "sb-regions"
 
         fun get(world: ServerWorld): WorldRegionState =
-            world.persistentStateManager.getOrCreate({ WorldRegionState(WORLD_REGIONS_KEY) }, WORLD_REGIONS_KEY)
+            world.persistentStateManager.get({ WorldRegionState(WORLD_REGIONS_KEY) }, WORLD_REGIONS_KEY)!!
         fun set(world: ServerWorld, state: WorldRegionState) =
-            world.persistentStateManager.set(state)
+            world.persistentStateManager.set(WORLD_REGIONS_KEY, state)
     }
 }

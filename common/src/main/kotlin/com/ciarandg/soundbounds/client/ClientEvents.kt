@@ -48,12 +48,12 @@ object ClientEvents {
     }
 
     private fun registerOptionsScreen() {
-        KeyBindings.registerKeyBinding(SBOptionsScreen.binding)
+        // KeyBindings.registerKeyBinding(SBOptionsScreen.binding)
 
         TickEvent.PLAYER_POST.register {
             val client = MinecraftClient.getInstance()
-            if (SBOptionsScreen.binding.isPressed && client.currentScreen == null)
-                client.openScreen(SBOptionsScreen())
+            // if (SBOptionsScreen.binding.isPressed && client.currentScreen == null)
+            //     client.openScreen(SBOptionsScreen())
         }
     }
 
