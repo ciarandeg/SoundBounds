@@ -6,8 +6,8 @@ import com.ciarandg.soundbounds.client.exceptions.NoMetadataException
 import com.ciarandg.soundbounds.client.regions.ClientRegion
 import com.ciarandg.soundbounds.client.regions.ClientWorldRegions
 import com.ciarandg.soundbounds.common.regions.RegionData
+import dev.architectury.networking.NetworkManager
 import io.netty.buffer.Unpooled
-import me.shedaniel.architectury.networking.NetworkManager
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.network.PacketByteBuf
 import java.lang.RuntimeException

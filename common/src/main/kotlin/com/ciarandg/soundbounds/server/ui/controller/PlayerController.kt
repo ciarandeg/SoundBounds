@@ -11,8 +11,8 @@ import com.ciarandg.soundbounds.server.ui.PlayerView
 import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason
 import com.ciarandg.soundbounds.server.ui.cli.CLIServerPlayerView
 import com.ciarandg.soundbounds.server.ui.cli.PosMarker
+import dev.architectury.networking.NetworkManager
 import io.netty.buffer.Unpooled
-import me.shedaniel.architectury.networking.NetworkManager
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld

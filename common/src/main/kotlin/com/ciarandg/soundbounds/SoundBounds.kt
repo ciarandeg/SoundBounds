@@ -5,9 +5,9 @@ import com.ciarandg.soundbounds.client.regions.ClientRegion
 import com.ciarandg.soundbounds.common.CommonEvents
 import com.ciarandg.soundbounds.common.regions.RegionData
 import com.ciarandg.soundbounds.server.ServerEvents
-import me.shedaniel.architectury.event.events.LifecycleEvent
-import me.shedaniel.architectury.event.events.client.ClientLifecycleEvent
-import me.shedaniel.architectury.platform.Platform
+import dev.architectury.event.events.client.ClientLifecycleEvent
+import dev.architectury.event.events.common.LifecycleEvent
+import dev.architectury.platform.Platform
 import net.fabricmc.api.EnvType
 import net.minecraft.text.MutableText
 import net.minecraft.util.Identifier

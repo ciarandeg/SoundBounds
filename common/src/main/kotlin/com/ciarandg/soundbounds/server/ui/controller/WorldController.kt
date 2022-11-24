@@ -15,7 +15,7 @@ import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason.NO_SUCH_REGIO
 import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason.REGION_MUST_HAVE_VOLUME
 import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason.REGION_NAME_CONFLICT
 import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason.VOLUME_INDEX_OOB
-import me.shedaniel.architectury.networking.NetworkManager
+import dev.architectury.networking.NetworkManager
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
 

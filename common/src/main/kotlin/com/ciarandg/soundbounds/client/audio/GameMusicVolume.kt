@@ -1,6 +1,6 @@
 package com.ciarandg.soundbounds.client.audio
 
-import me.shedaniel.architectury.utils.GameInstance
+import dev.architectury.utils.GameInstance
 import net.minecraft.sound.SoundCategory
 import java.util.Observable
 

@@ -5,7 +5,7 @@ import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.Fader
 import com.ciarandg.soundbounds.client.exceptions.EmptyPlaylistException
 import com.ciarandg.soundbounds.client.exceptions.MissingAudioException
-import me.shedaniel.architectury.utils.GameInstance
+import dev.architectury.utils.GameInstance
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d

@@ -6,7 +6,7 @@ import com.ciarandg.soundbounds.client.exceptions.NoMetadataException
 import com.ciarandg.soundbounds.client.exceptions.SongMetaMismatchException
 import com.ciarandg.soundbounds.client.metadata.ClientMeta
 import com.ciarandg.soundbounds.common.metadata.JsonSongMeta
-import me.shedaniel.architectury.utils.GameInstance
+import dev.architectury.utils.GameInstance
 import net.minecraft.client.sound.OggAudioStream
 import net.minecraft.util.Identifier
 import java.io.IOException

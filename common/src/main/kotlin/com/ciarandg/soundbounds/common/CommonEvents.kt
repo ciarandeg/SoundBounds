@@ -12,8 +12,8 @@ import com.ciarandg.soundbounds.common.ui.cli.argument.RegionArgumentType
 import com.ciarandg.soundbounds.common.ui.cli.argument.SongIDArgumentType
 import com.ciarandg.soundbounds.common.ui.cli.argument.SongTagArgumentType
 import com.ciarandg.soundbounds.common.ui.cli.command.SoundBoundsCommand
-import me.shedaniel.architectury.event.events.CommandRegistrationEvent
-import me.shedaniel.architectury.networking.NetworkManager
+import dev.architectury.event.events.common.CommandRegistrationEvent
+import dev.architectury.networking.NetworkManager
 
 object CommonEvents {
     fun register() {

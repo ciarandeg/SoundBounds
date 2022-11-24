@@ -2,7 +2,7 @@ package com.ciarandg.soundbounds.server.metadata
 
 import com.ciarandg.soundbounds.common.metadata.JsonMeta
 import com.google.gson.Gson
-import me.shedaniel.architectury.utils.GameInstance
+import dev.architectury.utils.GameInstance
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.world.PersistentState
 import net.minecraft.world.PersistentStateManager

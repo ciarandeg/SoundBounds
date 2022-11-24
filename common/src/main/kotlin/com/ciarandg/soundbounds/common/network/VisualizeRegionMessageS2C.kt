@@ -1,8 +1,8 @@
 package com.ciarandg.soundbounds.common.network
 
 import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
+import dev.architectury.networking.NetworkManager
 import io.netty.buffer.Unpooled
-import me.shedaniel.architectury.networking.NetworkManager
 import net.minecraft.network.PacketByteBuf
 
 class VisualizeRegionMessageS2C : NetworkManager.NetworkReceiver {

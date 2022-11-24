@@ -14,11 +14,10 @@ import com.ciarandg.soundbounds.common.network.PosMarkerUpdateMessage
 import com.ciarandg.soundbounds.common.network.RegionDestroyMessageS2C
 import com.ciarandg.soundbounds.common.network.RegionUpdateMessageS2C
 import com.ciarandg.soundbounds.common.network.VisualizeRegionMessageS2C
-import me.shedaniel.architectury.event.events.GuiEvent
-import me.shedaniel.architectury.event.events.TickEvent
-import me.shedaniel.architectury.event.events.client.ClientPlayerEvent
-import me.shedaniel.architectury.networking.NetworkManager
-import me.shedaniel.architectury.registry.KeyBindings
+import dev.architectury.event.events.client.ClientGuiEvent
+import dev.architectury.event.events.client.ClientPlayerEvent
+import dev.architectury.event.events.common.TickEvent
+import dev.architectury.networking.NetworkManager
 import net.minecraft.client.MinecraftClient
 
 object ClientEvents {
@@ -98,7 +97,7 @@ object ClientEvents {
     }
 
     private fun registerMetadata() {
-        GuiEvent.INIT_POST.register { _, _, _ -> ClientMeta.update() }
+        ClientGuiEvent.INIT_POST.register { _, _ -> ClientMeta.update() }
         NetworkManager.registerReceiver(
             NetworkManager.Side.S2C,
             SoundBounds.SYNC_METADATA_CHANNEL_S2C,
