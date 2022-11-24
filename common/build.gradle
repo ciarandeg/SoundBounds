@@ -1,7 +1,7 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm'
-    id "com.diffplug.spotless" version "5.14.1"
 }
+
 dependencies {
     // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
     // Do NOT use other classes from fabric loader
@@ -13,12 +13,6 @@ dependencies {
 
 architectury {
     common(rootProject.enabled_platforms.split(","))
-}
-
-spotless {
-    kotlin {
-        ktlint('0.40.0')
-    }
 }
 
 java {
