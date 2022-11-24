@@ -13,7 +13,7 @@ architectury {
 }
 
 loom {
-    useFabricMixin = true
+    // useFabricMixin = true TODO figure out if I lost functionality by commenting this out
 }
 
 dependencies {
