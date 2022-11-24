@@ -15,10 +15,6 @@ plugins {
 
 apply plugin: 'kotlin'
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-}
-
 architectury {
     minecraft = rootProject.minecraft_version
 }
@@ -64,6 +60,10 @@ allprojects {
     java {
         withSourcesJar()
     }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
 
 repositories {
