@@ -2,6 +2,10 @@ plugins {
     id 'org.jetbrains.kotlin.jvm'
 }
 
+architectury {
+    common(rootProject.enabled_platforms.split(","))
+}
+
 dependencies {
     // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
     // Do NOT use other classes from fabric loader
@@ -9,10 +13,6 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury:${rootProject.architectury_version}"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-}
-
-architectury {
-    common(rootProject.enabled_platforms.split(","))
 }
 
 java {
@@ -23,12 +23,7 @@ publishing {
     publications {
         mavenCommon(MavenPublication) {
             artifactId = rootProject.archives_base_name
-            // add all the jars that should be included when publishing to maven
-            artifact remapJar
-            artifact(sourcesJar) {
-                builtBy remapSourcesJar
-            }
-            from(components["java"])
+            from components.java
         }
     }
 
@@ -37,14 +32,17 @@ publishing {
         // Add repositories to publish to here.
     }
 }
+
 repositories {
     mavenCentral()
 }
+
 compileKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
     }
 }
+
 compileTestKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
