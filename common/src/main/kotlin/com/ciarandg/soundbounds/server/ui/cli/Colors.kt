@@ -44,7 +44,7 @@ object Colors {
     }.fold(bodyText("")) { textIn, textOut -> textIn + textOut }
 
     private fun singleArtistText(artist: String): MutableText {
-        val meta = ServerMetaState.get().meta
+        val meta = ServerMetaState.getOrCreate().meta
         val promo = meta.composers[artist]?.promo
         val groupMembers = meta.groups[artist]
         return when {

@@ -29,11 +29,12 @@ class ServerMetaState : PersistentState() {
         private const val SERVER_METADATA_KEY = "sb-meta"
         val gson = Gson()
 
-        fun get(): ServerMetaState =
-            getStateManager().get(
-                { ServerMetaState() },
-                SERVER_METADATA_KEY
-            )!!
+        fun getOrCreate(): ServerMetaState =
+            getStateManager().get({ ServerMetaState() }, SERVER_METADATA_KEY) ?: run {
+                val state = ServerMetaState()
+                set(state)
+                state
+            }
         fun set(state: ServerMetaState) =
             getStateManager().set(SERVER_METADATA_KEY, state)
 

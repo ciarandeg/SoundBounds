@@ -63,7 +63,7 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
     }
 
     override fun showNowPlaying(nowPlaying: String) {
-        val meta = ServerMetaState.get().meta
+        val meta = ServerMetaState.getOrCreate().meta
         val songMeta = meta.songs[nowPlaying]
         if (songMeta != null) sendWithBadge(
             bodyText("Now playing: ")
@@ -162,7 +162,7 @@ class CLIServerPlayerView(override val owner: PlayerEntity) : PlayerView {
         fun pluralize(size: Int, singular: String) =
             if (size == 1) singular else singular + "s"
 
-        val meta = ServerMetaState.get().meta
+        val meta = ServerMetaState.getOrCreate().meta
         val composers = meta.composers.size
         val groups = meta.groups.size
         val songs = meta.songs.size

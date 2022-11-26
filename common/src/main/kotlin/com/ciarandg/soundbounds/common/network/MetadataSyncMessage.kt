@@ -22,7 +22,7 @@ class MetadataSyncMessage : NetworkManager.NetworkReceiver {
             val requester: PlayerEntity? = GameInstance.getServer()?.playerManager?.getPlayer(buf.readUuid())
             val requesterController = PlayerControllers[requester]
             try {
-                val state = ServerMetaState.get()
+                val state = ServerMetaState.getOrCreate()
                 state.meta = gson.fromJson(buf.readString(STR_LIMIT), JsonMeta::class.java)
                 ServerMetaState.set(state)
                 requesterController?.notifyMetadataSynced(true)

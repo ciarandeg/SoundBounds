@@ -40,8 +40,12 @@ class WorldRegionState : PersistentState() {
     companion object {
         private const val WORLD_REGIONS_KEY = "sb-regions"
 
-        fun get(world: ServerWorld): WorldRegionState =
-            world.persistentStateManager.get({ WorldRegionState() }, WORLD_REGIONS_KEY)!!
+        fun getOrCreate(world: ServerWorld): WorldRegionState =
+            world.persistentStateManager.get({ WorldRegionState() }, WORLD_REGIONS_KEY) ?: run {
+                val state = WorldRegionState()
+                set(world, state)
+                state
+            }
         fun set(world: ServerWorld, state: WorldRegionState) =
             world.persistentStateManager.set(WORLD_REGIONS_KEY, state)
     }

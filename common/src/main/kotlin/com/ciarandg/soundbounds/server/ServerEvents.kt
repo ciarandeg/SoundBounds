@@ -27,7 +27,7 @@ object ServerEvents {
     }
 
     private fun sendWorldRegions(player: ServerPlayerEntity) {
-        val regions = WorldRegionState.get(player.getWorld()).getAllRegions().map { it.toPair() } ?: listOf()
+        val regions = WorldRegionState.getOrCreate(player.getWorld()).getAllRegions().map { it.toPair() } ?: listOf()
         NetworkManager.sendToPlayer(
             player,
             SoundBounds.UPDATE_REGIONS_CHANNEL_S2C,

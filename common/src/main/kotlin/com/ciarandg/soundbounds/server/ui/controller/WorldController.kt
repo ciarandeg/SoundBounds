@@ -153,12 +153,12 @@ class WorldController(
         editWorldState { state ->
             when (val region = state.getRegion(regionName)) {
                 null -> views.forEach { it.notifyFailed(NO_SUCH_REGION) }
-                else -> work(region, ServerMetaState.get().meta)
+                else -> work(region, ServerMetaState.getOrCreate().meta)
             }
         }
 
     private fun editWorldState(work: (WorldRegionState) -> Unit) = synchronized(owner) {
-        val state = WorldRegionState.get(owner)
+        val state = WorldRegionState.getOrCreate(owner)
         work(state)
         WorldRegionState.set(owner, state)
     }

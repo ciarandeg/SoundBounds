@@ -15,7 +15,7 @@ class MetaHashCheckMessage : NetworkManager.NetworkReceiver {
         if (ctx.player.world.isClient) NetworkManager.sendToServer(SoundBounds.META_HASH_CHECK_C2S, buildBufferC2S())
         else {
             val clientHash = buf.readInt()
-            val serverHash = ServerMetaState.get().meta.hashCode()
+            val serverHash = ServerMetaState.getOrCreate().meta.hashCode()
             if (clientHash != serverHash) PlayerControllers[ctx.player as ServerPlayerEntity].notifyMetaMismatch()
         }
     }
