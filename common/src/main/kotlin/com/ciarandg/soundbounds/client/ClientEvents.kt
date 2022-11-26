@@ -16,6 +16,7 @@ import com.ciarandg.soundbounds.common.network.RegionUpdateMessageS2C
 import com.ciarandg.soundbounds.common.network.VisualizeRegionMessageS2C
 import dev.architectury.event.events.client.ClientGuiEvent
 import dev.architectury.event.events.client.ClientPlayerEvent
+import dev.architectury.event.events.client.ClientTickEvent
 import dev.architectury.event.events.common.TickEvent
 import dev.architectury.networking.NetworkManager
 import dev.architectury.registry.client.keymappings.KeyMappingRegistry
@@ -50,7 +51,7 @@ object ClientEvents {
     private fun registerOptionsScreen() {
         KeyMappingRegistry.register(SBOptionsScreen.binding)
 
-        TickEvent.PLAYER_POST.register {
+        ClientTickEvent.CLIENT_POST.register {
             val client = MinecraftClient.getInstance()
             if (SBOptionsScreen.binding.isPressed && client.currentScreen == null)
                 client.setScreen(SBOptionsScreen())
