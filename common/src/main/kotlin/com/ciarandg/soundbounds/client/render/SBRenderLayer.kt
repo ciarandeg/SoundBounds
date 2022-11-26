@@ -25,32 +25,30 @@ class SBRenderLayer(
         fun getThinLines() = getLines(3.0)
         fun getThickLines() = getLines(5.0)
         fun getLines(lineWidth: Double): RenderLayer {
-            TODO()
-            // return of(
-            //     "${SoundBounds.MOD_ID}_lines", VertexFormats.POSITION_COLOR, GL_LINES, 256,
-            //     MultiPhaseParameters.builder()
-            //         .lineWidth(LineWidth(OptionalDouble.of(lineWidth)))
-            //         .layering(VIEW_OFFSET_Z_LAYERING)
-            //         .transparency(TRANSLUCENT_TRANSPARENCY)
-            //         .target(ITEM_TARGET)
-            //         .writeMaskState(ALL_MASK)
-            //         .build(false)
-            // )
+            return of(
+                "${SoundBounds.MOD_ID}_lines", VertexFormats.POSITION_COLOR, DrawMode.LINES, 256,
+                MultiPhaseParameters.builder()
+                    .lineWidth(LineWidth(OptionalDouble.of(lineWidth)))
+                    .layering(VIEW_OFFSET_Z_LAYERING)
+                    .transparency(TRANSLUCENT_TRANSPARENCY)
+                    .target(ITEM_TARGET)
+                    .writeMaskState(ALL_MASK)
+                    .build(false)
+            )
         }
 
         fun getSelectionHighlight(texture: Identifier): RenderLayer {
-            TODO()
-            // val multiPhaseParameters: MultiPhaseParameters =
-            //     MultiPhaseParameters.builder()
-            //         .texture(Texture(texture, false, false))
-            //         .transparency(ADDITIVE_TRANSPARENCY)
-            //         .diffuseLighting(ENABLE_DIFFUSE_LIGHTING)
-            //         .cull(DISABLE_CULLING)
-            //         .build(true)
-            // return of(
-            //     "${SoundBounds.MOD_ID}_selection_highlight", VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL,
-            //     GL_QUADS, 256, true, false, multiPhaseParameters
-            // )
+            val multiPhaseParameters: MultiPhaseParameters =
+                MultiPhaseParameters.builder()
+                    .texture(Texture(texture, false, false))
+                    .transparency(ADDITIVE_TRANSPARENCY)
+                    .lightmap(ENABLE_LIGHTMAP)
+                    .cull(DISABLE_CULLING)
+                    .build(true)
+            return of(
+                "${SoundBounds.MOD_ID}_selection_highlight", VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL,
+                DrawMode.QUADS, 256, true, false, multiPhaseParameters
+            )
         }
     }
 }

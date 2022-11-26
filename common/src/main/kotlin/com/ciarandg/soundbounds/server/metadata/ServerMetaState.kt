@@ -7,19 +7,17 @@ import net.minecraft.nbt.NbtCompound
 import net.minecraft.world.PersistentState
 import net.minecraft.world.PersistentStateManager
 
-class ServerMetaState(key: String?) : PersistentState(
-    // key
-) {
+class ServerMetaState : PersistentState() {
     var meta = JsonMeta()
         set(value) {
             field = value
             this.markDirty()
         }
 
-    // override fun fromTag(tag: NbtCompound?) {
-    //     val metaTag = tag?.getString("meta") ?: return
-    //     meta = gson.fromJson(metaTag, JsonMeta::class.java)
-    // }
+    fun fromTag(tag: NbtCompound?) {
+        val metaTag = tag?.getString("meta") ?: return
+        meta = gson.fromJson(metaTag, JsonMeta::class.java)
+    }
 
     override fun writeNbt(tag: NbtCompound?): NbtCompound {
         val newTag = NbtCompound()
@@ -33,7 +31,7 @@ class ServerMetaState(key: String?) : PersistentState(
 
         fun get(): ServerMetaState =
             getStateManager().get(
-                { ServerMetaState(SERVER_METADATA_KEY) },
+                { ServerMetaState() },
                 SERVER_METADATA_KEY
             )!!
         fun set(state: ServerMetaState) =

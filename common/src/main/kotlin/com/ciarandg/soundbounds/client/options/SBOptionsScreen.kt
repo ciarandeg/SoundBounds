@@ -1,107 +1,122 @@
 package com.ciarandg.soundbounds.client.options
 
 import net.minecraft.client.gui.screen.Screen
+import net.minecraft.client.gui.widget.ButtonWidget
+import net.minecraft.client.gui.widget.CyclingButtonWidget
+import net.minecraft.client.option.CyclingOption
+import net.minecraft.client.option.KeyBinding
+import net.minecraft.client.option.Option
 // import net.minecraft.client.gui.widget.ButtonWidget
 // import net.minecraft.client.gui.widget.OptionButtonWidget
 // import net.minecraft.client.options.BooleanOption
 // import net.minecraft.client.options.KeyBinding
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.text.LiteralText
+import net.minecraft.text.Text
 import org.lwjgl.glfw.GLFW
 import kotlin.math.pow
 
 class SBOptionsScreen : Screen(LiteralText("SoundBounds Client Options")) {
-    // override fun init() {
-    //     val xCenter = width / 2
-    //     val widgetWidth = 150
-    //     val widgetHeight = 20
-    //     val spacer = widgetHeight / 4
-    //     val top = height / 4 - widgetHeight / 2
+    override fun init() {
+        val xCenter = width / 2
+        val widgetWidth = 150
+        val widgetHeight = 20
+        val spacer = widgetHeight / 4
+        val top = height / 4 - widgetHeight / 2
 
-    //     val xPos = xCenter - widgetWidth / 2
-    //     var counter = 0
-    //     fun nextY() = top + (widgetHeight + spacer) * counter++
+        val xPos = xCenter - widgetWidth / 2
+        var counter = 0
+        fun nextY() = top + (widgetHeight + spacer) * counter++
 
-    //     super.init()
-    //     addButton(
-    //         ButtonWidget(
-    //             xPos, nextY(),
-    //             widgetWidth, widgetHeight,
-    //             LiteralText("Reset All")
-    //         ) {
-    //             SBClientOptions.setToDefault()
-    //             client?.openScreen(SBOptionsScreen())
-    //         }
-    //     )
-    //     addButton(
-    //         SBSliderWidget(
-    //             xPos, nextY(),
-    //             widgetWidth, widgetHeight,
-    //             fromFadeDur(),
-    //             "Fade Duration",
-    //             { value -> formatDuration(toFadeDur(value), { "ms" }, { "secs" }, { "mins" }) },
-    //             { value -> formatDuration(toFadeDur(value), { it.toString() }, { truncate(it) }, { truncate(it) }) },
-    //             { value -> SBClientOptions.data.fadeDuration = toFadeDur(value) }
-    //         )
-    //     )
-    //     addButton(
-    //         SBSliderWidget(
-    //             xPos, nextY(),
-    //             widgetWidth, widgetHeight,
-    //             fromIdleDur(),
-    //             "Post-Song Idle",
-    //             { value -> formatDuration(toIdleDur(value), { "ms" }, { "secs" }, { "mins" }) },
-    //             { value -> formatDuration(toIdleDur(value), { it.toString() }, { truncate(it) }, { truncate(it) }) },
-    //             { value -> SBClientOptions.data.idleDuration = toIdleDur(value) },
-    //         )
-    //     )
-    //     addButton(
-    //         SBSliderWidget(
-    //             xPos, nextY(),
-    //             widgetWidth, widgetHeight,
-    //             fromBufDur(),
-    //             "Buffer Size",
-    //             { "ms" },
-    //             { value -> toBufDur(value) },
-    //             { value -> SBClientOptions.data.bufferDuration = toBufDur(value) }
-    //         )
-    //     )
-    //     addButton(
-    //         SBSliderWidget(
-    //             xPos, nextY(),
-    //             widgetWidth, widgetHeight,
-    //             fromLookahead(),
-    //             "Lookahead",
-    //             { "buffers" },
-    //             { value -> toLookahead(value) },
-    //             { value -> SBClientOptions.data.lookahead = toLookahead(value) }
-    //         )
-    //     )
-    //     val diskStreamButton = OptionButtonWidget(
-    //         xPos, nextY(),
-    //         widgetWidth, widgetHeight,
-    //         diskStreamOption,
-    //         diskStreamOption.getDisplayString(null)
-    //     ) { button: ButtonWidget ->
-    //         diskStreamOption.toggle(client?.options)
-    //         button.message = diskStreamOption.getDisplayString(client?.options)
-    //         client?.options?.write()
-    //     }
-    //     diskStreamButton.active = false
-    //     addButton(diskStreamButton)
-    //     addButton(
-    //         OptionButtonWidget(
-    //             xPos, nextY(),
-    //             widgetWidth, widgetHeight,
-    //             autoNowPlayingOption,
-    //             autoNowPlayingOption.getDisplayString(null)
-    //         ) { button: ButtonWidget ->
-    //             autoNowPlayingOption.toggle(client?.options)
-    //             button.message = autoNowPlayingOption.getDisplayString(client?.options)
-    //             client?.options?.write()
-    //         }
-    //     )
-    // }
+        super.init()
+        addSelectableChild(
+            ButtonWidget(
+                xPos, nextY(),
+                widgetWidth, widgetHeight,
+                LiteralText("Reset All")
+            ) {
+                SBClientOptions.setToDefault()
+                client?.setScreen(SBOptionsScreen())
+            }
+        )
+        addSelectableChild(
+            SBSliderWidget(
+                xPos, nextY(),
+                widgetWidth, widgetHeight,
+                fromFadeDur(),
+                "Fade Duration",
+                { value -> formatDuration(toFadeDur(value), { "ms" }, { "secs" }, { "mins" }) },
+                { value -> formatDuration(toFadeDur(value), { it.toString() }, { truncate(it) }, { truncate(it) }) },
+                { value -> SBClientOptions.data.fadeDuration = toFadeDur(value) }
+            )
+        )
+        addSelectableChild(
+            SBSliderWidget(
+                xPos, nextY(),
+                widgetWidth, widgetHeight,
+                fromIdleDur(),
+                "Post-Song Idle",
+                { value -> formatDuration(toIdleDur(value), { "ms" }, { "secs" }, { "mins" }) },
+                { value -> formatDuration(toIdleDur(value), { it.toString() }, { truncate(it) }, { truncate(it) }) },
+                { value -> SBClientOptions.data.idleDuration = toIdleDur(value) },
+            )
+        )
+        addSelectableChild(
+            SBSliderWidget(
+                xPos, nextY(),
+                widgetWidth, widgetHeight,
+                fromBufDur(),
+                "Buffer Size",
+                { "ms" },
+                { value -> toBufDur(value) },
+                { value -> SBClientOptions.data.bufferDuration = toBufDur(value) }
+            )
+        )
+        addSelectableChild(
+            SBSliderWidget(
+                xPos, nextY(),
+                widgetWidth, widgetHeight,
+                fromLookahead(),
+                "Lookahead",
+                { "buffers" },
+                { value -> toLookahead(value) },
+                { value -> SBClientOptions.data.lookahead = toLookahead(value) }
+            )
+        )
+        val diskStreamButton = CyclingButtonWidget.onOffBuilder().build(
+            xPos, nextY(), widgetWidth, widgetHeight, LiteralText("My cool text!")
+        )
+        // val diskStreamButton = OptionButtonWidget(
+        //     xPos, nextY(),
+        //     widgetWidth, widgetHeight,
+        //     diskStreamOption.getDisplayString(null)
+        // ) { button: ButtonWidget ->
+        //     diskStreamOption.toggle(client?.options)
+        //     button.message = diskStreamOption.getDisplayString(client?.options)
+        //     client?.options?.write()
+        // }
+        diskStreamButton.active = false
+        addSelectableChild(diskStreamButton)
+        addSelectableChild(
+            CyclingButtonWidget.onOffBuilder().build(
+                xPos, nextY(),
+                widgetWidth, widgetHeight,
+                LiteralText("My other cool cool text!")
+            )
+        )
+        // addSelectableChild(
+        //     OptionButtonWidget(
+        //         xPos, nextY(),
+        //         widgetWidth, widgetHeight,
+        //         autoNowPlayingOption,
+        //         autoNowPlayingOption.getDisplayString(null)
+        //     ) { button: ButtonWidget ->
+        //         autoNowPlayingOption.toggle(client?.options)
+        //         button.message = autoNowPlayingOption.getDisplayString(client?.options)
+        //         client?.options?.write()
+        //     }
+        // )
+    }
 
     override fun render(matrices: MatrixStack, mouseX: Int, mouseY: Int, delta: Float) {
         renderBackground(matrices)
@@ -112,15 +127,15 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Client Options")) {
         super.render(matrices, mouseX, mouseY, delta)
     }
 
-    // override fun onClose() {
-    //     SBClientOptions.write()
-    //     super.onClose()
-    // }
+    override fun close() {
+        SBClientOptions.write()
+        super.close()
+    }
 
     companion object {
         private const val FADE_SLIDER_SKEW: Double = 2.0
         private const val IDLE_SLIDER_SKEW: Double = 2.0
-        // val binding = KeyBinding("Client Options Screen", GLFW.GLFW_KEY_B, "SoundBounds")
+        val binding = KeyBinding("Client Options Screen", GLFW.GLFW_KEY_B, "SoundBounds")
 
         private fun formatDuration(
             milliseconds: Long,
@@ -199,16 +214,16 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Client Options")) {
             return (SBClientOptions.data.lookahead - min) / range
         }
 
-        // val diskStreamOption = BooleanOption(
-        //     "Stream From Disk",
-        //     { false },
-        //     { _, _ -> }
-        // )
+        val diskStreamOption: CyclingOption<Boolean> = CyclingOption.create(
+            "Stream From Disk",
+            { false },
+            { _, _, _ -> }
+        )
 
-        // val autoNowPlayingOption = BooleanOption(
-        //     "Auto Now-Playing",
-        //     { SBClientOptions.data.autoNowPlaying },
-        //     { _, onOff -> SBClientOptions.data.autoNowPlaying = onOff }
-        // )
+        val autoNowPlayingOption: CyclingOption<Boolean> = CyclingOption.create(
+            "Auto Now-Playing",
+            { SBClientOptions.data.autoNowPlaying },
+            { _, _, onOff -> SBClientOptions.data.autoNowPlaying = onOff }
+        )
     }
 }

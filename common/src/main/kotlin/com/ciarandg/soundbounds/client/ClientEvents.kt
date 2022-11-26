@@ -18,6 +18,7 @@ import dev.architectury.event.events.client.ClientGuiEvent
 import dev.architectury.event.events.client.ClientPlayerEvent
 import dev.architectury.event.events.common.TickEvent
 import dev.architectury.networking.NetworkManager
+import dev.architectury.registry.client.keymappings.KeyMappingRegistry
 import net.minecraft.client.MinecraftClient
 
 object ClientEvents {
@@ -47,12 +48,12 @@ object ClientEvents {
     }
 
     private fun registerOptionsScreen() {
-        // KeyBindings.registerKeyBinding(SBOptionsScreen.binding)
+        KeyMappingRegistry.register(SBOptionsScreen.binding)
 
         TickEvent.PLAYER_POST.register {
             val client = MinecraftClient.getInstance()
-            // if (SBOptionsScreen.binding.isPressed && client.currentScreen == null)
-            //     client.openScreen(SBOptionsScreen())
+            if (SBOptionsScreen.binding.isPressed && client.currentScreen == null)
+                client.setScreen(SBOptionsScreen())
         }
     }
 

@@ -4,14 +4,12 @@ import net.minecraft.nbt.NbtCompound
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.world.PersistentState
 
-class WorldRegionState(key: String?) : PersistentState(
-    // key
-) {
+class WorldRegionState : PersistentState() {
     private val regions: MutableMap<String, RegionData> = HashMap()
 
-    // override fun fromTag(tag: NbtCompound) {
-    //     regions.putAll(tag.keys.associateWith { regionName -> RegionData.fromTag(tag.getCompound(regionName)) })
-    // }
+    fun fromTag(tag: NbtCompound) {
+        regions.putAll(tag.keys.associateWith { regionName -> RegionData.fromTag(tag.getCompound(regionName)) })
+    }
 
     override fun writeNbt(tag: NbtCompound?): NbtCompound {
         val newTag = NbtCompound()
@@ -43,7 +41,7 @@ class WorldRegionState(key: String?) : PersistentState(
         private const val WORLD_REGIONS_KEY = "sb-regions"
 
         fun get(world: ServerWorld): WorldRegionState =
-            world.persistentStateManager.get({ WorldRegionState(WORLD_REGIONS_KEY) }, WORLD_REGIONS_KEY)!!
+            world.persistentStateManager.get({ WorldRegionState() }, WORLD_REGIONS_KEY)!!
         fun set(world: ServerWorld, state: WorldRegionState) =
             world.persistentStateManager.set(WORLD_REGIONS_KEY, state)
     }
