@@ -18,7 +18,7 @@ class WorldRegionState : PersistentState() {
     }
 
     override fun save(file: File?) {
-        SoundBounds.LOGGER.info("Saving WorldRegionState, ${regions.size} regions total")
+        SoundBounds.LOGGER.debug("Saving WorldRegionState, ${regions.size} regions total")
         super.save(file)
     }
 
@@ -53,10 +53,10 @@ class WorldRegionState : PersistentState() {
         fun getOrCreate(world: ServerWorld): WorldRegionState {
             return world.persistentStateManager.getOrCreate({ nbt ->
                 val state = fromTag(nbt)
-                SoundBounds.LOGGER.info("Loaded WorldRegionState with ${state.regions.size} regions")
+                SoundBounds.LOGGER.debug("Loaded WorldRegionState with ${state.regions.size} regions")
                 state
             }, {
-                SoundBounds.LOGGER.info("Creating empty WorldRegionState")
+                SoundBounds.LOGGER.debug("Creating empty WorldRegionState")
                 WorldRegionState()
             },
                 WORLD_REGIONS_KEY
