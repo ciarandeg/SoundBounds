@@ -33,11 +33,11 @@ object CommonEvents {
         )
 
         // Metadata hash check registration
-        NetworkManager.registerReceiver(
-            NetworkManager.Side.C2S,
-            SoundBounds.META_HASH_CHECK_C2S,
-            MetaHashCheckMessage()
-        )
+        // NetworkManager.registerReceiver(
+        //     NetworkManager.Side.C2S,
+        //     SoundBounds.META_HASH_CHECK_C2S,
+        //     MetaHashCheckMessage()
+        // )
 
         // Now-playing message registration
         NetworkManager.registerReceiver(

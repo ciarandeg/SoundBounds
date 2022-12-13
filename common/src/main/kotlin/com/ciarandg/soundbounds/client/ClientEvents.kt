@@ -30,7 +30,7 @@ object ClientEvents {
         registerOptionsScreen()
         registerPosMarkerUpdate()
         registerVisualizationRegionUpdate()
-        registerMetaHashCheck()
+        // registerMetaHashCheck()
         registerNowPlaying()
         registerCurrentRegion()
         registerMetadata()
