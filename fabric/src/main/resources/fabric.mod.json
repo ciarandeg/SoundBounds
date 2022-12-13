@@ -19,7 +19,9 @@
       "com.ciarandg.soundbounds.fabric.SoundBoundsFabric"
     ]
   },
-  "mixins": [],
+  "mixins": [
+    "soundbounds-common.mixins.json"
+  ],
   "depends": {
     "fabric": "*",
     "minecraft": ">=1.18.2",
