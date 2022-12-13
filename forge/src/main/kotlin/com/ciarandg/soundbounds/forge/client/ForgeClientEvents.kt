@@ -23,12 +23,6 @@ class ForgeClientEvents {
             event.sound = null
     }
 
-    @SubscribeEvent
-    fun updateGameMusicVolume(event: ScreenEvent) {
-        if (GameInstance.getClient().currentScreen is SoundOptionsScreen)
-            GameMusicVolume.update()
-    }
-
     // @SubscribeEvent
     // fun render(event: RenderLevelLastEvent) {
     //     val player = MinecraftClient.getInstance().player ?: return

@@ -44,7 +44,7 @@ object ClientEvents {
     private fun registerTicker() = TickEvent.PLAYER_POST.register { if (it.world.isClient) ClientTicker.tick() }
 
     private fun registerAudio() {
-        ClientPlayerEvent.CLIENT_PLAYER_JOIN.register { GameMusicVolume.update() }
+        ClientTickEvent.CLIENT_POST.register { GameMusicVolume.update() }
         ClientPlayerEvent.CLIENT_PLAYER_QUIT.register { RegionSwitcher.purge() }
     }
 
