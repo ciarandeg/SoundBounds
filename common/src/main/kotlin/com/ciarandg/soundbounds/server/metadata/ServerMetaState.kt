@@ -14,11 +14,6 @@ class ServerMetaState : PersistentState() {
             this.markDirty()
         }
 
-    fun fromTag(tag: NbtCompound?) {
-        val metaTag = tag?.getString("meta") ?: return
-        meta = gson.fromJson(metaTag, JsonMeta::class.java)
-    }
-
     override fun writeNbt(tag: NbtCompound?): NbtCompound {
         val newTag = NbtCompound()
         newTag.putString("meta", gson.toJson(meta))
@@ -29,12 +24,19 @@ class ServerMetaState : PersistentState() {
         private const val SERVER_METADATA_KEY = "sb-meta"
         val gson = Gson()
 
+        private fun fromTag(tag: NbtCompound): ServerMetaState {
+            val state = ServerMetaState()
+            state.meta = gson.fromJson(tag.getString("meta"), JsonMeta::class.java)
+            return state
+        }
+
         fun getOrCreate(): ServerMetaState =
-            getStateManager().get({ ServerMetaState() }, SERVER_METADATA_KEY) ?: run {
-                val state = ServerMetaState()
-                set(state)
-                state
-            }
+            getStateManager().getOrCreate(
+                { nbt -> fromTag(nbt) },
+                { ServerMetaState() },
+                SERVER_METADATA_KEY
+            )
+
         fun set(state: ServerMetaState) =
             getStateManager().set(SERVER_METADATA_KEY, state)
 
