@@ -1,6 +1,7 @@
 package com.ciarandg.soundbounds.common
 
 import com.ciarandg.soundbounds.SoundBounds
+import com.ciarandg.soundbounds.common.item.Baton
 import com.ciarandg.soundbounds.common.network.CurrentRegionMessage
 import com.ciarandg.soundbounds.common.network.MetaHashCheckMessage
 import com.ciarandg.soundbounds.common.network.MetadataSyncMessage
@@ -14,9 +15,18 @@ import com.ciarandg.soundbounds.common.ui.cli.argument.SongTagArgumentType
 import com.ciarandg.soundbounds.common.ui.cli.command.SoundBoundsCommand
 import dev.architectury.event.events.common.CommandRegistrationEvent
 import dev.architectury.networking.NetworkManager
+import dev.architectury.registry.registries.DeferredRegister
+import net.minecraft.item.Item
+import net.minecraft.item.ItemGroup
+import net.minecraft.util.registry.Registry
 
 object CommonEvents {
     fun register() {
+        // Item registration
+        val items = DeferredRegister.create(SoundBounds.MOD_ID, Registry.ITEM_KEY)
+        items.register("bounds_baton") { Baton(Item.Settings().group(ItemGroup.TOOLS)) }
+        items.register()
+
         // Command registration
         RegionArgumentType.register()
         SongIDArgumentType.register()

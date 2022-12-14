@@ -1,17 +1,6 @@
 package com.ciarandg.soundbounds.forge.client
 
-import com.ciarandg.soundbounds.client.audio.GameMusicVolume
-import com.ciarandg.soundbounds.client.regions.ClientWorldRegions
-import com.ciarandg.soundbounds.client.render.MarkerSelectionRenderer
-import com.ciarandg.soundbounds.client.render.RegionVisualizationRenderer
-import com.ciarandg.soundbounds.client.ui.ClientPlayerModel
-import com.ciarandg.soundbounds.forge.common.item.Baton
-import dev.architectury.utils.GameInstance
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.screen.option.SoundOptionsScreen
 import net.minecraft.sound.SoundCategory
-import net.minecraftforge.client.event.RenderLevelLastEvent
-import net.minecraftforge.client.event.ScreenEvent
 import net.minecraftforge.client.event.sound.PlaySoundEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 

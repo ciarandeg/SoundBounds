@@ -1,4 +1,4 @@
-package com.ciarandg.soundbounds.forge.common.item
+package com.ciarandg.soundbounds.common.item
 
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.common.network.PosMarkerUpdateMessage
@@ -39,14 +39,14 @@ class Baton(settings: Settings?) : NetherStarItem(settings) {
         return false
     }
 
-    override fun onEntitySwing(stack: ItemStack?, entity: LivingEntity?): Boolean {
-        if (entity != null &&
-            entity.world.isClient &&
-            entity is ClientPlayerEntity &&
-            entity == GameInstance.getClient().player
-        ) setCorner(Corner.FIRST)
-        return super.onEntitySwing(stack, entity)
-    }
+    // override fun onEntitySwing(stack: ItemStack?, entity: LivingEntity?): Boolean {
+    //     if (entity != null &&
+    //         entity.world.isClient &&
+    //         entity is ClientPlayerEntity &&
+    //         entity == GameInstance.getClient().player
+    //     ) setCorner(Corner.FIRST)
+    //     return super.onEntitySwing(stack, entity)
+    // }
 
     override fun useOnBlock(context: ItemUsageContext?): ActionResult {
         if (context?.player?.itemsHand?.first()?.item is Baton) // only use when in right hand
