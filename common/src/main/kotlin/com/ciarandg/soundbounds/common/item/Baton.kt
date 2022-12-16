@@ -17,6 +17,7 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.item.ItemUsageContext
 import net.minecraft.item.NetherStarItem
+import net.minecraft.text.LiteralText
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.ActionResult
@@ -39,14 +40,13 @@ class Baton(settings: Settings?) : NetherStarItem(settings) {
         return false
     }
 
-    // override fun onEntitySwing(stack: ItemStack?, entity: LivingEntity?): Boolean {
-    //     if (entity != null &&
-    //         entity.world.isClient &&
-    //         entity is ClientPlayerEntity &&
-    //         entity == GameInstance.getClient().player
-    //     ) setCorner(Corner.FIRST)
-    //     return super.onEntitySwing(stack, entity)
-    // }
+    fun onEntitySwing(entity: LivingEntity?) {
+        if (entity != null &&
+            entity.world.isClient &&
+            entity is ClientPlayerEntity &&
+            entity == GameInstance.getClient().player
+        ) setCorner(Corner.FIRST)
+    }
 
     override fun useOnBlock(context: ItemUsageContext?): ActionResult {
         if (context?.player?.itemsHand?.first()?.item is Baton) // only use when in right hand
@@ -68,7 +68,10 @@ class Baton(settings: Settings?) : NetherStarItem(settings) {
             val isCoolingDown = currentTime - corner.timestamp < cooldown
             val isNewBlock = !trace.blockPos.equals(corner.pos)
             if (!isCoolingDown || isNewBlock) {
-                SoundBounds.LOGGER.info("Set corner $corner to ${trace.blockPos.toImmutable()}")
+                "Set corner $corner to ${trace.blockPos.toImmutable()}".let {
+                    SoundBounds.LOGGER.info(it)
+                    MinecraftClient.getInstance().player?.sendMessage(LiteralText(it), false)
+                }
                 corner.pos = trace.blockPos
                 corner.timestamp = currentTime
 

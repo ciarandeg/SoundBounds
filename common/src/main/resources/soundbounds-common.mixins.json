@@ -3,7 +3,8 @@
   "package": "com.ciarandg.soundbounds.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "MixinSoundSystem"
+    "MixinSoundSystem",
+    "MixinClientPlayerEntity"
   ],
   "mixins": [
   ],
