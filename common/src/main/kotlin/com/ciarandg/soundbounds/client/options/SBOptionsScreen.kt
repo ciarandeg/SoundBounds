@@ -1,18 +1,14 @@
 package com.ciarandg.soundbounds.client.options
 
+import com.ciarandg.soundbounds.SoundBounds
+import dev.architectury.utils.GameInstance
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.client.gui.widget.CyclingButtonWidget
 import net.minecraft.client.option.CyclingOption
 import net.minecraft.client.option.KeyBinding
-import net.minecraft.client.option.Option
-// import net.minecraft.client.gui.widget.ButtonWidget
-// import net.minecraft.client.gui.widget.OptionButtonWidget
-// import net.minecraft.client.options.BooleanOption
-// import net.minecraft.client.options.KeyBinding
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.text.LiteralText
-import net.minecraft.text.Text
 import org.lwjgl.glfw.GLFW
 import kotlin.math.pow
 
@@ -29,7 +25,7 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Client Options")) {
         fun nextY() = top + (widgetHeight + spacer) * counter++
 
         super.init()
-        addSelectableChild(
+        addDrawableChild(
             ButtonWidget(
                 xPos, nextY(),
                 widgetWidth, widgetHeight,
@@ -39,7 +35,7 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Client Options")) {
                 client?.setScreen(SBOptionsScreen())
             }
         )
-        addSelectableChild(
+        addDrawableChild(
             SBSliderWidget(
                 xPos, nextY(),
                 widgetWidth, widgetHeight,
@@ -50,7 +46,7 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Client Options")) {
                 { value -> SBClientOptions.data.fadeDuration = toFadeDur(value) }
             )
         )
-        addSelectableChild(
+        addDrawableChild(
             SBSliderWidget(
                 xPos, nextY(),
                 widgetWidth, widgetHeight,
@@ -61,7 +57,7 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Client Options")) {
                 { value -> SBClientOptions.data.idleDuration = toIdleDur(value) },
             )
         )
-        addSelectableChild(
+        addDrawableChild(
             SBSliderWidget(
                 xPos, nextY(),
                 widgetWidth, widgetHeight,
@@ -72,7 +68,7 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Client Options")) {
                 { value -> SBClientOptions.data.bufferDuration = toBufDur(value) }
             )
         )
-        addSelectableChild(
+        addDrawableChild(
             SBSliderWidget(
                 xPos, nextY(),
                 widgetWidth, widgetHeight,
@@ -83,39 +79,18 @@ class SBOptionsScreen : Screen(LiteralText("SoundBounds Client Options")) {
                 { value -> SBClientOptions.data.lookahead = toLookahead(value) }
             )
         )
-        val diskStreamButton = CyclingButtonWidget.onOffBuilder().build(
-            xPos, nextY(), widgetWidth, widgetHeight, LiteralText("My cool text!")
-        )
-        // val diskStreamButton = OptionButtonWidget(
-        //     xPos, nextY(),
-        //     widgetWidth, widgetHeight,
-        //     diskStreamOption.getDisplayString(null)
-        // ) { button: ButtonWidget ->
-        //     diskStreamOption.toggle(client?.options)
-        //     button.message = diskStreamOption.getDisplayString(client?.options)
-        //     client?.options?.write()
-        // }
-        diskStreamButton.active = false
-        addSelectableChild(diskStreamButton)
-        addSelectableChild(
-            CyclingButtonWidget.onOffBuilder().build(
-                xPos, nextY(),
-                widgetWidth, widgetHeight,
-                LiteralText("My other cool cool text!")
+        addDrawableChild(run {
+            val diskStreamButton = diskStreamOption.createButton(
+                GameInstance.getClient().options,
+                xPos, nextY(), widgetWidth
             )
-        )
-        // addSelectableChild(
-        //     OptionButtonWidget(
-        //         xPos, nextY(),
-        //         widgetWidth, widgetHeight,
-        //         autoNowPlayingOption,
-        //         autoNowPlayingOption.getDisplayString(null)
-        //     ) { button: ButtonWidget ->
-        //         autoNowPlayingOption.toggle(client?.options)
-        //         button.message = autoNowPlayingOption.getDisplayString(client?.options)
-        //         client?.options?.write()
-        //     }
-        // )
+            diskStreamButton.active = false
+            diskStreamButton
+        })
+        addDrawableChild(autoNowPlayingOption.createButton(
+            GameInstance.getClient().options,
+            xPos, nextY(), widgetWidth
+        ))
     }
 
     override fun render(matrices: MatrixStack, mouseX: Int, mouseY: Int, delta: Float) {
