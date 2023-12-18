@@ -5,7 +5,7 @@ import com.ciarandg.soundbounds.server.metadata.ServerMetaState
 // Can check for regions that have missing metadata or empty playlists
 object RegionAuditor {
     private fun songsMissingMetaInRegion(region: RegionData): Set<String> {
-        val meta = ServerMetaState.get().meta
+        val meta = ServerMetaState.getOrCreate().meta
         return region.playlist.filter { songID ->
             !meta.songs.containsKey(songID)
         }.toSet()

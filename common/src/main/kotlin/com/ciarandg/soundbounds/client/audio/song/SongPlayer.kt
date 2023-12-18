@@ -7,7 +7,7 @@ import com.ciarandg.soundbounds.client.audio.song.types.LoadedSong
 import com.ciarandg.soundbounds.client.audio.song.types.OggSong
 import com.ciarandg.soundbounds.client.options.SBClientOptions
 import com.ciarandg.soundbounds.common.network.NowPlayingMessage
-import me.shedaniel.architectury.networking.NetworkManager
+import dev.architectury.networking.NetworkManager
 import java.lang.IllegalStateException
 import java.util.Observable
 import java.util.Observer

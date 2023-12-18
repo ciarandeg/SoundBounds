@@ -3,8 +3,8 @@ package com.ciarandg.soundbounds.common.network
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.regions.RegionSwitcher
 import com.ciarandg.soundbounds.server.ui.controller.PlayerControllers
+import dev.architectury.networking.NetworkManager
 import io.netty.buffer.Unpooled
-import me.shedaniel.architectury.networking.NetworkManager
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
 

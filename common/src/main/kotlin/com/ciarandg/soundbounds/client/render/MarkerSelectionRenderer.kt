@@ -11,7 +11,6 @@ import net.minecraft.client.render.VertexConsumer
 import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.WorldRenderer
 import net.minecraft.client.util.math.MatrixStack
-import net.minecraft.client.util.math.Vector3f
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
@@ -19,6 +18,7 @@ import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Matrix3f
 import net.minecraft.util.math.Matrix4f
 import net.minecraft.util.math.Vec2f
+import net.minecraft.util.math.Vec3f
 import kotlin.math.abs
 
 object MarkerSelectionRenderer {
@@ -66,8 +66,8 @@ object MarkerSelectionRenderer {
         marker2: BlockPos?
     ) {
         val bufferBlockQuads = source.getBuffer(layer)
-        val matrixPos = matrixStack.peek().model
-        val matrixNormal = matrixStack.peek().normal
+        val matrixPos = matrixStack.peek().positionMatrix
+        val matrixNormal = matrixStack.peek().normalMatrix
 
         val markerBox =
             if (marker1 != null && marker2 != null) marker1.toBox().union(marker2.toBox())
@@ -92,25 +92,25 @@ object MarkerSelectionRenderer {
         val minZ = box.minZ.toFloat()
         val maxZ = box.maxZ.toFloat()
 
-        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(maxX, minY, minZ), Vector3f(minX, maxY, minZ), Direction.NORTH, color)
-        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(maxX, minY, maxZ), Vector3f(maxX, maxY, minZ), Direction.EAST, color)
-        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(minX, minY, maxZ), Vector3f(maxX, maxY, maxZ), Direction.SOUTH, color)
-        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(minX, minY, minZ), Vector3f(minX, maxY, maxZ), Direction.WEST, color)
-        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(minX, maxY, maxZ), Vector3f(maxX, maxY, minZ), Direction.UP, color)
-        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vector3f(minX, minY, minZ), Vector3f(maxX, minY, maxZ), Direction.DOWN, color)
+        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vec3f(maxX, minY, minZ), Vec3f(minX, maxY, minZ), Direction.NORTH, color)
+        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vec3f(maxX, minY, maxZ), Vec3f(maxX, maxY, minZ), Direction.EAST, color)
+        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vec3f(minX, minY, maxZ), Vec3f(maxX, maxY, maxZ), Direction.SOUTH, color)
+        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vec3f(minX, minY, minZ), Vec3f(minX, maxY, maxZ), Direction.WEST, color)
+        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vec3f(minX, maxY, maxZ), Vec3f(maxX, maxY, minZ), Direction.UP, color)
+        drawQuad(bufferBlockQuads, matrixPos, matrixNormal, Vec3f(minX, minY, minZ), Vec3f(maxX, minY, maxZ), Direction.DOWN, color)
     }
 
     private fun drawQuad(
         bufferBlockQuads: VertexConsumer,
         matrixPos: Matrix4f,
         matrixNormal: Matrix3f,
-        bottomLeft: Vector3f,
-        topRight: Vector3f,
+        bottomLeft: Vec3f,
+        topRight: Vec3f,
         facing: Direction,
         color: RenderColor
     ) {
         val dimensions2D: Vec2f = with(
-            Vector3f(
+            Vec3f(
                 abs(topRight.x - bottomLeft.x),
                 abs(topRight.y - bottomLeft.y),
                 abs(topRight.z - bottomLeft.z)
@@ -133,28 +133,28 @@ object MarkerSelectionRenderer {
 
         val corners = when (facing) {
             Direction.NORTH -> listOf(
-                bottomLeft, Vector3f(topRight.x, bottomLeft.y, bottomLeft.z), // bottom right
-                topRight, Vector3f(bottomLeft.x, topRight.y, bottomLeft.z) // top left
+                bottomLeft, Vec3f(topRight.x, bottomLeft.y, bottomLeft.z), // bottom right
+                topRight, Vec3f(bottomLeft.x, topRight.y, bottomLeft.z) // top left
             )
             Direction.EAST -> listOf(
-                bottomLeft, Vector3f(bottomLeft.x, bottomLeft.y, topRight.z),
-                topRight, Vector3f(bottomLeft.x, topRight.y, bottomLeft.z)
+                bottomLeft, Vec3f(bottomLeft.x, bottomLeft.y, topRight.z),
+                topRight, Vec3f(bottomLeft.x, topRight.y, bottomLeft.z)
             )
             Direction.SOUTH -> listOf(
-                bottomLeft, Vector3f(topRight.x, bottomLeft.y, bottomLeft.z),
-                topRight, Vector3f(bottomLeft.x, topRight.y, bottomLeft.z)
+                bottomLeft, Vec3f(topRight.x, bottomLeft.y, bottomLeft.z),
+                topRight, Vec3f(bottomLeft.x, topRight.y, bottomLeft.z)
             )
             Direction.WEST -> listOf(
-                bottomLeft, Vector3f(bottomLeft.x, bottomLeft.y, topRight.z),
-                topRight, Vector3f(bottomLeft.x, topRight.y, bottomLeft.z)
+                bottomLeft, Vec3f(bottomLeft.x, bottomLeft.y, topRight.z),
+                topRight, Vec3f(bottomLeft.x, topRight.y, bottomLeft.z)
             )
             Direction.UP -> listOf(
-                bottomLeft, Vector3f(topRight.x, bottomLeft.y, bottomLeft.z),
-                topRight, Vector3f(bottomLeft.x, bottomLeft.y, topRight.z)
+                bottomLeft, Vec3f(topRight.x, bottomLeft.y, bottomLeft.z),
+                topRight, Vec3f(bottomLeft.x, bottomLeft.y, topRight.z)
             )
             Direction.DOWN -> listOf(
-                bottomLeft, Vector3f(topRight.x, bottomLeft.y, bottomLeft.z),
-                topRight, Vector3f(bottomLeft.x, bottomLeft.y, topRight.z)
+                bottomLeft, Vec3f(topRight.x, bottomLeft.y, bottomLeft.z),
+                topRight, Vec3f(bottomLeft.x, bottomLeft.y, topRight.z)
             )
         }
 
@@ -168,7 +168,7 @@ object MarkerSelectionRenderer {
         bufferBlockQuads: VertexConsumer,
         matrixPos: Matrix4f,
         matrixNormal: Matrix3f,
-        pos: Vector3f,
+        pos: Vec3f,
         color: RenderColor,
         texUV: Vec2f
     ) {

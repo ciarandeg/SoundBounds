@@ -15,7 +15,7 @@ import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason.NO_SUCH_REGIO
 import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason.REGION_MUST_HAVE_VOLUME
 import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason.REGION_NAME_CONFLICT
 import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason.VOLUME_INDEX_OOB
-import me.shedaniel.architectury.networking.NetworkManager
+import dev.architectury.networking.NetworkManager
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
 
@@ -153,12 +153,12 @@ class WorldController(
         editWorldState { state ->
             when (val region = state.getRegion(regionName)) {
                 null -> views.forEach { it.notifyFailed(NO_SUCH_REGION) }
-                else -> work(region, ServerMetaState.get().meta)
+                else -> work(region, ServerMetaState.getOrCreate().meta)
             }
         }
 
     private fun editWorldState(work: (WorldRegionState) -> Unit) = synchronized(owner) {
-        val state = WorldRegionState.get(owner)
+        val state = WorldRegionState.getOrCreate(owner)
         work(state)
         WorldRegionState.set(owner, state)
     }

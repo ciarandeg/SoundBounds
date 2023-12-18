@@ -3,9 +3,9 @@ package com.ciarandg.soundbounds.server
 import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.common.network.RegionUpdateMessageS2C
 import com.ciarandg.soundbounds.common.regions.WorldRegionState
+import dev.architectury.event.events.common.PlayerEvent
+import dev.architectury.networking.NetworkManager
 import io.netty.buffer.Unpooled
-import me.shedaniel.architectury.event.events.PlayerEvent
-import me.shedaniel.architectury.networking.NetworkManager
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
 
@@ -27,7 +27,7 @@ object ServerEvents {
     }
 
     private fun sendWorldRegions(player: ServerPlayerEntity) {
-        val regions = WorldRegionState.get(player.serverWorld).getAllRegions().map { it.toPair() }
+        val regions = WorldRegionState.getOrCreate(player.getWorld()).getAllRegions().map { it.toPair() } ?: listOf()
         NetworkManager.sendToPlayer(
             player,
             SoundBounds.UPDATE_REGIONS_CHANNEL_S2C,

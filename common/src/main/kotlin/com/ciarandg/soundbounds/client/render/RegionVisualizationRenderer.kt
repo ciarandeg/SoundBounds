@@ -16,7 +16,7 @@ object RegionVisualizationRenderer {
     }
 
     private fun renderWireframe(matrixStack: MatrixStack, vertexConsumer: VertexConsumer, region: ClientRegion) {
-        val model = matrixStack.peek().model
+        val model = matrixStack.peek().positionMatrix
         val color = RenderColor.CYAN
         val wireframe = if (region === regionCache) {
             wireframeCache ?: throw IllegalStateException()

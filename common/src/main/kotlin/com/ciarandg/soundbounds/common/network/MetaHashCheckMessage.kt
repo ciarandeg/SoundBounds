@@ -4,8 +4,8 @@ import com.ciarandg.soundbounds.SoundBounds
 import com.ciarandg.soundbounds.client.metadata.ClientMeta
 import com.ciarandg.soundbounds.server.metadata.ServerMetaState
 import com.ciarandg.soundbounds.server.ui.controller.PlayerControllers
+import dev.architectury.networking.NetworkManager
 import io.netty.buffer.Unpooled
-import me.shedaniel.architectury.networking.NetworkManager
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
 
@@ -15,7 +15,7 @@ class MetaHashCheckMessage : NetworkManager.NetworkReceiver {
         if (ctx.player.world.isClient) NetworkManager.sendToServer(SoundBounds.META_HASH_CHECK_C2S, buildBufferC2S())
         else {
             val clientHash = buf.readInt()
-            val serverHash = ServerMetaState.get().meta.hashCode()
+            val serverHash = ServerMetaState.getOrCreate().meta.hashCode()
             if (clientHash != serverHash) PlayerControllers[ctx.player as ServerPlayerEntity].notifyMetaMismatch()
         }
     }

@@ -6,9 +6,9 @@ import com.ciarandg.soundbounds.common.metadata.JsonMeta
 import com.ciarandg.soundbounds.server.metadata.ServerMetaState
 import com.ciarandg.soundbounds.server.ui.controller.PlayerControllers
 import com.google.gson.Gson
+import dev.architectury.networking.NetworkManager
+import dev.architectury.utils.GameInstance
 import io.netty.buffer.Unpooled
-import me.shedaniel.architectury.networking.NetworkManager
-import me.shedaniel.architectury.utils.GameInstance
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.network.PacketByteBuf
@@ -22,7 +22,7 @@ class MetadataSyncMessage : NetworkManager.NetworkReceiver {
             val requester: PlayerEntity? = GameInstance.getServer()?.playerManager?.getPlayer(buf.readUuid())
             val requesterController = PlayerControllers[requester]
             try {
-                val state = ServerMetaState.get()
+                val state = ServerMetaState.getOrCreate()
                 state.meta = gson.fromJson(buf.readString(STR_LIMIT), JsonMeta::class.java)
                 ServerMetaState.set(state)
                 requesterController?.notifyMetadataSynced(true)

@@ -2,25 +2,20 @@ package com.ciarandg.soundbounds.server.metadata
 
 import com.ciarandg.soundbounds.common.metadata.JsonMeta
 import com.google.gson.Gson
-import me.shedaniel.architectury.utils.GameInstance
-import net.minecraft.nbt.CompoundTag
+import dev.architectury.utils.GameInstance
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.world.PersistentState
 import net.minecraft.world.PersistentStateManager
 
-class ServerMetaState(key: String?) : PersistentState(key) {
+class ServerMetaState : PersistentState() {
     var meta = JsonMeta()
         set(value) {
             field = value
             this.markDirty()
         }
 
-    override fun fromTag(tag: CompoundTag?) {
-        val metaTag = tag?.getString("meta") ?: return
-        meta = gson.fromJson(metaTag, JsonMeta::class.java)
-    }
-
-    override fun toTag(tag: CompoundTag?): CompoundTag {
-        val newTag = CompoundTag()
+    override fun writeNbt(tag: NbtCompound?): NbtCompound {
+        val newTag = NbtCompound()
         newTag.putString("meta", gson.toJson(meta))
         return newTag
     }
@@ -29,13 +24,21 @@ class ServerMetaState(key: String?) : PersistentState(key) {
         private const val SERVER_METADATA_KEY = "sb-meta"
         val gson = Gson()
 
-        fun get(): ServerMetaState =
+        private fun fromTag(tag: NbtCompound): ServerMetaState {
+            val state = ServerMetaState()
+            state.meta = gson.fromJson(tag.getString("meta"), JsonMeta::class.java)
+            return state
+        }
+
+        fun getOrCreate(): ServerMetaState =
             getStateManager().getOrCreate(
-                { ServerMetaState(SERVER_METADATA_KEY) },
+                { nbt -> fromTag(nbt) },
+                { ServerMetaState() },
                 SERVER_METADATA_KEY
             )
+
         fun set(state: ServerMetaState) =
-            getStateManager().set(state)
+            getStateManager().set(SERVER_METADATA_KEY, state)
 
         private fun getStateManager(): PersistentStateManager {
             val server = GameInstance.getServer() ?: throw RuntimeException("Must be run from server side")

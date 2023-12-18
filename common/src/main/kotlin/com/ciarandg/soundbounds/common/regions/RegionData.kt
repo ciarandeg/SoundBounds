@@ -2,10 +2,10 @@ package com.ciarandg.soundbounds.common.regions
 
 import com.ciarandg.soundbounds.common.PlaylistType
 import com.ciarandg.soundbounds.common.PlaylistType.SEQUENTIAL
-import net.minecraft.nbt.CompoundTag
-import net.minecraft.nbt.IntTag
-import net.minecraft.nbt.ListTag
-import net.minecraft.nbt.StringTag
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.nbt.NbtInt
+import net.minecraft.nbt.NbtList
+import net.minecraft.nbt.NbtString
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3i
@@ -21,8 +21,8 @@ data class RegionData(
     val volumes: MutableList<Pair<BlockPos, BlockPos>> = ArrayList(),
     var queuePersistence: Boolean = false
 ) {
-    fun toTag(): CompoundTag {
-        val tag = CompoundTag()
+    fun toTag(): NbtCompound {
+        val tag = NbtCompound()
         tag.putInt(Tag.PRIORITY.key, priority)
         tag.putString(Tag.PLAYLIST_TYPE.key, playlistType.toString())
         tag.put(Tag.PLAYLIST.key, playlistToTag(playlist))
@@ -58,7 +58,7 @@ data class RegionData(
             CORNER_Z("z"),
         }
 
-        fun fromTag(tag: CompoundTag): RegionData {
+        fun fromTag(tag: NbtCompound): RegionData {
             return RegionData(
                 tag.getInt(Tag.PRIORITY.key),
                 PlaylistType.valueOf(tag.getString(Tag.PLAYLIST_TYPE.key)),
@@ -68,38 +68,38 @@ data class RegionData(
             )
         }
 
-        private fun tagToPlaylist(tag: ListTag) = tag.map {
-            if (it !is StringTag) throw InvalidParameterException("Playlist entry tags must be strings")
+        private fun tagToPlaylist(tag: NbtList) = tag.map {
+            if (it !is NbtString) throw InvalidParameterException("Playlist entry tags must be strings")
             it.asString()
         }.toMutableList()
 
-        private fun tagToVolumeList(tag: ListTag) = tag.map {
-            if (it !is CompoundTag) throw InvalidParameterException("Volume tags must be compound")
+        private fun tagToVolumeList(tag: NbtList) = tag.map {
+            if (it !is NbtCompound) throw InvalidParameterException("Volume tags must be compound")
 
             val corner1 = it[Tag.CORNER1.key]
             val corner2 = it[Tag.CORNER2.key]
-            if (corner1 !is CompoundTag || corner2 !is CompoundTag)
+            if (corner1 !is NbtCompound || corner2 !is NbtCompound)
                 throw InvalidParameterException("Corner tags must be compound")
 
             Pair(tagToBlockPos(corner1), tagToBlockPos(corner2))
         }.toMutableList()
 
-        private fun tagToBlockPos(tag: CompoundTag) = BlockPos(
+        private fun tagToBlockPos(tag: NbtCompound) = BlockPos(
             tag.getInt(Tag.CORNER_X.key),
             tag.getInt(Tag.CORNER_Y.key),
             tag.getInt(Tag.CORNER_Z.key)
         )
-        private fun playlistToTag(playlist: List<String>): ListTag {
-            val playlistTag = ListTag()
-            playlistTag.addAll(playlist.map { StringTag.of(it) })
+        private fun playlistToTag(playlist: List<String>): NbtList {
+            val playlistTag = NbtList()
+            playlistTag.addAll(playlist.map { NbtString.of(it) })
             return playlistTag
         }
 
-        private fun volumesToTag(volumes: List<Pair<BlockPos, BlockPos>>): ListTag {
-            val volumesTag = ListTag()
+        private fun volumesToTag(volumes: List<Pair<BlockPos, BlockPos>>): NbtList {
+            val volumesTag = NbtList()
             volumesTag.addAll(
                 volumes.map {
-                    val boundingBox = CompoundTag()
+                    val boundingBox = NbtCompound()
                     boundingBox.put(Tag.CORNER1.key, blockPosToTag(it.first))
                     boundingBox.put(Tag.CORNER2.key, blockPosToTag(it.second))
                     boundingBox
@@ -108,11 +108,11 @@ data class RegionData(
             return volumesTag
         }
 
-        private fun blockPosToTag(pos: BlockPos): CompoundTag {
-            val t = CompoundTag()
-            t.put(Tag.CORNER_X.key, IntTag.of(pos.x))
-            t.put(Tag.CORNER_Y.key, IntTag.of(pos.y))
-            t.put(Tag.CORNER_Z.key, IntTag.of(pos.z))
+        private fun blockPosToTag(pos: BlockPos): NbtCompound {
+            val t = NbtCompound()
+            t.put(Tag.CORNER_X.key, NbtInt.of(pos.x))
+            t.put(Tag.CORNER_Y.key, NbtInt.of(pos.y))
+            t.put(Tag.CORNER_Z.key, NbtInt.of(pos.z))
             return t
         }
     }

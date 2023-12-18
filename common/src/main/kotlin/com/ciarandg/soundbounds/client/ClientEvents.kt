@@ -14,11 +14,12 @@ import com.ciarandg.soundbounds.common.network.PosMarkerUpdateMessage
 import com.ciarandg.soundbounds.common.network.RegionDestroyMessageS2C
 import com.ciarandg.soundbounds.common.network.RegionUpdateMessageS2C
 import com.ciarandg.soundbounds.common.network.VisualizeRegionMessageS2C
-import me.shedaniel.architectury.event.events.GuiEvent
-import me.shedaniel.architectury.event.events.TickEvent
-import me.shedaniel.architectury.event.events.client.ClientPlayerEvent
-import me.shedaniel.architectury.networking.NetworkManager
-import me.shedaniel.architectury.registry.KeyBindings
+import dev.architectury.event.events.client.ClientGuiEvent
+import dev.architectury.event.events.client.ClientPlayerEvent
+import dev.architectury.event.events.client.ClientTickEvent
+import dev.architectury.event.events.common.TickEvent
+import dev.architectury.networking.NetworkManager
+import dev.architectury.registry.client.keymappings.KeyMappingRegistry
 import net.minecraft.client.MinecraftClient
 
 object ClientEvents {
@@ -29,7 +30,7 @@ object ClientEvents {
         registerOptionsScreen()
         registerPosMarkerUpdate()
         registerVisualizationRegionUpdate()
-        registerMetaHashCheck()
+        // registerMetaHashCheck()
         registerNowPlaying()
         registerCurrentRegion()
         registerMetadata()
@@ -43,17 +44,17 @@ object ClientEvents {
     private fun registerTicker() = TickEvent.PLAYER_POST.register { if (it.world.isClient) ClientTicker.tick() }
 
     private fun registerAudio() {
-        ClientPlayerEvent.CLIENT_PLAYER_JOIN.register { GameMusicVolume.update() }
+        ClientTickEvent.CLIENT_POST.register { GameMusicVolume.update() }
         ClientPlayerEvent.CLIENT_PLAYER_QUIT.register { RegionSwitcher.purge() }
     }
 
     private fun registerOptionsScreen() {
-        KeyBindings.registerKeyBinding(SBOptionsScreen.binding)
+        KeyMappingRegistry.register(SBOptionsScreen.binding)
 
-        TickEvent.PLAYER_POST.register {
+        ClientTickEvent.CLIENT_POST.register {
             val client = MinecraftClient.getInstance()
             if (SBOptionsScreen.binding.isPressed && client.currentScreen == null)
-                client.openScreen(SBOptionsScreen())
+                client.setScreen(SBOptionsScreen())
         }
     }
 
@@ -98,7 +99,7 @@ object ClientEvents {
     }
 
     private fun registerMetadata() {
-        GuiEvent.INIT_POST.register { _, _, _ -> ClientMeta.update() }
+        ClientGuiEvent.INIT_POST.register { _, _ -> ClientMeta.update() }
         NetworkManager.registerReceiver(
             NetworkManager.Side.S2C,
             SoundBounds.SYNC_METADATA_CHANNEL_S2C,

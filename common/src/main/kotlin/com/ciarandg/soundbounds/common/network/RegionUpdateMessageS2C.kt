@@ -6,16 +6,16 @@ import com.ciarandg.soundbounds.client.exceptions.NoMetadataException
 import com.ciarandg.soundbounds.client.regions.ClientRegion
 import com.ciarandg.soundbounds.client.regions.ClientWorldRegions
 import com.ciarandg.soundbounds.common.regions.RegionData
+import dev.architectury.networking.NetworkManager
 import io.netty.buffer.Unpooled
-import me.shedaniel.architectury.networking.NetworkManager
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.network.PacketByteBuf
 import java.lang.RuntimeException
 
 class RegionUpdateMessageS2C : NetworkManager.NetworkReceiver {
     override fun receive(buf: PacketByteBuf, ctx: NetworkManager.PacketContext) {
         val wipeExisting = buf.readBoolean()
-        val regions = buf.readCompoundTag() ?: throw RuntimeException("There should be a compound tag here")
+        val regions = buf.readNbt() ?: throw RuntimeException("There should be a compound tag here")
         if (wipeExisting) wipeRegions()
         try {
             updateAll(regions)
@@ -33,7 +33,7 @@ class RegionUpdateMessageS2C : NetworkManager.NetworkReceiver {
         if (oldSize > 0) SoundBounds.LOGGER.info("Wiped local region data")
     }
 
-    private fun updateAll(regions: CompoundTag) {
+    private fun updateAll(regions: NbtCompound) {
         val size = regions.size
         if (size == 0) return
         regions.keys.forEach { regionName ->
@@ -47,11 +47,11 @@ class RegionUpdateMessageS2C : NetworkManager.NetworkReceiver {
         fun buildBufferS2C(wipeExistingRegions: Boolean, regions: List<RegionEntry>): PacketByteBuf {
             val buf = PacketByteBuf(Unpooled.buffer())
             buf.writeBoolean(wipeExistingRegions)
-            val tag = CompoundTag()
+            val tag = NbtCompound()
             regions.forEach {
                 tag.put(it.first, it.second.toTag())
             }
-            buf.writeCompoundTag(tag)
+            buf.writeNbt(tag)
             return buf
         }
     }

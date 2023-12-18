@@ -1,14 +1,13 @@
-package com.ciarandg.soundbounds.forge.common.item
+package com.ciarandg.soundbounds.common.item
 
 import com.ciarandg.soundbounds.SoundBounds
-import com.ciarandg.soundbounds.forge.SoundBoundsForge
 import com.ciarandg.soundbounds.common.network.PosMarkerUpdateMessage
 import com.ciarandg.soundbounds.server.ui.cli.PosMarker
-import me.shedaniel.architectury.networking.NetworkManager
-import me.shedaniel.architectury.platform.Platform
-import me.shedaniel.architectury.utils.Env.CLIENT
-import me.shedaniel.architectury.utils.Env.SERVER
-import me.shedaniel.architectury.utils.GameInstance
+import dev.architectury.networking.NetworkManager
+import dev.architectury.platform.Platform
+import dev.architectury.utils.Env.CLIENT
+import dev.architectury.utils.Env.SERVER
+import dev.architectury.utils.GameInstance
 import net.minecraft.block.BlockState
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.item.TooltipContext
@@ -18,6 +17,7 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.item.ItemUsageContext
 import net.minecraft.item.NetherStarItem
+import net.minecraft.text.LiteralText
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.ActionResult
@@ -40,13 +40,12 @@ class Baton(settings: Settings?) : NetherStarItem(settings) {
         return false
     }
 
-    override fun onEntitySwing(stack: ItemStack?, entity: LivingEntity?): Boolean {
+    fun onEntitySwing(entity: LivingEntity?) {
         if (entity != null &&
             entity.world.isClient &&
             entity is ClientPlayerEntity &&
             entity == GameInstance.getClient().player
         ) setCorner(Corner.FIRST)
-        return super.onEntitySwing(stack, entity)
     }
 
     override fun useOnBlock(context: ItemUsageContext?): ActionResult {
@@ -69,7 +68,10 @@ class Baton(settings: Settings?) : NetherStarItem(settings) {
             val isCoolingDown = currentTime - corner.timestamp < cooldown
             val isNewBlock = !trace.blockPos.equals(corner.pos)
             if (!isCoolingDown || isNewBlock) {
-                SoundBounds.LOGGER.info("Set corner $corner to ${trace.blockPos.toImmutable()}")
+                "Set corner $corner to ${trace.blockPos.toImmutable()}".let {
+                    SoundBounds.LOGGER.info(it)
+                    MinecraftClient.getInstance().player?.sendMessage(LiteralText(it), false)
+                }
                 corner.pos = trace.blockPos
                 corner.timestamp = currentTime
 

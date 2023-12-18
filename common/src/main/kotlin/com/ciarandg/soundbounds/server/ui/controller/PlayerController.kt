@@ -11,8 +11,8 @@ import com.ciarandg.soundbounds.server.ui.PlayerView
 import com.ciarandg.soundbounds.server.ui.PlayerView.FailureReason
 import com.ciarandg.soundbounds.server.ui.cli.CLIServerPlayerView
 import com.ciarandg.soundbounds.server.ui.cli.PosMarker
+import dev.architectury.networking.NetworkManager
 import io.netty.buffer.Unpooled
-import me.shedaniel.architectury.networking.NetworkManager
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
@@ -26,7 +26,7 @@ class PlayerController(
 ) {
     val paginator = Paginator()
     private val world: ServerWorld
-        get() = owner.serverWorld
+        get() = owner.getWorld()
 
     fun showNowPlaying(player: ServerPlayerEntity) =
         NetworkManager.sendToPlayer(
@@ -56,7 +56,7 @@ class PlayerController(
     }
 
     fun setVisualizingRegion(regionName: String) {
-        val region = WorldRegionState.get(world).getRegion(regionName)
+        val region = WorldRegionState.getOrCreate(world).getRegion(regionName)
         if (region != null) {
             NetworkManager.sendToPlayer(owner, SoundBounds.VISUALIZE_REGION_CHANNEL_S2C, VisualizeRegionMessageS2C.buildBuffer(regionName))
             view.notifyVisualizationRegionChanged(regionName)
@@ -65,19 +65,19 @@ class PlayerController(
 
     fun notifyMetaMismatch() = view.notifyMetaMismatch()
 
-    fun listRegions() = view.showRegionList(WorldRegionState.get(world).getAllRegions().sortedBy { it.key }, paginator)
+    fun listRegions() = view.showRegionList(WorldRegionState.getOrCreate(world).getAllRegions().sortedBy { it.key }, paginator)
 
     fun listRegionsWithinRadius(radius: Int) {
-        val allRegions = WorldRegionState.get(world).getAllRegions()
+        val allRegions = WorldRegionState.getOrCreate(world).getAllRegions()
         val proximityPairs = allRegions.map { Pair(it, it.value.distanceFrom(owner.blockPos)) }
         val withinRadius = proximityPairs.sortedBy { it.second }.filter { it.second <= radius }
         view.showRegionProximities(withinRadius, paginator)
     }
 
     fun listRegionsContainingSong(songID: String) {
-        val allRegions = WorldRegionState.get(world).getAllRegions()
+        val allRegions = WorldRegionState.getOrCreate(world).getAllRegions()
         val regionsContaining = allRegions.filter { it.value.playlist.contains(songID) }
-        val songShouldExist = ServerMetaState.get().meta.songs.containsKey(songID)
+        val songShouldExist = ServerMetaState.getOrCreate().meta.songs.containsKey(songID)
 
         if (!songShouldExist) view.notifyFailed(
             if (regionsContaining.isEmpty()) {
@@ -89,14 +89,14 @@ class PlayerController(
     }
 
     fun listSongsContainingTag(tag: String) {
-        val songMeta = ServerMetaState.get().meta.songs
+        val songMeta = ServerMetaState.getOrCreate().meta.songs
         val songsContainingTag = songMeta.entries.sortedBy { it.key }.filter { it.value.tags.contains(tag) }.map { it.toPair() }
         view.showSongList(songsContainingTag, paginator)
     }
 
     fun listRegionPlaylistSongs(regionName: String) {
-        val region = WorldRegionState.get(world).getRegion(regionName)
-        val metaSongs = ServerMetaState.get().meta.songs
+        val region = WorldRegionState.getOrCreate(world).getRegion(regionName)
+        val metaSongs = ServerMetaState.getOrCreate().meta.songs
         if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
         else view.showSongList(region.playlist.map { Pair(it, metaSongs[it]) }, paginator)
     }
@@ -119,7 +119,7 @@ class PlayerController(
     }
 
     fun createRegion(regionName: String, priority: Int) {
-        val state = WorldRegionState.get(world)
+        val state = WorldRegionState.getOrCreate(world)
         val m1 = model.marker1
         val m2 = model.marker2
 
@@ -136,16 +136,16 @@ class PlayerController(
     }
 
     fun showRegionInfo(regionName: String) {
-        val region = WorldRegionState.get(world).getRegion(regionName)
+        val region = WorldRegionState.getOrCreate(world).getRegion(regionName)
         if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
         else view.showRegionInfo(regionName, region)
     }
 
     fun listSongs() =
-        view.showSongList(ServerMetaState.get().meta.songs.map { it.toPair() }.sortedBy { it.first }, paginator)
+        view.showSongList(ServerMetaState.getOrCreate().meta.songs.map { it.toPair() }.sortedBy { it.first }, paginator)
 
     fun showSongInfo(songID: String) {
-        val song = ServerMetaState.get().meta.songs[songID]
+        val song = ServerMetaState.getOrCreate().meta.songs[songID]
         if (song == null) view.notifyFailed(FailureReason.NO_SUCH_SONG)
         else view.showSongInfo(songID, song)
     }
@@ -158,7 +158,7 @@ class PlayerController(
     }
 
     fun listRegionVolumes(regionName: String) {
-        val region = WorldRegionState.get(world).getRegion(regionName)
+        val region = WorldRegionState.getOrCreate(world).getRegion(regionName)
         if (region == null) view.notifyFailed(FailureReason.NO_SUCH_REGION)
         else view.showRegionVolumeList(regionName, region.volumes, paginator)
     }
@@ -169,7 +169,7 @@ class PlayerController(
     }
 
     fun showGroupInfo(groupName: String) {
-        val members = ServerMetaState.get().meta.groups[groupName]
+        val members = ServerMetaState.getOrCreate().meta.groups[groupName]
         if (members == null) view.notifyFailed(FailureReason.NO_SUCH_GROUP)
         else view.showGroupMembers(groupName, members)
     }
